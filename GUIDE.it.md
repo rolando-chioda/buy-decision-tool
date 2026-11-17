@@ -2,6 +2,8 @@
 
 [English](GUIDE.md) · **Italiano** · [Français](GUIDE.fr.md)
 
+> Non è uno strumento per gestire un budget: se metti un articolo in lista è perché te lo puoi permettere. Serve solo a capire se e quando comprarlo.
+
 ## Installazione
 
 Non serve installare nulla. Scegli una delle tre opzioni:

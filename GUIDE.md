@@ -2,6 +2,8 @@
 
 **English** · [Italiano](GUIDE.it.md) · [Français](GUIDE.fr.md)
 
+> It is not a budgeting tool: if you put an item on the list, it is because you can afford it. It only helps you work out whether and when to buy it.
+
 ## Installation
 
 There is nothing to install. Pick one option:

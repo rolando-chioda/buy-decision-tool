@@ -14,6 +14,8 @@ A single HTML file that helps you decide **what to buy first**. It combines five
 | **Cost per use** | Price ÷ (uses per month × expected lifespan in months). |
 | **Waiting rule** | Items wait a few days (or weeks, above a price threshold) before they can be recommended. This filters out impulse buys. |
 
+> It is not a budgeting tool: if you put an item on the list, it is because you can afford it. It only helps you work out whether and when to buy it.
+
 It also has:
 
 - **Bundles**: link items you should buy together. A bundle is ranked and recommended as one purchase.

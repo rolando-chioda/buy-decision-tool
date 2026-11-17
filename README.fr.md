@@ -14,6 +14,8 @@ Un seul fichier HTML qui vous aide à décider **quoi acheter en premier**. Il c
 | **Coût par utilisation** | Prix ÷ (utilisations par mois × durée de vie prévue en mois). |
 | **Règle d'attente** | Les articles attendent quelques jours (ou semaines, au-dessus d'un seuil de prix) avant de pouvoir être conseillés. Cela filtre les achats impulsifs. |
 
+> Ce n'est pas un outil de gestion de budget : si vous mettez un article dans la liste, c'est que vous pouvez vous le permettre. Il sert seulement à décider si et quand l'acheter.
+
 Il propose aussi :
 
 - **Lots** : liez les articles à acheter ensemble. Un lot est classé et conseillé comme un seul achat.

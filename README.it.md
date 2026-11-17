@@ -14,6 +14,8 @@ Un unico file HTML che ti aiuta a decidere **cosa comprare prima**. Combina cinq
 | **Costo per utilizzo** | Prezzo ÷ (utilizzi al mese × durata prevista in mesi). |
 | **Regola dell'attesa** | Gli articoli aspettano qualche giorno (o settimana, sopra una soglia di prezzo) prima di poter essere consigliati. Filtra gli acquisti d'impulso. |
 
+> Non è uno strumento per gestire un budget: se metti un articolo in lista è perché te lo puoi permettere. Serve solo a capire se e quando comprarlo.
+
 In più:
 
 - **Pacchetti**: collega gli articoli da comprare insieme. Un pacchetto viene classificato e consigliato come un unico acquisto.
