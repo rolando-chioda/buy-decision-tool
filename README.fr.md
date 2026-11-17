@@ -17,6 +17,7 @@ Un seul fichier HTML qui vous aide à décider **quoi acheter en premier**. Il c
 Il propose aussi :
 
 - **Lots** : liez les articles à acheter ensemble. Un lot est classé, budgété et conseillé comme un seul achat.
+- **Valeur et rapport qualité-prix** : une matrice à quatre secteurs (Bonne affaire, Investissement, Petit plaisir, À éviter) qui réunit tous les critères sur deux axes : les notes manuelles donnent la valeur, le prix et le coût par utilisation donnent le rapport qualité-prix.
 - **Budget** : en parcourant le classement, il indique ce que vous pouvez acheter maintenant, ce qui est encore en attente et ce qui dépasse le budget.
 - **Notes** pour chaque article (liens, modèles, magasins, doutes).
 - **État** de chaque article : *Acheté* et *Plus nécessaire* le déplacent dans une archive (hors classement et budget) ; *Reporté de N jours ou mois* le retire du classement jusqu'à cette date et l'affiche parmi les *Reportés* dans les résultats.

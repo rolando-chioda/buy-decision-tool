@@ -17,6 +17,7 @@ A single HTML file that helps you decide **what to buy first**. It combines five
 It also has:
 
 - **Bundles**: link items you should buy together. A bundle is ranked, budgeted and released as one purchase.
+- **Value and convenience**: a four-sector matrix (Bargain, Investment, Treat, Avoid) that combines all criteria into two axes: manual scores give the value, price and cost per use give the convenience.
 - **Budget**: going down the ranking, it marks what you can buy now, what is still waiting and what is over budget.
 - **Notes** for each item (links, models, shops, doubts).
 - **Status** for each item: *Bought* and *No longer needed* move it to an archive (out of ranking and budget); *Postponed by N days or months* takes it out of the ranking until that date and lists it under *Postponed* in the results.

@@ -17,6 +17,7 @@ Un unico file HTML che ti aiuta a decidere **cosa comprare prima**. Combina cinq
 In più:
 
 - **Pacchetti**: collega gli articoli da comprare insieme. Un pacchetto viene classificato, conteggiato nel budget e consigliato come un unico acquisto.
+- **Valore e convenienza**: una matrice a quattro settori (Affare, Investimento, Sfizio, Da evitare) che unisce tutti i criteri in due assi: i voti manuali danno il valore, prezzo e costo per utilizzo danno la convenienza.
 - **Budget**: scorrendo la classifica, indica cosa puoi comprare ora, cosa è ancora in attesa e cosa è fuori budget.
 - **Note** per ogni articolo (link, modelli, negozi, dubbi).
 - **Stato** di ogni articolo: *Comprato* e *Non serve più* lo spostano in un archivio (fuori da classifica e budget); *Rimandato di N giorni o mesi* lo toglie dalla classifica fino a quella data e lo mostra fra i *Rimandati* nei risultati.

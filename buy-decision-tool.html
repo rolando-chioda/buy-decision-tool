@@ -136,6 +136,7 @@ td input[type=number]{width:64px;text-align:right}
 .quad .q ul{margin:0;padding-left:18px;font-size:14px}
 .quad .ax{font-size:12px;color:var(--mute);display:flex;align-items:center;justify-content:center}
 .quad .axv{writing-mode:vertical-rl;transform:rotate(180deg)}
+.v1{background:var(--ok-soft)}.v2{background:var(--warn-soft)}.v3{background:var(--gray-soft)}.v4{background:var(--bad-soft)}
 .q1{background:var(--bad-soft)}.q2{background:var(--ok-soft)}.q3{background:var(--warn-soft)}.q4{background:var(--gray-soft)}
 .reco{border-left:4px solid var(--ok)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
@@ -270,6 +271,13 @@ const T = {
     daysLeft: n => `ancora ${n} gg`, waitsBundle: 'attende il resto del pacchetto',
     bundlesTitle: 'Pacchetti (da comprare insieme)',
     bundlesHelp: "Un pacchetto si compra solo quando tutti i suoi articoli hanno superato l'attesa e il totale entra nel budget. Gli articoli \"Won't have\" non entrano nei pacchetti.",
+    vcTitle: 'Valore e convenienza', vcHelp: 'Unisce tutti i criteri delle Valutazioni in due assi: il valore è la media pesata dei voti manuali (utilità, facilità…), la convenienza quella dei criteri automatici (prezzo, costo per utilizzo). Il confine fra alto e basso è 5,5.',
+    vcNeed: 'Per questo grafico servono almeno un criterio a voto manuale e uno automatico (prezzo o costo per utilizzo) con peso maggiore di zero. Aggiungili in Impostazioni → Criteri.',
+    axVal: 'Valore alto', axNoVal: 'Valore basso', axConv: 'Conveniente', axNoConv: 'Costoso', vcShort: (v, c) => `valore ${v} · conv. ${c}`, vcFact: 'Valore / convenienza',
+    'v1.s': 'Affare', 'v1.h': 'Vale molto e costa poco: in cima alla lista.',
+    'v2.s': 'Investimento', 'v2.h': "Vale molto ma costa: risparmia o aspetta un'offerta.",
+    'v3.s': 'Sfizio', 'v3.h': 'Costa poco ma serve poco: solo se avanza budget.',
+    'v4.s': 'Da evitare', 'v4.h': 'Costa tanto e serve poco: lascia perdere o cerca altro.',
     eisTitle: 'Matrice di Eisenhower', axUrgent: 'Urgente', axNotUrgent: 'Non urgente', axImp: 'Importante', axNotImp: 'Non importante',
     howTitle: 'Come viene calcolato',
     how: [
@@ -370,6 +378,13 @@ const T = {
     daysLeft: n => `${n} ${n === 1 ? 'day' : 'days'} left`, waitsBundle: 'waiting for the rest of the bundle',
     bundlesTitle: 'Bundles (buy together)',
     bundlesHelp: 'A bundle is bought only when all its items are past their waiting period and the total fits the budget. "Won\'t have" items are left out of bundles.',
+    vcTitle: 'Value and convenience', vcHelp: 'Combines all the criteria from Scores into two axes: value is the weighted average of the manual scores (usefulness, ease…), convenience that of the automatic criteria (price, cost per use). The line between high and low is 5.5.',
+    vcNeed: 'This chart needs at least one manual criterion and one automatic criterion (price or cost per use) with a weight above zero. Add them in Settings → Criteria.',
+    axVal: 'High value', axNoVal: 'Low value', axConv: 'Good deal', axNoConv: 'Expensive', vcShort: (v, c) => `value ${v} · conv. ${c}`, vcFact: 'Value / convenience',
+    'v1.s': 'Bargain', 'v1.h': 'High value, low cost: top of the list.',
+    'v2.s': 'Investment', 'v2.h': 'High value but costly: save up or wait for a deal.',
+    'v3.s': 'Treat', 'v3.h': 'Cheap but of little use: only if budget is left over.',
+    'v4.s': 'Avoid', 'v4.h': 'Costly and of little use: skip it or look for something else.',
     eisTitle: 'Eisenhower matrix', axUrgent: 'Urgent', axNotUrgent: 'Not urgent', axImp: 'Important', axNotImp: 'Not important',
     howTitle: 'How it is calculated',
     how: [
@@ -470,6 +485,13 @@ const T = {
     daysLeft: n => `encore ${n} j`, waitsBundle: 'attend le reste du lot',
     bundlesTitle: 'Lots (à acheter ensemble)',
     bundlesHelp: "Un lot ne s'achète que lorsque tous ses articles ont fini leur attente et que le total tient dans le budget. Les articles « Won't have » sont exclus des lots.",
+    vcTitle: 'Valeur et rapport qualité-prix', vcHelp: "Réunit tous les critères des Notes sur deux axes : la valeur est la moyenne pondérée des notes manuelles (utilité, facilité…), le rapport qualité-prix celle des critères automatiques (prix, coût par utilisation). La limite entre haut et bas est 5,5.",
+    vcNeed: "Ce graphique demande au moins un critère manuel et un critère automatique (prix ou coût par utilisation) avec un poids supérieur à zéro. Ajoutez-les dans Réglages → Critères.",
+    axVal: 'Valeur élevée', axNoVal: 'Valeur faible', axConv: 'Avantageux', axNoConv: 'Cher', vcShort: (v, c) => `valeur ${v} · prix ${c}`, vcFact: 'Valeur / prix',
+    'v1.s': 'Bonne affaire', 'v1.h': 'Grande valeur, petit coût : en tête de liste.',
+    'v2.s': 'Investissement', 'v2.h': 'Grande valeur mais coûteux : économisez ou attendez une offre.',
+    'v3.s': 'Petit plaisir', 'v3.h': 'Pas cher mais peu utile : seulement s’il reste du budget.',
+    'v4.s': 'À éviter', 'v4.h': 'Cher et peu utile : laissez tomber ou cherchez autre chose.',
     eisTitle: "Matrice d'Eisenhower", axUrgent: 'Urgent', axNotUrgent: 'Pas urgent', axImp: 'Important', axNotImp: 'Pas important',
     howTitle: 'Mode de calcul',
     how: [
@@ -734,6 +756,9 @@ function compute() {
       sum += s * Math.max(0, +c.weight || 0);
     }
     const matrix = on('matrix') ? (totW ? sum / totW : 0) : 10;
+    const wavg = cs => { const w = cs.reduce((a, c) => a + Math.max(0, +c.weight || 0), 0); return w ? cs.reduce((a, c) => a + sc[c.id] * Math.max(0, +c.weight || 0), 0) / w : null; };
+    const val = wavg(S.criteria.filter(c => !c.auto)), conv = wavg(S.criteria.filter(c => c.auto));
+    const vq = val == null || conv == null ? null : val >= 5.5 ? (conv >= 5.5 ? 'v1' : 'v2') : (conv >= 5.5 ? 'v3' : 'v4');
     const q = i.urgent && i.important ? 'q1' : i.important ? 'q2' : i.urgent ? 'q3' : 'q4';
     const mF = on('moscow') ? (MOSCOW[i.moscow]?.f ?? 0.5) : 1;
     const qF = on('eisenhower') ? QF[q] : 1;
@@ -743,7 +768,7 @@ function compute() {
     const waitLeft = Math.max(0, Math.ceil((added.getTime() + waitDays * DAY - today.getTime()) / DAY));
     const snoozeLeft = i.state === 'snoozed' && i.snoozeUntil ? Math.max(0, Math.ceil((new Date(i.snoozeUntil + 'T00:00').getTime() - today.getTime()) / DAY)) : 0;
     const remaining = Math.max(waitLeft, snoozeLeft);
-    per[i.id] = {cpu, sc, matrix, q, mF, qF, final, waitDays, remaining, snoozed:snoozeLeft > 0 && snoozeLeft >= waitLeft};
+    per[i.id] = {cpu, sc, matrix, val, conv, vq, q, mF, qF, final, waitDays, remaining, snoozed:snoozeLeft > 0 && snoozeLeft >= waitLeft};
   }
 
   const activeIds = new Set(active.map(i => i.id));
@@ -809,6 +834,7 @@ function itemFacts(i, p, D) {
     ${f(t('grp.state'), t('state.' + (i.state || 'active')) + (isPostponed(i) ? ' · ' + t('backOn', fmtDate(i.snoozeUntil)) : ''))}
     ${f('MoSCoW', MOSCOW[i.moscow]?.label ?? '—')}
     ${f(t('quadrant'), t(p.q + '.l'))}
+    ${on('matrix') && p.vq ? f(t('vcFact'), `${t(p.vq + '.s')} (${n1(p.val)} / ${n1(p.conv)})`) : ''}
     ${f(`${t('urgent')} / ${t('important')}`, `${yn(i.urgent)} / ${yn(i.important)}`)}
     ${f(t('price'), money(+i.price || 0))}
     ${f(t('cpu'), cpuText(p))}
@@ -1060,6 +1086,21 @@ function viewResults(D) {
   };
   const qbox = q => `<div class="q ${q}"><h3>${t(q + '.s')}</h3><p>${t(q + '.l')}. ${t(q + '.h')}</p>${list(q)}</div>`;
 
+  const vlist = q => {
+    const its = D.live.filter(i => D.per[i.id].vq === q && !isPostponed(i));
+    return its.length ? `<ul>${its.map(i => `<li>${esc(i.name) || t('unnamed')} <span class="mute small">${t('vcShort', n1(D.per[i.id].val), n1(D.per[i.id].conv))}</span>${isW(i) ? ` <span class="mute">(${t('excludedBadge')})</span>` : ''}</li>`).join('')}</ul>` : '<p>—</p>';
+  };
+  const vbox = q => `<div class="q ${q}"><h3>${t(q + '.s')}</h3><p>${t(q + '.h')}</p>${vlist(q)}</div>`;
+  const vcReady = D.live.some(i => D.per[i.id].vq);
+  const vcCard = on('matrix') ? `<div class="card"><h2>${t('vcTitle')}</h2>
+    <p class="small mute" style="margin-top:0">${t('vcHelp')}</p>
+    ${vcReady ? `<div class="quad">
+      <div></div><div class="ax">${t('axConv')}</div><div class="ax">${t('axNoConv')}</div>
+      <div class="ax"><span class="axv">${t('axVal')}</span></div>${vbox('v1')}${vbox('v2')}
+      <div class="ax"><span class="axv">${t('axNoVal')}</span></div>${vbox('v3')}${vbox('v4')}
+    </div>` : `<div class="banner warn" style="margin:0">${t('vcNeed')}</div>`}
+  </div>` : '';
+
   const allOff = !METHODS.some(on);
   return `${allOff ? `<div class="banner warn">${t('allOff')}</div>` : ''}${reco}${kpis}
   <div class="card"><h2>${t('rankTitle')}</h2>
@@ -1082,6 +1123,7 @@ function viewResults(D) {
     </div>`).join('')}
     <p class="small mute" style="margin:10px 0 0">${t('bundlesHelp')}</p>
   </div>` : ''}
+  ${vcCard}
   ${on('eisenhower') ? `<div class="card"><h2>${t('eisTitle')}</h2>
     <div class="quad">
       <div></div><div class="ax">${t('axUrgent')}</div><div class="ax">${t('axNotUrgent')}</div>
