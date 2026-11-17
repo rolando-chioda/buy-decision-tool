@@ -67,6 +67,11 @@ nav{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:18px;
 nav button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;font:inherit;color:var(--mute);cursor:pointer;white-space:nowrap}
 nav button.on{color:var(--ink);border-color:var(--acc);font-weight:600}
 nav button:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+nav{align-items:flex-end}
+nav .results-btn{background:var(--acc-soft);color:var(--acc);font-weight:600;border-radius:8px 8px 0 0;padding:10px 18px}
+nav .results-btn.on{background:var(--acc);color:var(--on-acc);border-color:var(--acc)}
+nav .results-btn:focus-visible{outline-offset:2px}
+.navsep{width:1px;align-self:stretch;background:var(--line);margin:6px 8px 0;flex:none}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;min-width:0}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 14px}
 label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mute)}
@@ -152,9 +157,10 @@ footer{margin-top:28px;display:flex;flex-direction:column;gap:10px}
   </header>
   <div id="banners"></div>
   <nav id="tabs">
+    <button id="tab-results" class="results-btn" data-tab="results" data-i18n="tab.results"></button>
+    <span class="navsep" aria-hidden="true"></span>
     <button id="tab-items" data-tab="items" data-i18n="tab.items"></button>
     <button id="tab-scores" data-tab="scores" data-i18n="tab.scores"></button>
-    <button id="tab-results" data-tab="results" data-i18n="tab.results"></button>
     <button id="tab-settings" data-tab="settings" data-i18n="tab.settings"></button>
   </nav>
   <main id="view"></main>
@@ -172,7 +178,7 @@ footer{margin-top:28px;display:flex;flex-direction:column;gap:10px}
 const T = {
   it: {
     subtitle: "Matrice pesata, MoSCoW, Eisenhower, costo per utilizzo, regola dell'attesa e pacchetti.",
-    'tab.items': '1 · Articoli', 'tab.scores': '2 · Valutazioni', 'tab.results': '3 · Risultati', 'tab.settings': '4 · Impostazioni',
+    'tab.items': '1 · Articoli', 'tab.scores': '2 · Valutazioni', 'tab.results': '★ Risultati', 'tab.settings': '3 · Impostazioni',
     'sub.budget': 'Budget e valuta', 'sub.wait': "Regola dell'attesa", 'sub.criteria': 'Criteri', 'sub.data': 'Dati e backup', 'sub.how': 'Come funziona',
     hintsToggle: 'Mostra descrizioni', 'grp.base': 'Cosa e quanto', 'grp.priority': 'Priorità', 'grp.usage': 'Utilizzo', 'grp.state': 'Stato',
     critDescPh: 'Descrizione (facoltativa)', critLegend: 'Cosa significano i criteri', howLink: 'Come viene calcolato il punteggio →',
@@ -263,7 +269,7 @@ const T = {
   },
   en: {
     subtitle: 'Weighted matrix, MoSCoW, Eisenhower, cost per use, waiting rule and bundles.',
-    'tab.items': '1 · Items', 'tab.scores': '2 · Scores', 'tab.results': '3 · Results', 'tab.settings': '4 · Settings',
+    'tab.items': '1 · Items', 'tab.scores': '2 · Scores', 'tab.results': '★ Results', 'tab.settings': '3 · Settings',
     'sub.budget': 'Budget & currency', 'sub.wait': 'Waiting rule', 'sub.criteria': 'Criteria', 'sub.data': 'Data & backup', 'sub.how': 'How it works',
     hintsToggle: 'Show descriptions', 'grp.base': 'What and how much', 'grp.priority': 'Priority', 'grp.usage': 'Usage', 'grp.state': 'Status',
     critDescPh: 'Description (optional)', critLegend: 'What the criteria mean', howLink: 'How the score is calculated →',
@@ -354,7 +360,7 @@ const T = {
   },
   fr: {
     subtitle: "Matrice pondérée, MoSCoW, Eisenhower, coût par utilisation, règle d'attente et lots.",
-    'tab.items': '1 · Articles', 'tab.scores': '2 · Notes', 'tab.results': '3 · Résultats', 'tab.settings': '4 · Réglages',
+    'tab.items': '1 · Articles', 'tab.scores': '2 · Notes', 'tab.results': '★ Résultats', 'tab.settings': '3 · Réglages',
     'sub.budget': 'Budget et devise', 'sub.wait': "Règle d'attente", 'sub.criteria': 'Critères', 'sub.data': 'Données et sauvegarde', 'sub.how': 'Fonctionnement',
     hintsToggle: 'Afficher les descriptions', 'grp.base': 'Quoi et combien', 'grp.priority': 'Priorité', 'grp.usage': 'Utilisation', 'grp.state': 'État',
     critDescPh: 'Description (facultative)', critLegend: 'Signification des critères', howLink: 'Comment le score est calculé →',
@@ -507,9 +513,7 @@ function snoozeDate(n, unit) {
 let S = {...defaultSettings(), items:[]};
 let mode = null;            // 'claude' | 'local'
 let db = null, autoBackup = null, loaded = false, dbOk = null;
-let tab = 'items';
-try { tab = localStorage.getItem('bdt:tab') || 'items'; } catch (e) {}
-if (tab === 'criteria') tab = 'settings';
+let tab = 'results';   // la pagina si apre sempre sui risultati
 let showHints = true;
 try { showHints = localStorage.getItem('bdt:hints') !== '0'; } catch (e) {}
 
@@ -746,7 +750,7 @@ function viewArchive() {
 function viewItems(D) {
   const liveItems = S.items.filter(i => !isArchived(i));
   if (!liveItems.length) return emptyState(t('emptyItems')) + viewArchive();
-  const cards = liveItems.map(i => {
+  const cards = liveItems.slice().sort((a, b) => (b.created || 0) - (a.created || 0)).map(i => {
     const p = D.per[i.id];
     const st = i.state || 'active';
     return `<div class="card">
@@ -797,7 +801,7 @@ function viewItems(D) {
       </div>
     </div>`;
   }).join('');
-  return `${cards}<button class="btn primary" id="add-item" data-act="addItem" style="margin-bottom:14px">${t('add')}</button>${viewArchive()}`;
+  return `<button class="btn primary" id="add-item" data-act="addItem" style="margin-bottom:14px">${t('add')}</button>${cards}${viewArchive()}`;
 }
 
 const SUBS = ['budget', 'wait', 'criteria', 'data', 'how'];
@@ -1101,7 +1105,8 @@ document.addEventListener('click', async e => {
     S.items.push(it);
     if (tab !== 'items') { tab = 'items'; try { localStorage.setItem('bdt:tab', tab); } catch (err) {} }
     queueWrite('items/' + it.id, true); render();
-    document.getElementById('name-' + it.id)?.focus();
+    window.scrollTo(0, 0);
+    document.getElementById('name-' + it.id)?.focus({preventScroll:true});
   } else if (act === 'delItem') {
     const i = S.items.find(x => x.id === id);
     if (!await ask(t('askDel', i?.name || t('unnamed')), t('okDel'))) return;
