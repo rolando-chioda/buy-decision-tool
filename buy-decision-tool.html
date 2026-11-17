@@ -44,6 +44,8 @@ h2{font-size:17px;margin:0 0 10px}
 .hint{display:block;font-size:12px;color:var(--mute);line-height:1.35;font-weight:400;margin-top:2px}
 .group{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:600;margin:16px 0 8px}
 .checkcell{display:flex;flex-direction:column;justify-content:flex-end;gap:2px}
+.autocell{display:flex;flex-direction:column;justify-content:flex-start;gap:4px;font-size:12px;color:var(--mute)}
+.autocell .autoval{display:flex;align-items:center;gap:6px;min-height:38px;font-size:15px;color:var(--ink)}
 .subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .subtabs button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);color:var(--mute);border-radius:999px;padding:5px 12px;cursor:pointer}
 .subtabs button.on{background:var(--acc-soft);border-color:var(--acc);color:var(--acc);font-weight:600}
@@ -871,7 +873,7 @@ function viewItems(D) {
       </div>
       ${on('matrix') && S.criteria.length ? `${groupTitle('grp.scores')}
       <div class="grid">${S.criteria.map(c => c.auto
-        ? `<div class="checkcell"><span>${esc(critName(c))}</span><span><b data-d="${i.id}:sc:${c.id}">${n1(p.sc[c.id])}</b> <span class="badge b-gray">${t('autoScore')}</span></span>${showHints && critDesc(c) ? `<span class="hint">${esc(critDesc(c))}</span>` : ''}</div>`
+        ? `<div class="autocell"><span>${esc(critName(c))}</span><span class="autoval"><b data-d="${i.id}:sc:${c.id}">${n1(p.sc[c.id])}</b> <span class="badge b-gray">${t('autoScore')}</span></span>${showHints && critDesc(c) ? `<span class="hint">${esc(critDesc(c))}</span>` : ''}</div>`
         : `<label>${esc(critName(c))}<input id="iscore-${i.id}-${c.id}" type="number" min="1" max="10" step="1" data-k="score:${i.id}:${c.id}" value="${esc(i.scores?.[c.id] ?? 5)}">${showHints && critDesc(c) ? `<span class="hint">${esc(critDesc(c))}</span>` : ''}</label>`).join('')}
       </div>${hint('scores')}` : ''}
       ${groupTitle('grp.usage')}
