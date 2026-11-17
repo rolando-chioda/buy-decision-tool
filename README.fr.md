@@ -2,6 +2,8 @@
 
 [English](README.md) · [Italiano](README.it.md) · **Français**
 
+👉 **[Guide rapide : installation et utilisation en 2 minutes](GUIDE.fr.md)**
+
 Un seul fichier HTML qui vous aide à décider **quoi acheter en premier**. Il combine cinq techniques connues en un seul classement :
 
 | Technique | Ce qu'elle fait ici |
