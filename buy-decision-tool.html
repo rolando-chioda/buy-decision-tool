@@ -241,7 +241,7 @@ const T = {
     critDescPh: 'Descrizione (facoltativa)', critLegend: 'Cosa significano i criteri', howLink: 'Come viene calcolato il punteggio →',
     'state.active': 'Attivo', 'state.bought': 'Comprato', 'state.dropped': 'Non serve più', 'state.snoozed': 'Rimandato',
     snoozeFor: 'Rimanda di', 'unit.days': 'giorni', 'unit.months': 'mesi', snoozedUntil: d => `Rimandato fino al ${d}`,
-    postponedTitle: 'Rimandati', postponedHelp: 'Fuori dalla classifica fino alla data indicata, poi rientrano da soli.', backOn: d => `torna il ${d}`,
+    postponedTitle: 'Rimandati', postponedHelp: 'Fuori dalla classifica fino alla data indicata, poi rientrano da soli. Clicca una riga per vedere i dati o modificarli, anche per cambiare lo stato.', backOn: d => `torna il ${d}`,
     'sub.methods': 'Metodi di classifica',
     methodsHelp: 'Scegli quali metodi compongono il punteggio. Un metodo disattivato non conta: la matrice vale 10 per tutti, MoSCoW ed Eisenhower moltiplicano per 1. Se disattivi MoSCoW, anche gli articoli "Won\'t have" tornano in classifica. Costo per utilizzo e regola dell\'attesa restano attivi.',
     'm.matrix': 'Matrice decisionale pesata', 'm.matrix.d': 'Voti da 1 a 10 su criteri pesati, inclusi prezzo e costo per utilizzo.',
@@ -346,7 +346,7 @@ const T = {
     critDescPh: 'Description (optional)', critLegend: 'What the criteria mean', howLink: 'How the score is calculated →',
     'state.active': 'Active', 'state.bought': 'Bought', 'state.dropped': 'No longer needed', 'state.snoozed': 'Postponed',
     snoozeFor: 'Postpone by', 'unit.days': 'days', 'unit.months': 'months', snoozedUntil: d => `Postponed until ${d}`,
-    postponedTitle: 'Postponed', postponedHelp: 'Out of the ranking until the date shown, then they come back by themselves.', backOn: d => `back on ${d}`,
+    postponedTitle: 'Postponed', postponedHelp: 'Out of the ranking until the date shown, then they come back by themselves. Click a row to see the data or edit it, including the status.', backOn: d => `back on ${d}`,
     'sub.methods': 'Ranking methods',
     methodsHelp: 'Choose which methods make up the score. A method that is off does not count: the matrix is 10 for everyone, MoSCoW and Eisenhower multiply by 1. If you turn MoSCoW off, "Won\'t have" items also come back into the ranking. Cost per use and the waiting rule stay on.',
     'm.matrix': 'Weighted decision matrix', 'm.matrix.d': 'Scores from 1 to 10 on weighted criteria, including price and cost per use.',
@@ -451,7 +451,7 @@ const T = {
     critDescPh: 'Description (facultative)', critLegend: 'Signification des critères', howLink: 'Comment le score est calculé →',
     'state.active': 'Actif', 'state.bought': 'Acheté', 'state.dropped': 'Plus nécessaire', 'state.snoozed': 'Reporté',
     snoozeFor: 'Reporter de', 'unit.days': 'jours', 'unit.months': 'mois', snoozedUntil: d => `Reporté jusqu'au ${d}`,
-    postponedTitle: 'Reportés', postponedHelp: "Hors classement jusqu'à la date indiquée, puis ils reviennent d'eux-mêmes.", backOn: d => `revient le ${d}`,
+    postponedTitle: 'Reportés', postponedHelp: "Hors classement jusqu'à la date indiquée, puis ils reviennent d'eux-mêmes. Cliquez sur une ligne pour voir les données ou les modifier, y compris l'état.", backOn: d => `revient le ${d}`,
     'sub.methods': 'Méthodes de classement',
     methodsHelp: "Choisissez les méthodes qui composent le score. Une méthode désactivée ne compte pas : la matrice vaut 10 pour tous, MoSCoW et Eisenhower multiplient par 1. Si vous désactivez MoSCoW, les articles « Won't have » reviennent aussi dans le classement. Le coût par utilisation et la règle d'attente restent actifs.",
     'm.matrix': 'Matrice de décision pondérée', 'm.matrix.d': 'Notes de 1 à 10 sur des critères pondérés, prix et coût par utilisation compris.',
@@ -1140,10 +1140,19 @@ function viewResults(D) {
   </div>
   ${D.postponed.length ? `<div class="card"><h2>${t('postponedTitle')}</h2>
     <p class="small mute" style="margin-top:0">${t('postponedHelp')}</p>
-    ${D.postponed.map(i => `<div class="bundle spread">
-      <span style="min-width:0"><b>${esc(i.name) || t('unnamed')}</b> · ${money(+i.price || 0)}</span>
-      <span class="badge b-warn">${t('backOn', fmtDate(i.snoozeUntil))}</span>
-    </div>`).join('')}
+    <div class="tablewrap"><table class="ltable">
+      <thead><tr><th></th><th>${t('thItem')}</th><th class="num">${t('thPrice')}</th><th>${t('thStatus')}</th></tr></thead>
+      <tbody>${D.postponed.map(i => {
+        const p = D.per[i.id], open = openRows.has(i.id);
+        return `<tr class="rrow${open ? ' open' : ''}" data-act="toggleRow" data-id="${i.id}">
+      <td><button class="tog" aria-expanded="${open}" aria-label="${esc(t('showDetails'))}">${open ? '▾' : '▸'}</button></td>
+      <td class="lname"><span class="ell">${esc(i.name) || t('unnamed')}</span></td>
+      <td class="num">${money(+i.price || 0)}</td>
+      <td><span class="badge b-warn">${t('backOn', fmtDate(i.snoozeUntil))}</span></td>
+    </tr>${open ? `<tr class="rdetail"><td></td><td colspan="3">${itemFacts(i, p, D)}
+      <button class="btn" id="edit-${i.id}" data-act="editItem" data-id="${i.id}">${t('edit')}</button></td></tr>` : ''}`;
+      }).join('')}</tbody>
+    </table></div>
   </div>` : ''}
   ${D.bundles.length ? `<div class="card"><h2>${t('bundlesTitle')}</h2>
     ${D.bundles.map(b => `<div class="bundle">
