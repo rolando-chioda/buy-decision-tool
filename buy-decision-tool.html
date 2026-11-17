@@ -55,6 +55,18 @@ h2{font-size:17px;margin:0 0 10px}
 .linkbtn{background:none;border:0;color:var(--acc);font:inherit;cursor:pointer;padding:0;text-decoration:underline}
 .tools label.check{font-size:12px;color:var(--mute)}
 .archived{opacity:.85}
+tr.rrow{cursor:pointer}
+tr.rrow:hover td{background:var(--bg)}
+tr.rrow.open td{border-bottom-color:transparent;background:var(--bg)}
+tr.rdetail td{background:var(--bg);padding-top:0}
+.tog{background:var(--card);border:1px solid var(--line);border-radius:6px;width:28px;height:28px;cursor:pointer;color:var(--ink);font:inherit;line-height:1}
+.tog:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.ell{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:min(46ch,48vw);font-weight:600}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;margin:4px 0 12px}
+.facts div{min-width:0}
+.facts dt{font-size:12px;color:var(--mute)}
+.facts dd{margin:0;font-size:14px;overflow-wrap:anywhere}
+.facts .wide{grid-column:1/-1}
 header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 .tools{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .tools select{width:auto;padding:4px 8px;font-size:13px}
@@ -185,6 +197,7 @@ const T = {
     'state.active': 'Attivo', 'state.bought': 'Comprato', 'state.dropped': 'Non serve più', 'state.snoozed': 'Rimandato',
     snoozeFor: 'Rimanda di', 'unit.days': 'giorni', 'unit.months': 'mesi', snoozedUntil: d => `Rimandato fino al ${d}`,
     postponedTitle: 'Rimandati', postponedHelp: 'Fuori dalla classifica e dal budget fino alla data indicata, poi rientrano da soli.', backOn: d => `torna il ${d}`,
+    yes: 'sì', no: 'no', matrixScore: 'Punteggio', scoresBy: 'Voti per criterio', edit: 'Modifica articolo', showDetails: 'Mostra dettagli', waitCol: 'Attesa',
     archiveTitle: 'Archivio', archiveHelp: 'Articoli comprati o che non servono più: non entrano in classifica né nel budget.', restore: 'Ripristina',
     boughtOn: d => `comprato il ${d}`, droppedOn: d => `archiviato il ${d}`, archSummary: (n, x) => `Già comprati: ${n} articoli, ${x} in totale.`,
     'h.state': "Comprato e Non serve più spostano l'articolo nell'archivio. Rimandato lo toglie dalla classifica fino alla data indicata, poi rientra da solo.",
@@ -276,6 +289,7 @@ const T = {
     'state.active': 'Active', 'state.bought': 'Bought', 'state.dropped': 'No longer needed', 'state.snoozed': 'Postponed',
     snoozeFor: 'Postpone by', 'unit.days': 'days', 'unit.months': 'months', snoozedUntil: d => `Postponed until ${d}`,
     postponedTitle: 'Postponed', postponedHelp: 'Out of the ranking and the budget until the date shown, then they come back by themselves.', backOn: d => `back on ${d}`,
+    yes: 'yes', no: 'no', matrixScore: 'Score', scoresBy: 'Scores by criterion', edit: 'Edit item', showDetails: 'Show details', waitCol: 'Waiting',
     archiveTitle: 'Archive', archiveHelp: 'Items you bought or no longer need: they are left out of the ranking and the budget.', restore: 'Restore',
     boughtOn: d => `bought on ${d}`, droppedOn: d => `archived on ${d}`, archSummary: (n, x) => `Bought so far: ${n} items, ${x} in total.`,
     'h.state': 'Bought and No longer needed move the item to the archive. Postponed takes it out of the ranking until the date shown, then it comes back by itself.',
@@ -367,6 +381,7 @@ const T = {
     'state.active': 'Actif', 'state.bought': 'Acheté', 'state.dropped': 'Plus nécessaire', 'state.snoozed': 'Reporté',
     snoozeFor: 'Reporter de', 'unit.days': 'jours', 'unit.months': 'mois', snoozedUntil: d => `Reporté jusqu'au ${d}`,
     postponedTitle: 'Reportés', postponedHelp: "Hors classement et budget jusqu'à la date indiquée, puis ils reviennent d'eux-mêmes.", backOn: d => `revient le ${d}`,
+    yes: 'oui', no: 'non', matrixScore: 'Score', scoresBy: 'Notes par critère', edit: "Modifier l'article", showDetails: 'Afficher les détails', waitCol: 'Attente',
     archiveTitle: 'Archive', archiveHelp: 'Articles achetés ou devenus inutiles : ils ne comptent ni dans le classement ni dans le budget.', restore: 'Restaurer',
     boughtOn: d => `acheté le ${d}`, droppedOn: d => `archivé le ${d}`, archSummary: (n, x) => `Déjà achetés : ${n} articles, ${x} au total.`,
     'h.state': "Acheté et Plus nécessaire déplacent l'article dans l'archive. Reporté le retire du classement jusqu'à la date indiquée, puis il revient tout seul.",
@@ -514,6 +529,7 @@ let S = {...defaultSettings(), items:[]};
 let mode = null;            // 'claude' | 'local'
 let db = null, autoBackup = null, loaded = false, dbOk = null;
 let tab = 'results';   // la pagina si apre sempre sui risultati
+const openRows = new Set();
 let showHints = true;
 try { showHints = localStorage.getItem('bdt:hints') !== '0'; } catch (e) {}
 
@@ -918,19 +934,39 @@ function viewResults(D) {
     <div class="kpi"><div class="v">${waiting.length}</div><div class="l">${t('kWaiting')}</div></div>
   </div>${archLine ? `<div style="margin:-6px 0 14px">${archLine}</div>` : ''}`;
 
+  const yn = v => v ? t('yes') : t('no');
+  const detail = (i, p) => {
+    const f = (l, v) => `<div><dt>${l}</dt><dd>${v}</dd></div>`;
+    const scores = S.criteria.map(c => `${esc(critName(c))}: <b>${n1(p.sc[c.id])}</b>`).join(' · ');
+    const links = (i.links || []).map(id => D.byId[id]).filter(Boolean).map(o => esc(o.name) || t('unnamed')).join(', ');
+    return `<dl class="facts">
+      ${f(t('grp.state'), t('state.' + (i.state || 'active')))}
+      ${f('MoSCoW', MOSCOW[i.moscow].label)}
+      ${f(t('quadrant'), t(p.q + '.l'))}
+      ${f(`${t('urgent')} / ${t('important')}`, `${yn(i.urgent)} / ${yn(i.important)}`)}
+      ${f(t('price'), money(+i.price || 0))}
+      ${f(t('cpu'), cpuText(p))}
+      ${f(t('uses'), esc(i.uses))}
+      ${f(t('life'), esc(i.life))}
+      ${f(t('added'), fmtDate(i.added))}
+      ${f(t('waitCol'), waitText(p, i))}
+      ${f(t('matrixScore'), `${n1(p.matrix)} × ${fnum(p.mF)} × ${fnum(QF[p.q])} = <b>${n1(p.final)}</b>`)}
+      <div class="wide"><dt>${t('scoresBy')}</dt><dd>${scores}</dd></div>
+      ${links ? f(t('together').replace(/\s*:\s*$/, ''), links) : ''}
+      ${i.notes ? `<div class="wide"><dt>${t('notes')}</dt><dd class="note">${esc(i.notes)}</dd></div>` : ''}
+    </dl>
+    <button class="btn" id="edit-${i.id}" data-act="editItem" data-id="${i.id}">${t('edit')}</button>`;
+  };
   const rows = D.ranked.map((i, n) => {
-    const p = D.per[i.id];
-    return `<tr>
+    const p = D.per[i.id], open = openRows.has(i.id);
+    return `<tr class="rrow${open ? ' open' : ''}" data-act="toggleRow" data-id="${i.id}">
+      <td><button class="tog" aria-expanded="${open}" aria-label="${esc(t('showDetails'))}">${open ? '▾' : '▸'}</button></td>
       <td class="num">${n + 1}</td>
-      <td style="min-width:200px"><b>${esc(i.name)}</b><br><span class="small mute">${MOSCOW[i.moscow].label} · ${t(p.q + '.s')}</span>
-        ${p.group.length > 1 ? `<br><span class="small" style="color:var(--acc)">🔗 ${t('with')} ${p.group.filter(id => id !== i.id).map(nameOf).join(', ')}</span>` : ''}
-        ${i.notes ? `<div class="small mute note" style="margin-top:4px">${esc(i.notes)}</div>` : ''}</td>
+      <td><span class="ell">${p.group.length > 1 ? '🔗 ' : ''}${esc(i.name) || t('unnamed')}</span></td>
       <td class="num">${money(+i.price || 0)}</td>
-      <td class="num">${cpuText(p)}</td>
-      <td style="min-width:150px"><div class="row" style="flex-wrap:nowrap"><div class="bar" style="flex:1"><i style="width:${100 * p.final / max}%"></i></div><b class="num">${n1(p.final)}</b></div>
-        <span class="small mute">${n1(p.matrix)} × ${fnum(p.mF)} × ${fnum(QF[p.q])}</span></td>
-      <td>${statusBadge(p.status)}${p.status === 'wait' ? `<br><span class="small mute">${p.snoozed ? t('snoozedUntil', fmtDate(i.snoozeUntil)) : p.remaining > 0 ? t('daysLeft', p.remaining) : t('waitsBundle')}</span>` : ''}</td>
-    </tr>`;
+      <td style="min-width:120px"><div class="row" style="flex-wrap:nowrap"><div class="bar" style="flex:1"><i style="width:${100 * p.final / max}%"></i></div><b class="num">${n1(p.final)}</b></div></td>
+      <td>${statusBadge(p.status)}</td>
+    </tr>${open ? `<tr class="rdetail"><td></td><td colspan="5">${detail(i, p)}</td></tr>` : ''}`;
   }).join('');
 
   const list = q => {
@@ -942,7 +978,7 @@ function viewResults(D) {
   return `${reco}${kpis}
   <div class="card"><h2>${t('rankTitle')}</h2>
     <div class="tablewrap"><table>
-      <thead><tr><th class="num">#</th><th>${t('thItem')}</th><th class="num">${t('thPrice')}</th><th class="num">${t('thCpu')}</th><th>${t('thFinal')}<br><span class="mute">${t('thFinalSub')}</span></th><th>${t('thStatus')}</th></tr></thead>
+      <thead><tr><th></th><th class="num">#</th><th>${t('thItem')}</th><th class="num">${t('thPrice')}</th><th>${t('thFinal')}</th><th>${t('thStatus')}</th></tr></thead>
       <tbody>${rows || `<tr><td colspan="6" class="mute">${t('noActive')}</td></tr>`}</tbody>
     </table></div>
     ${D.excluded.length ? `<p class="small mute" style="margin:12px 0 0">${t('excludedList')} ${D.excluded.map(i => esc(i.name)).join(', ')}</p>` : ''}
@@ -1143,6 +1179,15 @@ document.addEventListener('click', async e => {
     const i = S.items.find(x => x.id === id); if (!i) return;
     i.state = 'active'; i.closedAt = null; i.snoozeUntil = null;
     queueWrite('items/' + id, true); render();
+  } else if (act === 'toggleRow') {
+    if (e.target.closest('.rdetail')) return;
+    openRows.has(id) ? openRows.delete(id) : openRows.add(id);
+    render();
+    document.querySelector(`tr.rrow[data-id="${id}"] .tog`)?.focus({preventScroll:true});
+  } else if (act === 'editItem') {
+    tab = 'items'; render();
+    const el = document.getElementById('name-' + id);
+    if (el) { el.scrollIntoView({block:'center'}); el.focus({preventScroll:true}); }
   } else if (act === 'goHow') {
     tab = 'settings'; sub = 'how';
     try { localStorage.setItem('bdt:tab', tab); localStorage.setItem('bdt:sub', sub); } catch (err) {}
