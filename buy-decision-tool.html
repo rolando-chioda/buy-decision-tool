@@ -55,6 +55,8 @@ h2{font-size:17px;margin:0 0 10px}
 .linkbtn{background:none;border:0;color:var(--acc);font:inherit;cursor:pointer;padding:0;text-decoration:underline}
 .tools label.check{font-size:12px;color:var(--mute)}
 .archived{opacity:.85}
+.method{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:10px}
+.method a{color:var(--acc)}
 tr.rrow{cursor:pointer}
 tr.rrow:hover td{background:var(--bg)}
 tr.rrow.open td{border-bottom-color:transparent;background:var(--bg)}
@@ -197,6 +199,14 @@ const T = {
     'state.active': 'Attivo', 'state.bought': 'Comprato', 'state.dropped': 'Non serve più', 'state.snoozed': 'Rimandato',
     snoozeFor: 'Rimanda di', 'unit.days': 'giorni', 'unit.months': 'mesi', snoozedUntil: d => `Rimandato fino al ${d}`,
     postponedTitle: 'Rimandati', postponedHelp: 'Fuori dalla classifica e dal budget fino alla data indicata, poi rientrano da soli.', backOn: d => `torna il ${d}`,
+    'sub.methods': 'Metodi di classifica',
+    methodsHelp: 'Scegli quali metodi compongono il punteggio. Un metodo disattivato non conta: la matrice vale 10 per tutti, MoSCoW ed Eisenhower moltiplicano per 1. Se disattivi MoSCoW, anche gli articoli "Won\'t have" tornano in classifica. Costo per utilizzo e regola dell\'attesa restano attivi.',
+    'm.matrix': 'Matrice decisionale pesata', 'm.matrix.d': 'Voti da 1 a 10 su criteri pesati, inclusi prezzo e costo per utilizzo.',
+    'm.moscow': 'MoSCoW', 'm.moscow.d': "Must ×1, Should ×0,75, Could ×0,5, Won't escluso.",
+    'm.eisenhower': 'Matrice di Eisenhower', 'm.eisenhower.d': 'Urgente e importante ×1,2, solo importante ×1, solo urgente ×0,8, nessuno dei due ×0,6.',
+    wiki: 'Approfondisci su Wikipedia', wikiEn: ' (in inglese)', offLabel: 'nessun metodo attivo',
+    matrixOff: 'La matrice pesata è disattivata in Impostazioni → Metodi di classifica: i voti non influiscono sulla classifica.',
+    allOff: 'Tutti i metodi di classifica sono disattivati: l\'ordine segue solo il prezzo, dal più economico.',
     yes: 'sì', no: 'no', matrixScore: 'Punteggio', scoresBy: 'Voti per criterio', edit: 'Modifica articolo', showDetails: 'Mostra dettagli', waitCol: 'Attesa',
     archiveTitle: 'Archivio', archiveHelp: 'Articoli comprati o che non servono più: non entrano in classifica né nel budget.', restore: 'Ripristina',
     boughtOn: d => `comprato il ${d}`, droppedOn: d => `archiviato il ${d}`, archSummary: (n, x) => `Già comprati: ${n} articoli, ${x} in totale.`,
@@ -289,6 +299,14 @@ const T = {
     'state.active': 'Active', 'state.bought': 'Bought', 'state.dropped': 'No longer needed', 'state.snoozed': 'Postponed',
     snoozeFor: 'Postpone by', 'unit.days': 'days', 'unit.months': 'months', snoozedUntil: d => `Postponed until ${d}`,
     postponedTitle: 'Postponed', postponedHelp: 'Out of the ranking and the budget until the date shown, then they come back by themselves.', backOn: d => `back on ${d}`,
+    'sub.methods': 'Ranking methods',
+    methodsHelp: 'Choose which methods make up the score. A method that is off does not count: the matrix is 10 for everyone, MoSCoW and Eisenhower multiply by 1. If you turn MoSCoW off, "Won\'t have" items also come back into the ranking. Cost per use and the waiting rule stay on.',
+    'm.matrix': 'Weighted decision matrix', 'm.matrix.d': 'Scores from 1 to 10 on weighted criteria, including price and cost per use.',
+    'm.moscow': 'MoSCoW', 'm.moscow.d': "Must ×1, Should ×0.75, Could ×0.5, Won't excluded.",
+    'm.eisenhower': 'Eisenhower matrix', 'm.eisenhower.d': 'Urgent and important ×1.2, important only ×1, urgent only ×0.8, neither ×0.6.',
+    wiki: 'Read more on Wikipedia', wikiEn: '', offLabel: 'no method on',
+    matrixOff: 'The weighted matrix is turned off in Settings → Ranking methods: scores do not affect the ranking.',
+    allOff: 'All ranking methods are off: the order follows price only, cheapest first.',
     yes: 'yes', no: 'no', matrixScore: 'Score', scoresBy: 'Scores by criterion', edit: 'Edit item', showDetails: 'Show details', waitCol: 'Waiting',
     archiveTitle: 'Archive', archiveHelp: 'Items you bought or no longer need: they are left out of the ranking and the budget.', restore: 'Restore',
     boughtOn: d => `bought on ${d}`, droppedOn: d => `archived on ${d}`, archSummary: (n, x) => `Bought so far: ${n} items, ${x} in total.`,
@@ -381,6 +399,14 @@ const T = {
     'state.active': 'Actif', 'state.bought': 'Acheté', 'state.dropped': 'Plus nécessaire', 'state.snoozed': 'Reporté',
     snoozeFor: 'Reporter de', 'unit.days': 'jours', 'unit.months': 'mois', snoozedUntil: d => `Reporté jusqu'au ${d}`,
     postponedTitle: 'Reportés', postponedHelp: "Hors classement et budget jusqu'à la date indiquée, puis ils reviennent d'eux-mêmes.", backOn: d => `revient le ${d}`,
+    'sub.methods': 'Méthodes de classement',
+    methodsHelp: "Choisissez les méthodes qui composent le score. Une méthode désactivée ne compte pas : la matrice vaut 10 pour tous, MoSCoW et Eisenhower multiplient par 1. Si vous désactivez MoSCoW, les articles « Won't have » reviennent aussi dans le classement. Le coût par utilisation et la règle d'attente restent actifs.",
+    'm.matrix': 'Matrice de décision pondérée', 'm.matrix.d': 'Notes de 1 à 10 sur des critères pondérés, prix et coût par utilisation compris.',
+    'm.moscow': 'MoSCoW', 'm.moscow.d': "Must ×1, Should ×0,75, Could ×0,5, Won't exclu.",
+    'm.eisenhower': "Matrice d'Eisenhower", 'm.eisenhower.d': "Urgent et important ×1,2, important seulement ×1, urgent seulement ×0,8, ni l'un ni l'autre ×0,6.",
+    wiki: 'En savoir plus sur Wikipédia', wikiEn: ' (en anglais)', offLabel: 'aucune méthode active',
+    matrixOff: "La matrice pondérée est désactivée dans Réglages → Méthodes de classement : les notes n'influencent pas le classement.",
+    allOff: "Toutes les méthodes de classement sont désactivées : l'ordre suit uniquement le prix, du moins cher au plus cher.",
     yes: 'oui', no: 'non', matrixScore: 'Score', scoresBy: 'Notes par critère', edit: "Modifier l'article", showDetails: 'Afficher les détails', waitCol: 'Attente',
     archiveTitle: 'Archive', archiveHelp: 'Articles achetés ou devenus inutiles : ils ne comptent ni dans le classement ni dans le budget.', restore: 'Restaurer',
     boughtOn: d => `acheté le ${d}`, droppedOn: d => `archivé le ${d}`, archSummary: (n, x) => `Déjà achetés : ${n} articles, ${x} au total.`,
@@ -490,9 +516,10 @@ const fmtDate = iso => iso ? new Date(String(iso).length === 10 ? iso + 'T00:00'
 
 const MOSCOW = {M:{label:'Must have', f:1.0}, S:{label:'Should have', f:0.75}, C:{label:'Could have', f:0.5}, W:{label:"Won't have", f:0}};
 const QF = {q1:1.2, q2:1.0, q3:0.8, q4:0.6};
-const SETTINGS_KEYS = ['budget', 'waitShort', 'waitLong', 'threshold', 'currency', 'criteria', 'lastBackup'];
+const SETTINGS_KEYS = ['budget', 'waitShort', 'waitLong', 'threshold', 'currency', 'methods', 'criteria', 'lastBackup'];
 const defaultSettings = () => ({
   budget: 400, waitShort: 2, waitLong: 30, threshold: 100, currency: 'EUR', lastBackup: null,
+  methods: {matrix:true, moscow:true, eisenhower:true},
   criteria: [
     {id:'price', name:t('crit.price'), weight:20, auto:'price'},
     {id:'cpu', name:t('crit.cpu'), weight:15, auto:'cpu'},
@@ -516,6 +543,21 @@ function exampleData() {
   return {...defaultSettings(), items};
 }
 const critName = c => c.auto ? t('crit.' + c.auto) : c.name;
+const METHODS = ['matrix', 'moscow', 'eisenhower'];
+const on = k => (S.methods || {})[k] !== false;
+const isW = i => on('moscow') && i.moscow === 'W';
+const WIKI = {
+  matrix: {en:'https://en.wikipedia.org/wiki/Decision_matrix', fr:'https://fr.wikipedia.org/wiki/Aide_%C3%A0_la_d%C3%A9cision_multicrit%C3%A8re'},
+  moscow: {en:'https://en.wikipedia.org/wiki/MoSCoW_method', it:'https://it.wikipedia.org/wiki/Metodo_MoSCoW', fr:'https://fr.wikipedia.org/wiki/M%C3%A9thode_MoSCoW'},
+  eisenhower: {en:'https://en.wikipedia.org/wiki/Eisenhower_matrix', it:'https://it.wikipedia.org/wiki/Matrice_di_Eisenhower', fr:'https://fr.wikipedia.org/wiki/Matrice_d%27Eisenhower'},
+};
+function formula(p) {
+  if (!METHODS.some(on)) return t('offLabel');
+  const parts = [n1(p.matrix)];
+  if (on('moscow')) parts.push(fnum(p.mF));
+  if (on('eisenhower')) parts.push(fnum(p.qF));
+  return parts.length > 1 ? `${parts.join(' × ')} = <b>${n1(p.final)}</b>` : `<b>${n1(p.final)}</b>`;
+}
 const isArchived = i => i.state === 'bought' || i.state === 'dropped';
 const isPostponed = i => i.state === 'snoozed' && !!i.snoozeUntil && i.snoozeUntil > todayISO();
 function snoozeDate(n, unit) {
@@ -665,7 +707,7 @@ async function connect() {
 function compute() {
   const cpuOf = i => (+i.uses > 0 && +i.life > 0) ? (+i.price || 0) / (+i.uses * +i.life) : null;
   const live = S.items.filter(i => !isArchived(i));
-  const active = live.filter(i => i.moscow !== 'W' && !isPostponed(i));
+  const active = live.filter(i => !isW(i) && !isPostponed(i));
   const range = vals => { const v = vals.filter(x => x != null && isFinite(x)); return v.length ? [Math.min(...v), Math.max(...v)] : [0, 0]; };
   const [pmin, pmax] = range(active.map(i => +i.price || 0));
   const [cmin, cmax] = range(active.map(cpuOf));
@@ -686,16 +728,17 @@ function compute() {
       sc[c.id] = s;
       sum += s * Math.max(0, +c.weight || 0);
     }
-    const matrix = totW ? sum / totW : 0;
+    const matrix = on('matrix') ? (totW ? sum / totW : 0) : 10;
     const q = i.urgent && i.important ? 'q1' : i.important ? 'q2' : i.urgent ? 'q3' : 'q4';
-    const mF = MOSCOW[i.moscow]?.f ?? 0.5;
-    const final = matrix * mF * QF[q];
+    const mF = on('moscow') ? (MOSCOW[i.moscow]?.f ?? 0.5) : 1;
+    const qF = on('eisenhower') ? QF[q] : 1;
+    const final = matrix * mF * qF;
     const waitDays = (+i.price || 0) >= (+S.threshold || 0) ? (+S.waitLong || 0) : (+S.waitShort || 0);
     const added = i.added ? new Date(i.added + 'T00:00') : today;
     const waitLeft = Math.max(0, Math.ceil((added.getTime() + waitDays * DAY - today.getTime()) / DAY));
     const snoozeLeft = i.state === 'snoozed' && i.snoozeUntil ? Math.max(0, Math.ceil((new Date(i.snoozeUntil + 'T00:00').getTime() - today.getTime()) / DAY)) : 0;
     const remaining = Math.max(waitLeft, snoozeLeft);
-    per[i.id] = {cpu, sc, matrix, q, mF, final, waitDays, remaining, snoozed:snoozeLeft > 0 && snoozeLeft >= waitLeft};
+    per[i.id] = {cpu, sc, matrix, q, mF, qF, final, waitDays, remaining, snoozed:snoozeLeft > 0 && snoozeLeft >= waitLeft};
   }
 
   const activeIds = new Set(active.map(i => i.id));
@@ -711,7 +754,7 @@ function compute() {
   }
   for (const i of S.items) if (!per[i.id].group) per[i.id].group = [i.id];
 
-  const ranked = active.slice().sort((a, b) => per[b.id].final - per[a.id].final);
+  const ranked = active.slice().sort((a, b) => (per[b.id].final - per[a.id].final) || ((+a.price || 0) - (+b.price || 0)));
   const priceOf = id => +byId[id].price || 0;
   let spent = 0;
   const budget = +S.budget || 0;
@@ -729,10 +772,10 @@ function compute() {
     if (g.length > 1) bundles.push({ids:g.slice().sort((a, b) => per[b].final - per[a].final), total, status:st});
   }
   for (const i of live) if (isPostponed(i)) per[i.id].status = 'postponed';
-  for (const i of live) if (i.moscow === 'W') per[i.id].status = 'excluded';
+  for (const i of live) if (isW(i)) per[i.id].status = 'excluded';
   for (const i of S.items) if (isArchived(i)) per[i.id].status = 'archived';
-  const postponed = live.filter(i => isPostponed(i) && i.moscow !== 'W').sort((a, b) => a.snoozeUntil < b.snoozeUntil ? -1 : 1);
-  return {per, ranked, bundles, byId, live, postponed, excluded:live.filter(i => i.moscow === 'W'), spent, budget, totW};
+  const postponed = live.filter(i => isPostponed(i) && !isW(i)).sort((a, b) => a.snoozeUntil < b.snoozeUntil ? -1 : 1);
+  return {per, ranked, bundles, byId, live, postponed, excluded:live.filter(i => isW(i)), spent, budget, totW};
 }
 
 /* ================= viste ================= */
@@ -820,7 +863,7 @@ function viewItems(D) {
   return `<button class="btn primary" id="add-item" data-act="addItem" style="margin-bottom:14px">${t('add')}</button>${cards}${viewArchive()}`;
 }
 
-const SUBS = ['budget', 'wait', 'criteria', 'data', 'how'];
+const SUBS = ['budget', 'wait', 'methods', 'criteria', 'data', 'how'];
 let sub = 'budget';
 try { sub = localStorage.getItem('bdt:sub') || 'budget'; } catch (e) {}
 
@@ -848,7 +891,17 @@ function viewSettings(D) {
         <label>${t('waitShort')}<input id="set-waitShort" type="number" min="0" data-k="set:waitShort" value="${esc(S.waitShort)}">${hint('waitShort')}</label>
         <label>${t('waitLong')}<input id="set-waitLong" type="number" min="0" data-k="set:waitLong" value="${esc(S.waitLong)}">${hint('waitLong')}</label>
       </div></div>`;
+  } else if (sub === 'methods') {
+    const link = m => { const u = WIKI[m][lang] || WIKI[m].en; return `<a href="${u}" target="_blank" rel="noopener">${t('wiki')}${WIKI[m][lang] ? '' : t('wikiEn')} ↗</a>`; };
+    body = `<div class="card"><h2>${t('sub.methods')}</h2>
+      <p class="small mute" style="margin-top:0">${t('methodsHelp')}</p>
+      <div class="actions">${METHODS.map(m => `<div class="method">
+        <label class="check"><input type="checkbox" id="method-${m}" data-k="method:${m}" ${on(m) ? 'checked' : ''}> <b>${t('m.' + m)}</b></label>
+        <span class="hint">${t('m.' + m + '.d')}</span>
+        <span class="small">${link(m)}</span>
+      </div>`).join('')}</div></div>`;
   } else if (sub === 'criteria') {
+    if (!on('matrix')) body += `<div class="banner warn">${t('matrixOff')}</div>`;
     const rows = S.criteria.map(c => `<tr>
         <td style="min-width:220px">${c.auto
           ? `<b>${esc(critName(c))}</b><span class="hint">${esc(critDesc(c))}</span>`
@@ -859,7 +912,7 @@ function viewSettings(D) {
         <td class="num"><b data-d="crit:${c.id}:pct">${pct(c, D)}%</b></td>
         <td><button class="btn del" data-act="delCrit" data-id="${c.id}" aria-label="${esc(t('delCrit'))}">✕</button></td>
       </tr>`).join('');
-    body = `<div class="card"><h2>${t('critTitle')}</h2>
+    body += `<div class="card"><h2>${t('critTitle')}</h2>
       <p class="small mute" style="margin-top:0">${t('critHelp')}</p>
       ${showHints ? `<p class="hint" style="margin-top:0">${t('h.weight')} ${t('h.manual')}</p>` : ''}
       <div class="tablewrap"><table>
@@ -899,9 +952,9 @@ function viewScores(D) {
     const cells = S.criteria.map(c => c.auto
       ? `<td class="num auto" data-d="${i.id}:sc:${c.id}">${n1(p.sc[c.id])}</td>`
       : `<td class="num"><input id="score-${i.id}-${c.id}" type="number" min="1" max="10" step="1" data-k="score:${i.id}:${c.id}" value="${esc(i.scores?.[c.id] ?? 5)}" aria-label="${esc(t('scoreOf', critName(c), i.name))}"></td>`).join('');
-    return `<tr><td>${esc(i.name) || `<span class="mute">${t('unnamed')}</span>`} ${i.moscow === 'W' ? `<span class="badge b-gray">${t('excludedBadge')}</span>` : ''}</td>${cells}<td class="num"><b data-d="${i.id}:matrix">${n1(p.matrix)}</b></td></tr>`;
+    return `<tr><td>${esc(i.name) || `<span class="mute">${t('unnamed')}</span>`} ${isW(i) ? `<span class="badge b-gray">${t('excludedBadge')}</span>` : ''}</td>${cells}<td class="num"><b data-d="${i.id}:matrix">${n1(p.matrix)}</b></td></tr>`;
   }).join('');
-  return `${legend}<div class="card">
+  return `${on('matrix') ? '' : `<div class="banner warn">${t('matrixOff')}</div>`}${legend}<div class="card">
     <p class="small mute" style="margin-top:0">${t('scoresHelp')}</p>
     <div class="tablewrap"><table>
       <thead><tr><th>${t('thItem')}</th>${head}<th class="num">${t('thMatrix')}</th></tr></thead>
@@ -950,7 +1003,7 @@ function viewResults(D) {
       ${f(t('life'), esc(i.life))}
       ${f(t('added'), fmtDate(i.added))}
       ${f(t('waitCol'), waitText(p, i))}
-      ${f(t('matrixScore'), `${n1(p.matrix)} × ${fnum(p.mF)} × ${fnum(QF[p.q])} = <b>${n1(p.final)}</b>`)}
+      ${f(t('matrixScore'), formula(p))}
       <div class="wide"><dt>${t('scoresBy')}</dt><dd>${scores}</dd></div>
       ${links ? f(t('together').replace(/\s*:\s*$/, ''), links) : ''}
       ${i.notes ? `<div class="wide"><dt>${t('notes')}</dt><dd class="note">${esc(i.notes)}</dd></div>` : ''}
@@ -971,11 +1024,12 @@ function viewResults(D) {
 
   const list = q => {
     const its = D.live.filter(i => D.per[i.id].q === q && !isPostponed(i));
-    return its.length ? `<ul>${its.map(i => `<li>${esc(i.name)}${i.moscow === 'W' ? ` <span class="mute">(${t('excludedBadge')})</span>` : ''}</li>`).join('')}</ul>` : '<p>—</p>';
+    return its.length ? `<ul>${its.map(i => `<li>${esc(i.name)}${isW(i) ? ` <span class="mute">(${t('excludedBadge')})</span>` : ''}</li>`).join('')}</ul>` : '<p>—</p>';
   };
   const qbox = q => `<div class="q ${q}"><h3>${t(q + '.s')}</h3><p>${t(q + '.l')}. ${t(q + '.h')}</p>${list(q)}</div>`;
 
-  return `${reco}${kpis}
+  const allOff = !METHODS.some(on);
+  return `${allOff ? `<div class="banner warn">${t('allOff')}</div>` : ''}${reco}${kpis}
   <div class="card"><h2>${t('rankTitle')}</h2>
     <div class="tablewrap"><table>
       <thead><tr><th></th><th class="num">#</th><th>${t('thItem')}</th><th class="num">${t('thPrice')}</th><th>${t('thFinal')}</th><th>${t('thStatus')}</th></tr></thead>
@@ -996,13 +1050,13 @@ function viewResults(D) {
     </div>`).join('')}
     <p class="small mute" style="margin:10px 0 0">${t('bundlesHelp')}</p>
   </div>` : ''}
-  <div class="card"><h2>${t('eisTitle')}</h2>
+  ${on('eisenhower') ? `<div class="card"><h2>${t('eisTitle')}</h2>
     <div class="quad">
       <div></div><div class="ax">${t('axUrgent')}</div><div class="ax">${t('axNotUrgent')}</div>
       <div class="ax"><span class="axv">${t('axImp')}</span></div>${qbox('q1')}${qbox('q2')}
       <div class="ax"><span class="axv">${t('axNotImp')}</span></div>${qbox('q3')}${qbox('q4')}
     </div>
-  </div>
+  </div>` : ''}
   <p class="small"><button class="linkbtn" data-act="goHow">${t('howLink')}</button></p>`;
 }
 
@@ -1075,6 +1129,7 @@ function onEdit(e) {
   else if (kind === 'crit') { const c = S.criteria.find(x => x.id === id); if (!c) return; c[field] = val; queueWrite('app/settings'); }
   else if (kind === 'score') { const i = S.items.find(x => x.id === id); if (!i) return; i.scores = i.scores || {}; i.scores[field] = el.value === '' ? 5 : clamp(+el.value, 1, 10); queueWrite('items/' + id); }
   else if (kind === 'set') { S[id] = val; queueWrite('app/settings'); if (id === 'currency') { render(); return; } }
+  else if (kind === 'method') { S.methods = {matrix:true, moscow:true, eisenhower:true, ...(S.methods || {}), [id]:el.checked}; queueWrite('app/settings', true); return; }
   refreshDerived();
 }
 document.addEventListener('input', e => { if (e.target.type !== 'checkbox' && e.target.tagName !== 'SELECT') onEdit(e); });

@@ -53,6 +53,8 @@ punteggio finale = punteggio matrice pesata × fattore MoSCoW × fattore Eisenho
 - Regola dell'attesa: un articolo ancora in attesa resta in classifica ma non viene consigliato.
 - Budget: scorrendo la classifica, ogni articolo (o pacchetto) pronto diventa **Compra** se entra nel budget residuo, altrimenti **Fuori budget**.
 
+Ognuno dei tre metodi (matrice, MoSCoW, Eisenhower) si può disattivare in **Impostazioni → Metodi di classifica**, dove trovi anche il link alla pagina Wikipedia di ciascuno. Con tutti e tre disattivati, la classifica segue solo il prezzo.
+
 Tutto è JavaScript semplice dentro il file HTML: puoi leggerlo e modificarlo.
 
 ## Disclaimer

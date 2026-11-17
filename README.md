@@ -53,6 +53,8 @@ final score = weighted matrix score × MoSCoW factor × Eisenhower factor
 - Waiting rule: an item still waiting stays in the ranking but is not recommended.
 - Budget: going down the ranking, each ready item (or bundle) is marked **Buy** if it fits the remaining budget, otherwise **Over budget**.
 
+Each of the three methods (matrix, MoSCoW, Eisenhower) can be turned off in **Settings → Ranking methods**, which also links to the Wikipedia page of each method. With all three off, the ranking follows price only.
+
 All of this is in plain JavaScript inside the HTML file, so you can read it and change it.
 
 ## Disclaimer

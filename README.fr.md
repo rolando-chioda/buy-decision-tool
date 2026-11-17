@@ -53,6 +53,8 @@ score final = score de la matrice pondérée × facteur MoSCoW × facteur Eisenh
 - Règle d'attente : un article encore en attente reste dans le classement mais n'est pas conseillé.
 - Budget : en parcourant le classement, chaque article (ou lot) prêt passe en **Acheter** s'il tient dans le budget restant, sinon **Hors budget**.
 
+Chacune des trois méthodes (matrice, MoSCoW, Eisenhower) peut être désactivée dans **Réglages → Méthodes de classement**, avec un lien vers la page Wikipédia de chacune. Si les trois sont désactivées, le classement suit uniquement le prix.
+
 Tout est en JavaScript simple dans le fichier HTML : vous pouvez le lire et le modifier.
 
 ## Avertissement
