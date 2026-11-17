@@ -178,9 +178,10 @@ const T = {
     critDescPh: 'Descrizione (facoltativa)', critLegend: 'Cosa significano i criteri', howLink: 'Come viene calcolato il punteggio →',
     'state.active': 'Attivo', 'state.bought': 'Comprato', 'state.dropped': 'Non serve più', 'state.snoozed': 'Rimandato',
     snoozeFor: 'Rimanda di', 'unit.days': 'giorni', 'unit.months': 'mesi', snoozedUntil: d => `Rimandato fino al ${d}`,
+    postponedTitle: 'Rimandati', postponedHelp: 'Fuori dalla classifica e dal budget fino alla data indicata, poi rientrano da soli.', backOn: d => `torna il ${d}`,
     archiveTitle: 'Archivio', archiveHelp: 'Articoli comprati o che non servono più: non entrano in classifica né nel budget.', restore: 'Ripristina',
     boughtOn: d => `comprato il ${d}`, droppedOn: d => `archiviato il ${d}`, archSummary: (n, x) => `Già comprati: ${n} articoli, ${x} in totale.`,
-    'h.state': "Comprato e Non serve più spostano l'articolo nell'archivio. Rimandato lo tiene fuori dai consigli fino alla data indicata, poi torna attivo da solo.",
+    'h.state': "Comprato e Non serve più spostano l'articolo nell'archivio. Rimandato lo toglie dalla classifica fino alla data indicata, poi rientra da solo.",
     'h.name': 'Come lo riconosci nella lista.', 'h.price': 'Prezzo previsto, spedizione inclusa.',
     'h.moscow': "Quanto è indispensabile. Must: non puoi farne a meno. Should: importante. Could: sarebbe bello. Won't: non ora, escluso dalla classifica.",
     'h.uses': 'Quante volte al mese pensi di usarlo. Serve per il costo per utilizzo.', 'h.life': 'Per quanti mesi pensi di usarlo prima di cambiarlo.',
@@ -268,9 +269,10 @@ const T = {
     critDescPh: 'Description (optional)', critLegend: 'What the criteria mean', howLink: 'How the score is calculated →',
     'state.active': 'Active', 'state.bought': 'Bought', 'state.dropped': 'No longer needed', 'state.snoozed': 'Postponed',
     snoozeFor: 'Postpone by', 'unit.days': 'days', 'unit.months': 'months', snoozedUntil: d => `Postponed until ${d}`,
+    postponedTitle: 'Postponed', postponedHelp: 'Out of the ranking and the budget until the date shown, then they come back by themselves.', backOn: d => `back on ${d}`,
     archiveTitle: 'Archive', archiveHelp: 'Items you bought or no longer need: they are left out of the ranking and the budget.', restore: 'Restore',
     boughtOn: d => `bought on ${d}`, droppedOn: d => `archived on ${d}`, archSummary: (n, x) => `Bought so far: ${n} items, ${x} in total.`,
-    'h.state': 'Bought and No longer needed move the item to the archive. Postponed keeps it out of recommendations until the date shown, then it becomes active again by itself.',
+    'h.state': 'Bought and No longer needed move the item to the archive. Postponed takes it out of the ranking until the date shown, then it comes back by itself.',
     'h.name': 'How you recognise it in the list.', 'h.price': 'Expected price, shipping included.',
     'h.moscow': "How essential it is. Must: you can't do without it. Should: important. Could: nice to have. Won't: not now, left out of the ranking.",
     'h.uses': 'How many times a month you expect to use it. Used for cost per use.', 'h.life': 'How many months you expect to use it before replacing it.',
@@ -358,9 +360,10 @@ const T = {
     critDescPh: 'Description (facultative)', critLegend: 'Signification des critères', howLink: 'Comment le score est calculé →',
     'state.active': 'Actif', 'state.bought': 'Acheté', 'state.dropped': 'Plus nécessaire', 'state.snoozed': 'Reporté',
     snoozeFor: 'Reporter de', 'unit.days': 'jours', 'unit.months': 'mois', snoozedUntil: d => `Reporté jusqu'au ${d}`,
+    postponedTitle: 'Reportés', postponedHelp: "Hors classement et budget jusqu'à la date indiquée, puis ils reviennent d'eux-mêmes.", backOn: d => `revient le ${d}`,
     archiveTitle: 'Archive', archiveHelp: 'Articles achetés ou devenus inutiles : ils ne comptent ni dans le classement ni dans le budget.', restore: 'Restaurer',
     boughtOn: d => `acheté le ${d}`, droppedOn: d => `archivé le ${d}`, archSummary: (n, x) => `Déjà achetés : ${n} articles, ${x} au total.`,
-    'h.state': "Acheté et Plus nécessaire déplacent l'article dans l'archive. Reporté le garde hors des conseils jusqu'à la date indiquée, puis il redevient actif tout seul.",
+    'h.state': "Acheté et Plus nécessaire déplacent l'article dans l'archive. Reporté le retire du classement jusqu'à la date indiquée, puis il revient tout seul.",
     'h.name': 'Comment vous le reconnaissez dans la liste.', 'h.price': 'Prix prévu, livraison comprise.',
     'h.moscow': "À quel point il est indispensable. Must : impossible de s'en passer. Should : important. Could : ce serait bien. Won't : pas maintenant, exclu du classement.",
     'h.uses': "Combien de fois par mois vous pensez l'utiliser. Sert au coût par utilisation.", 'h.life': "Pendant combien de mois vous pensez l'utiliser avant de le remplacer.",
@@ -493,6 +496,7 @@ function exampleData() {
 }
 const critName = c => c.auto ? t('crit.' + c.auto) : c.name;
 const isArchived = i => i.state === 'bought' || i.state === 'dropped';
+const isPostponed = i => i.state === 'snoozed' && !!i.snoozeUntil && i.snoozeUntil > todayISO();
 function snoozeDate(n, unit) {
   const d = new Date(); n = Math.max(1, +n || 1);
   if (unit === 'days') d.setDate(d.getDate() + n); else d.setMonth(d.getMonth() + n);
@@ -641,7 +645,7 @@ async function connect() {
 function compute() {
   const cpuOf = i => (+i.uses > 0 && +i.life > 0) ? (+i.price || 0) / (+i.uses * +i.life) : null;
   const live = S.items.filter(i => !isArchived(i));
-  const active = live.filter(i => i.moscow !== 'W');
+  const active = live.filter(i => i.moscow !== 'W' && !isPostponed(i));
   const range = vals => { const v = vals.filter(x => x != null && isFinite(x)); return v.length ? [Math.min(...v), Math.max(...v)] : [0, 0]; };
   const [pmin, pmax] = range(active.map(i => +i.price || 0));
   const [cmin, cmax] = range(active.map(cpuOf));
@@ -704,9 +708,11 @@ function compute() {
     g.forEach(id => per[id].status = st);
     if (g.length > 1) bundles.push({ids:g.slice().sort((a, b) => per[b].final - per[a].final), total, status:st});
   }
+  for (const i of live) if (isPostponed(i)) per[i.id].status = 'postponed';
   for (const i of live) if (i.moscow === 'W') per[i.id].status = 'excluded';
   for (const i of S.items) if (isArchived(i)) per[i.id].status = 'archived';
-  return {per, ranked, bundles, byId, live, excluded:live.filter(i => i.moscow === 'W'), spent, budget, totW};
+  const postponed = live.filter(i => isPostponed(i) && i.moscow !== 'W').sort((a, b) => a.snoozeUntil < b.snoozeUntil ? -1 : 1);
+  return {per, ranked, bundles, byId, live, postponed, excluded:live.filter(i => i.moscow === 'W'), spent, budget, totW};
 }
 
 /* ================= viste ================= */
@@ -924,7 +930,7 @@ function viewResults(D) {
   }).join('');
 
   const list = q => {
-    const its = D.live.filter(i => D.per[i.id].q === q);
+    const its = D.live.filter(i => D.per[i.id].q === q && !isPostponed(i));
     return its.length ? `<ul>${its.map(i => `<li>${esc(i.name)}${i.moscow === 'W' ? ` <span class="mute">(${t('excludedBadge')})</span>` : ''}</li>`).join('')}</ul>` : '<p>—</p>';
   };
   const qbox = q => `<div class="q ${q}"><h3>${t(q + '.s')}</h3><p>${t(q + '.l')}. ${t(q + '.h')}</p>${list(q)}</div>`;
@@ -937,6 +943,13 @@ function viewResults(D) {
     </table></div>
     ${D.excluded.length ? `<p class="small mute" style="margin:12px 0 0">${t('excludedList')} ${D.excluded.map(i => esc(i.name)).join(', ')}</p>` : ''}
   </div>
+  ${D.postponed.length ? `<div class="card"><h2>${t('postponedTitle')}</h2>
+    <p class="small mute" style="margin-top:0">${t('postponedHelp')}</p>
+    ${D.postponed.map(i => `<div class="bundle spread">
+      <span style="min-width:0"><b>${esc(i.name) || t('unnamed')}</b> · ${money(+i.price || 0)}</span>
+      <span class="badge b-warn">${t('backOn', fmtDate(i.snoozeUntil))}</span>
+    </div>`).join('')}
+  </div>` : ''}
   ${D.bundles.length ? `<div class="card"><h2>${t('bundlesTitle')}</h2>
     ${D.bundles.map(b => `<div class="bundle">
       <div class="spread"><span style="min-width:0">${b.ids.map(nameOf).join(' + ')}</span><span class="row"><b>${money(b.total)}</b>${statusBadge(b.status)}</span></div>

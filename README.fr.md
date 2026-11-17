@@ -17,7 +17,7 @@ Il propose aussi :
 - **Lots** : liez les articles à acheter ensemble. Un lot est classé, budgété et conseillé comme un seul achat.
 - **Budget** : en parcourant le classement, il indique ce que vous pouvez acheter maintenant, ce qui est encore en attente et ce qui dépasse le budget.
 - **Notes** pour chaque article (liens, modèles, magasins, doutes).
-- **État** de chaque article : *Acheté* et *Plus nécessaire* le déplacent dans une archive (hors classement et budget) ; *Reporté de N jours ou mois* le garde hors des conseils jusqu'à cette date.
+- **État** de chaque article : *Acheté* et *Plus nécessaire* le déplacent dans une archive (hors classement et budget) ; *Reporté de N jours ou mois* le retire du classement jusqu'à cette date et l'affiche parmi les *Reportés* dans les résultats.
 - **Descriptions** sous chaque champ et réglage, que vous pouvez masquer une fois connues. Les réglages sont regroupés en sous-onglets : budget et devise, règle d'attente, critères, données et sauvegarde, fonctionnement.
 - **Langues** : français, anglais, italien. La page suit la langue du navigateur et propose un sélecteur.
 - **Devises** : EUR, USD, GBP, CHF, CAD, AUD, JPY.

@@ -17,7 +17,7 @@ It also has:
 - **Bundles**: link items you should buy together. A bundle is ranked, budgeted and released as one purchase.
 - **Budget**: going down the ranking, it marks what you can buy now, what is still waiting and what is over budget.
 - **Notes** for each item (links, models, shops, doubts).
-- **Status** for each item: *Bought* and *No longer needed* move it to an archive (out of ranking and budget); *Postponed by N days or months* keeps it out of recommendations until that date.
+- **Status** for each item: *Bought* and *No longer needed* move it to an archive (out of ranking and budget); *Postponed by N days or months* takes it out of the ranking until that date and lists it under *Postponed* in the results.
 - **Descriptions** under every field and setting, which you can hide once you know them. Settings are grouped in sub-tabs: budget and currency, waiting rule, criteria, data and backup, how it works.
 - **Languages**: English, Italiano, Français. The page follows your browser language and has a selector.
 - **Currencies**: EUR, USD, GBP, CHF, CAD, AUD, JPY.
