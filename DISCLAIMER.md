@@ -2,7 +2,7 @@
 
 **English** · [Italiano](#italiano) · [Français](#français)
 
-Buy Decision Tool is a decision aid. Its rankings, scores and recommendations come only from the data, weights and rules you enter, and from a simple calculation that you can read in the source code. They are indicative and may be wrong or unsuitable for your situation.
+Buy Decision Tool is a decision aid for your purchases. Its rankings, scores and recommendations come only from the data, weights and rules you enter, and from a simple calculation that you can read in the source code. They are indicative and may be wrong or unsuitable for your situation.
 
 - It is not financial, legal or professional advice.
 - You alone decide what to buy, when, and how much to spend. You are responsible for those decisions and their consequences.
@@ -28,7 +28,7 @@ Il software è fornito "così com'è", senza garanzie di alcun tipo, come previs
 
 ## Français
 
-Buy Decision Tool est un outil d'aide à la décision. Ses classements, scores et conseils reposent uniquement sur les données, poids et règles que vous saisissez, et sur un calcul simple que vous pouvez lire dans le code source. Ils sont indicatifs et peuvent être erronés ou inadaptés à votre situation.
+Buy Decision Tool est un outil d'aide à la décision pour vos achats. Ses classements, scores et conseils reposent uniquement sur les données, poids et règles que vous saisissez, et sur un calcul simple que vous pouvez lire dans le code source. Ils sont indicatifs et peuvent être erronés ou inadaptés à votre situation.
 
 - Ce n'est pas un conseil financier, juridique ou professionnel.
 - Vous seul décidez quoi acheter, quand et combien dépenser. Vous êtes responsable de ces décisions et de leurs conséquences.
