@@ -16,12 +16,11 @@ A single HTML file that helps you decide **what to buy first**. It combines five
 
 It also has:
 
-- **Bundles**: link items you should buy together. A bundle is ranked, budgeted and released as one purchase.
+- **Bundles**: link items you should buy together. A bundle is ranked and recommended as one purchase.
 - **Value and convenience**: a four-sector matrix (Bargain, Investment, Treat, Avoid) that combines all criteria into two axes: manual scores give the value, price and cost per use give the convenience.
-- **Budget**: going down the ranking, it marks what you can buy now, what is still waiting and what is over budget.
 - **Notes** for each item (links, models, shops, doubts).
-- **Status** for each item: *Bought* and *No longer needed* move it to an archive (out of ranking and budget); *Postponed by N days or months* takes it out of the ranking until that date and lists it under *Postponed* in the results.
-- **Descriptions** under every field and setting, which you can hide once you know them. Settings are grouped in sub-tabs: budget and currency, waiting rule, criteria, data and backup, how it works.
+- **Status** for each item: *Bought* and *No longer needed* move it to an archive (out of the ranking); *Postponed by N days or months* takes it out of the ranking until that date and lists it under *Postponed* in the results.
+- **Descriptions** under every field and setting, which you can hide once you know them. Settings are grouped in sub-tabs: currency, waiting rule, criteria, data and backup, how it works.
 - **Languages**: English, Italiano, Français. The page follows your browser language and has a selector.
 - **Currencies**: EUR, USD, GBP, CHF, CAD, AUD, JPY.
 - **Backup**: download your data as JSON and import it again anywhere.
@@ -53,8 +52,7 @@ final score = weighted matrix score × MoSCoW factor × Eisenhower factor
 - Weighted matrix: average of the 1–10 scores, weighted by the criteria weights. Automatic criteria give 10 to the cheapest item and 1 to the most expensive (linear in between).
 - MoSCoW: Must ×1, Should ×0.75, Could ×0.5, Won't = excluded.
 - Eisenhower: urgent and important ×1.2, important only ×1, urgent only ×0.8, neither ×0.6.
-- Waiting rule: an item still waiting stays in the ranking but is not recommended.
-- Budget: going down the ranking, each ready item (or bundle) is marked **Buy** if it fits the remaining budget, otherwise **Over budget**.
+- Waiting rule: an item still waiting stays in the ranking but is not recommended. The others are **Ready**: the top one is the recommended next purchase.
 
 Each of the three methods (matrix, MoSCoW, Eisenhower) can be turned off in **Settings → Ranking methods**, which also links to the Wikipedia page of each method. With all three off, the ranking follows price only.
 

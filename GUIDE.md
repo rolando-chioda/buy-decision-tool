@@ -12,9 +12,9 @@ There is nothing to install. Pick one option:
 
 ## Use
 
-1. **Settings**: set your budget and currency. If you want, change the criteria and their weights.
+1. **Settings**: choose your currency. If you want, change the criteria and their weights.
 2. **Items → + Add item**: enter name, price, MoSCoW, urgent/important, uses per month, lifespan and the 1–10 criteria scores. Click a row to review the data, then **Edit** to change it.
-3. **★ Results**: see what to buy now, what is waiting and what is over budget. Click a row to see every detail.
+3. **★ Results**: see the recommended next purchase, what is ready and what is still waiting. Click a row to see every detail.
 4. **After buying**: set the status to *Bought*, *No longer needed* or *Postponed* by N days or months.
 5. **Backup**: in Settings → Data & backup, use **Download backup (JSON)** often. To restore, use **Import JSON**.
 

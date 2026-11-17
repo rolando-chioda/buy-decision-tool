@@ -198,12 +198,12 @@ const T = {
   it: {
     subtitle: "Matrice pesata, MoSCoW, Eisenhower, costo per utilizzo, regola dell'attesa e pacchetti.",
     'tab.items': '1 · Articoli', 'tab.scores': '2 · Valutazioni', 'tab.results': '★ Risultati', 'tab.settings': '3 · Impostazioni',
-    'sub.budget': 'Budget e valuta', 'sub.wait': "Regola dell'attesa", 'sub.criteria': 'Criteri', 'sub.data': 'Dati e backup', 'sub.how': 'Come funziona',
+    'sub.currency': 'Valuta', 'sub.wait': "Regola dell'attesa", 'sub.criteria': 'Criteri', 'sub.data': 'Dati e backup', 'sub.how': 'Come funziona',
     hintsToggle: 'Mostra descrizioni', 'grp.base': 'Cosa e quanto', 'grp.priority': 'Priorità', 'grp.usage': 'Utilizzo', 'grp.scores': 'Voti dei criteri', 'h.scores': 'Da 1 (pessimo) a 10 (ottimo) per ogni criterio della matrice. Prezzo e costo per utilizzo sono calcolati in automatico. Gli stessi voti sono nella scheda Valutazioni.', autoScore: 'automatico', 'grp.state': 'Stato',
     critDescPh: 'Descrizione (facoltativa)', critLegend: 'Cosa significano i criteri', howLink: 'Come viene calcolato il punteggio →',
     'state.active': 'Attivo', 'state.bought': 'Comprato', 'state.dropped': 'Non serve più', 'state.snoozed': 'Rimandato',
     snoozeFor: 'Rimanda di', 'unit.days': 'giorni', 'unit.months': 'mesi', snoozedUntil: d => `Rimandato fino al ${d}`,
-    postponedTitle: 'Rimandati', postponedHelp: 'Fuori dalla classifica e dal budget fino alla data indicata, poi rientrano da soli.', backOn: d => `torna il ${d}`,
+    postponedTitle: 'Rimandati', postponedHelp: 'Fuori dalla classifica fino alla data indicata, poi rientrano da soli.', backOn: d => `torna il ${d}`,
     'sub.methods': 'Metodi di classifica',
     methodsHelp: 'Scegli quali metodi compongono il punteggio. Un metodo disattivato non conta: la matrice vale 10 per tutti, MoSCoW ed Eisenhower moltiplicano per 1. Se disattivi MoSCoW, anche gli articoli "Won\'t have" tornano in classifica. Costo per utilizzo e regola dell\'attesa restano attivi.',
     'm.matrix': 'Matrice decisionale pesata', 'm.matrix.d': 'Voti da 1 a 10 su criteri pesati, inclusi prezzo e costo per utilizzo.',
@@ -213,7 +213,7 @@ const T = {
     matrixOff: 'La matrice pesata è disattivata in Impostazioni → Metodi di classifica: i voti non influiscono sulla classifica.',
     allOff: 'Tutti i metodi di classifica sono disattivati: l\'ordine segue solo il prezzo, dal più economico.',
     yes: 'sì', no: 'no', matrixScore: 'Punteggio', scoresBy: 'Voti per criterio', edit: 'Modifica articolo', editShort: 'Modifica', listTitle: 'I tuoi articoli', doneEdit: 'Fatto', itemsHelp: 'Clicca su una riga per vedere tutti i dati dell\'articolo o modificarlo.', showDetails: 'Mostra dettagli', waitCol: 'Attesa',
-    archiveTitle: 'Archivio', archiveHelp: 'Articoli comprati o che non servono più: non entrano in classifica né nel budget.', restore: 'Ripristina',
+    archiveTitle: 'Archivio', archiveHelp: 'Articoli comprati o che non servono più: non entrano in classifica.', restore: 'Ripristina',
     boughtOn: d => `comprato il ${d}`, droppedOn: d => `archiviato il ${d}`, archSummary: (n, x) => `Già comprati: ${n} articoli, ${x} in totale.`,
     'h.state': "Comprato e Non serve più spostano l'articolo nell'archivio. Rimandato lo toglie dalla classifica fino alla data indicata, poi rientra da solo.",
     'h.name': 'Come lo riconosci nella lista.', 'h.price': 'Prezzo previsto, spedizione inclusa.',
@@ -222,7 +222,6 @@ const T = {
     'h.added': 'Da quando lo desideri. Da questa data parte il periodo di attesa.', 'h.urgent': 'Serve a breve, per esempio perché qualcosa si è rotto.',
     'h.important': 'Ha un effetto reale sulla tua vita o sul tuo lavoro.', 'h.notes': 'Link, modello, negozio, dubbi. Le note compaiono anche nei risultati.',
     'h.together': "Articoli da comprare nello stesso momento (stesso negozio, uno non serve senza l'altro). Insieme formano un pacchetto.",
-    'h.budget': 'La cifra che vuoi spendere adesso per questa lista. I risultati indicano cosa ci sta dentro, seguendo la classifica.',
     'h.currency': 'Cambia solo il simbolo mostrato: gli importi non vengono convertiti.',
     'h.threshold': "Da questo prezzo in su un acquisto è considerato importante e richiede l'attesa lunga.",
     'h.waitShort': 'Giorni di attesa per gli articoli sotto la soglia, prima che possano essere consigliati.', 'h.waitLong': 'Giorni di attesa per gli articoli dalla soglia in su.',
@@ -250,7 +249,7 @@ const T = {
     urgent: 'Urgente', important: 'Importante', notes: 'Note', notesPh: 'Link, modello, negozio, dubbi…',
     together: 'Da comprare insieme a:', unnamed: 'senza nome', cpu: 'Costo per utilizzo', quadrant: 'Quadrante',
     waitLeft: n => `⏳ aspetta ancora ${n} ${n === 1 ? 'giorno' : 'giorni'}`, waitDone: '✓ attesa superata', na: 'n.d.',
-    budgetTitle: "Budget e regola dell'attesa", budget: 'Budget disponibile', threshold: 'Soglia "acquisto importante"',
+    threshold: 'Soglia "acquisto importante"',
     waitShort: 'Attesa sotto soglia (giorni)', waitLong: 'Attesa sopra soglia (giorni)', currency: 'Valuta',
     waitHelp: 'Un articolo diventa acquistabile solo dopo il periodo di attesa, contato dalla data "Desiderato dal".',
     critTitle: 'Criteri della matrice pesata',
@@ -262,21 +261,21 @@ const T = {
     scoresHelp: 'Dai un voto da 1 (pessimo) a 10 (ottimo) a ogni articolo. I valori in corsivo sono calcolati in automatico da prezzo e costo per utilizzo.',
     thItem: 'Articolo', thMatrix: 'Punteggio<br>matrice', excludedBadge: 'escluso', scoreOf: (c, i) => `${c} per ${i}`,
     recoTitle: 'Prossimo acquisto consigliato', bundleSuffix: ' (pacchetto)', total: 'Totale',
-    recoHelp: "Punteggio più alto tra gli articoli che hanno superato l'attesa e rientrano nel budget.",
-    noReco: 'Nessun acquisto consigliato ora', noRecoWait: 'Gli articoli migliori sono ancora nel periodo di attesa.', noRecoBudget: 'Nessun articolo rientra nel budget.',
-    kBudget: 'Budget', kSpend: 'Da spendere ora (articoli "Compra")', kLeft: 'Budget residuo', kWaiting: 'Articoli in attesa',
+    recoHelp: "Punteggio più alto tra gli articoli che hanno superato l'attesa.",
+    noReco: 'Nessun acquisto consigliato ora', noRecoWait: 'Gli articoli migliori sono ancora nel periodo di attesa.', noRecoNone: 'Nessun articolo in classifica.',
+    kReady: 'Pronti da comprare', kWaiting: 'In attesa', kPostponed: 'Rimandati',
     rankTitle: 'Classifica', thPrice: 'Prezzo', thCpu: 'Costo/uso', thFinal: 'Punteggio finale', thFinalSub: 'matrice × MoSCoW × Eisenhower', thStatus: 'Stato',
     noActive: 'Nessun articolo attivo.', excludedList: "Esclusi (Won't have):", with: 'insieme a',
-    'st.buy': 'Compra', 'st.wait': 'In attesa', 'st.over': 'Fuori budget', 'st.excluded': 'Escluso',
+    'st.buy': 'Pronto', 'st.wait': 'In attesa', 'st.excluded': 'Escluso',
     daysLeft: n => `ancora ${n} gg`, waitsBundle: 'attende il resto del pacchetto',
     bundlesTitle: 'Pacchetti (da comprare insieme)',
-    bundlesHelp: "Un pacchetto si compra solo quando tutti i suoi articoli hanno superato l'attesa e il totale entra nel budget. Gli articoli \"Won't have\" non entrano nei pacchetti.",
+    bundlesHelp: "Un pacchetto è pronto solo quando tutti i suoi articoli hanno superato l'attesa. Gli articoli \"Won't have\" non entrano nei pacchetti.",
     vcTitle: 'Valore e convenienza', vcHelp: 'Unisce tutti i criteri delle Valutazioni in due assi: il valore è la media pesata dei voti manuali (utilità, facilità…), la convenienza quella dei criteri automatici (prezzo, costo per utilizzo). Il confine fra alto e basso è 5,5.',
     vcNeed: 'Per questo grafico servono almeno un criterio a voto manuale e uno automatico (prezzo o costo per utilizzo) con peso maggiore di zero. Aggiungili in Impostazioni → Criteri.',
     axVal: 'Valore alto', axNoVal: 'Valore basso', axConv: 'Conveniente', axNoConv: 'Costoso', vcShort: (v, c) => `valore ${v} · conv. ${c}`, vcFact: 'Valore / convenienza',
     'v1.s': 'Affare', 'v1.h': 'Vale molto e costa poco: in cima alla lista.',
     'v2.s': 'Investimento', 'v2.h': "Vale molto ma costa: risparmia o aspetta un'offerta.",
-    'v3.s': 'Sfizio', 'v3.h': 'Costa poco ma serve poco: solo se avanza budget.',
+    'v3.s': 'Sfizio', 'v3.h': 'Costa poco ma serve poco: solo se ti avanza qualcosa.',
     'v4.s': 'Da evitare', 'v4.h': 'Costa tanto e serve poco: lascia perdere o cerca altro.',
     eisTitle: 'Matrice di Eisenhower', axUrgent: 'Urgente', axNotUrgent: 'Non urgente', axImp: 'Importante', axNotImp: 'Non importante',
     howTitle: 'Come viene calcolato',
@@ -285,8 +284,7 @@ const T = {
       '<b>MoSCoW</b>: moltiplica per ×1 (Must), ×0,75 (Should), ×0,5 (Could). I "Won\'t" sono esclusi.',
       '<b>Eisenhower</b>: moltiplica per ×1,2 / ×1 / ×0,8 / ×0,6 secondo il quadrante.',
       "<b>Regola dell'attesa</b>: un articolo ancora nel periodo di attesa resta in classifica ma non viene consigliato.",
-      '<b>Budget</b>: scorrendo la classifica, ogni articolo pronto viene messo in "Compra" se entra nel budget residuo, altrimenti "Fuori budget".',
-      '<b>Pacchetti</b>: gli articoli collegati (anche a catena: A con B, B con C) formano un pacchetto. Il pacchetto prende la posizione del suo articolo migliore, e attesa e budget valgono per tutto il gruppo.',
+      '<b>Pacchetti</b>: gli articoli collegati (anche a catena: A con B, B con C) formano un pacchetto. Il pacchetto prende la posizione del suo articolo migliore, e l\'attesa vale per tutto il gruppo.',
     ],
     dbDown: 'Non riesco a raggiungere il database: le modifiche potrebbero non essere salvate. Controlla la connessione e ricarica la pagina.',
     localFail: 'Questo browser non permette di salvare i dati: usa "Scarica backup" prima di chiudere la pagina.',
@@ -305,12 +303,12 @@ const T = {
   en: {
     subtitle: 'Weighted matrix, MoSCoW, Eisenhower, cost per use, waiting rule and bundles.',
     'tab.items': '1 · Items', 'tab.scores': '2 · Scores', 'tab.results': '★ Results', 'tab.settings': '3 · Settings',
-    'sub.budget': 'Budget & currency', 'sub.wait': 'Waiting rule', 'sub.criteria': 'Criteria', 'sub.data': 'Data & backup', 'sub.how': 'How it works',
+    'sub.currency': 'Currency', 'sub.wait': 'Waiting rule', 'sub.criteria': 'Criteria', 'sub.data': 'Data & backup', 'sub.how': 'How it works',
     hintsToggle: 'Show descriptions', 'grp.base': 'What and how much', 'grp.priority': 'Priority', 'grp.usage': 'Usage', 'grp.scores': 'Criteria scores', 'h.scores': 'From 1 (poor) to 10 (excellent) for each matrix criterion. Price and cost per use are calculated automatically. The same scores are in the Scores tab.', autoScore: 'automatic', 'grp.state': 'Status',
     critDescPh: 'Description (optional)', critLegend: 'What the criteria mean', howLink: 'How the score is calculated →',
     'state.active': 'Active', 'state.bought': 'Bought', 'state.dropped': 'No longer needed', 'state.snoozed': 'Postponed',
     snoozeFor: 'Postpone by', 'unit.days': 'days', 'unit.months': 'months', snoozedUntil: d => `Postponed until ${d}`,
-    postponedTitle: 'Postponed', postponedHelp: 'Out of the ranking and the budget until the date shown, then they come back by themselves.', backOn: d => `back on ${d}`,
+    postponedTitle: 'Postponed', postponedHelp: 'Out of the ranking until the date shown, then they come back by themselves.', backOn: d => `back on ${d}`,
     'sub.methods': 'Ranking methods',
     methodsHelp: 'Choose which methods make up the score. A method that is off does not count: the matrix is 10 for everyone, MoSCoW and Eisenhower multiply by 1. If you turn MoSCoW off, "Won\'t have" items also come back into the ranking. Cost per use and the waiting rule stay on.',
     'm.matrix': 'Weighted decision matrix', 'm.matrix.d': 'Scores from 1 to 10 on weighted criteria, including price and cost per use.',
@@ -320,7 +318,7 @@ const T = {
     matrixOff: 'The weighted matrix is turned off in Settings → Ranking methods: scores do not affect the ranking.',
     allOff: 'All ranking methods are off: the order follows price only, cheapest first.',
     yes: 'yes', no: 'no', matrixScore: 'Score', scoresBy: 'Scores by criterion', edit: 'Edit item', editShort: 'Edit', listTitle: 'Your items', doneEdit: 'Done', itemsHelp: 'Click a row to see all the data of the item or edit it.', showDetails: 'Show details', waitCol: 'Waiting',
-    archiveTitle: 'Archive', archiveHelp: 'Items you bought or no longer need: they are left out of the ranking and the budget.', restore: 'Restore',
+    archiveTitle: 'Archive', archiveHelp: 'Items you bought or no longer need: they are left out of the ranking.', restore: 'Restore',
     boughtOn: d => `bought on ${d}`, droppedOn: d => `archived on ${d}`, archSummary: (n, x) => `Bought so far: ${n} items, ${x} in total.`,
     'h.state': 'Bought and No longer needed move the item to the archive. Postponed takes it out of the ranking until the date shown, then it comes back by itself.',
     'h.name': 'How you recognise it in the list.', 'h.price': 'Expected price, shipping included.',
@@ -329,7 +327,6 @@ const T = {
     'h.added': 'Since when you have wanted it. The waiting period starts from this date.', 'h.urgent': 'Needed soon, for example because something broke.',
     'h.important': 'Makes a real difference to your life or work.', 'h.notes': 'Links, model, shop, doubts. Notes also appear in the results.',
     'h.together': 'Items to buy at the same time (same shop, one is useless without the other). Together they form a bundle.',
-    'h.budget': 'The amount you want to spend now on this list. The results show what fits, following the ranking.',
     'h.currency': 'Only changes the symbol shown: amounts are not converted.',
     'h.threshold': 'From this price up, a purchase counts as big and gets the long wait.',
     'h.waitShort': 'Days to wait for items below the threshold before they can be recommended.', 'h.waitLong': 'Days to wait for items at or above the threshold.',
@@ -357,7 +354,7 @@ const T = {
     urgent: 'Urgent', important: 'Important', notes: 'Notes', notesPh: 'Link, model, shop, doubts…',
     together: 'Buy together with:', unnamed: 'unnamed', cpu: 'Cost per use', quadrant: 'Quadrant',
     waitLeft: n => `⏳ wait ${n} more ${n === 1 ? 'day' : 'days'}`, waitDone: '✓ waiting period over', na: 'n/a',
-    budgetTitle: 'Budget and waiting rule', budget: 'Available budget', threshold: '"Big purchase" threshold',
+    threshold: '"Big purchase" threshold',
     waitShort: 'Wait below threshold (days)', waitLong: 'Wait above threshold (days)', currency: 'Currency',
     waitHelp: 'An item becomes buyable only after the waiting period, counted from its "Wanted since" date.',
     critTitle: 'Weighted matrix criteria',
@@ -369,21 +366,21 @@ const T = {
     scoresHelp: 'Score each item from 1 (poor) to 10 (excellent). Values in italics are calculated automatically from price and cost per use.',
     thItem: 'Item', thMatrix: 'Matrix<br>score', excludedBadge: 'excluded', scoreOf: (c, i) => `${c} for ${i}`,
     recoTitle: 'Recommended next purchase', bundleSuffix: ' (bundle)', total: 'Total',
-    recoHelp: 'Highest score among items past their waiting period and within budget.',
-    noReco: 'No purchase recommended right now', noRecoWait: 'The best items are still in their waiting period.', noRecoBudget: 'No item fits the budget.',
-    kBudget: 'Budget', kSpend: 'To spend now ("Buy" items)', kLeft: 'Budget left', kWaiting: 'Items waiting',
+    recoHelp: 'Highest score among items past their waiting period.',
+    noReco: 'No purchase recommended right now', noRecoWait: 'The best items are still in their waiting period.', noRecoNone: 'No item in the ranking.',
+    kReady: 'Ready to buy', kWaiting: 'Waiting', kPostponed: 'Postponed',
     rankTitle: 'Ranking', thPrice: 'Price', thCpu: 'Cost/use', thFinal: 'Final score', thFinalSub: 'matrix × MoSCoW × Eisenhower', thStatus: 'Status',
     noActive: 'No active items.', excludedList: "Excluded (Won't have):", with: 'together with',
-    'st.buy': 'Buy', 'st.wait': 'Waiting', 'st.over': 'Over budget', 'st.excluded': 'Excluded',
+    'st.buy': 'Ready', 'st.wait': 'Waiting', 'st.excluded': 'Excluded',
     daysLeft: n => `${n} ${n === 1 ? 'day' : 'days'} left`, waitsBundle: 'waiting for the rest of the bundle',
     bundlesTitle: 'Bundles (buy together)',
-    bundlesHelp: 'A bundle is bought only when all its items are past their waiting period and the total fits the budget. "Won\'t have" items are left out of bundles.',
+    bundlesHelp: 'A bundle is ready only when all its items are past their waiting period. "Won\'t have" items are left out of bundles.',
     vcTitle: 'Value and convenience', vcHelp: 'Combines all the criteria from Scores into two axes: value is the weighted average of the manual scores (usefulness, ease…), convenience that of the automatic criteria (price, cost per use). The line between high and low is 5.5.',
     vcNeed: 'This chart needs at least one manual criterion and one automatic criterion (price or cost per use) with a weight above zero. Add them in Settings → Criteria.',
     axVal: 'High value', axNoVal: 'Low value', axConv: 'Good deal', axNoConv: 'Expensive', vcShort: (v, c) => `value ${v} · conv. ${c}`, vcFact: 'Value / convenience',
     'v1.s': 'Bargain', 'v1.h': 'High value, low cost: top of the list.',
     'v2.s': 'Investment', 'v2.h': 'High value but costly: save up or wait for a deal.',
-    'v3.s': 'Treat', 'v3.h': 'Cheap but of little use: only if budget is left over.',
+    'v3.s': 'Treat', 'v3.h': 'Cheap but of little use: only if you have money to spare.',
     'v4.s': 'Avoid', 'v4.h': 'Costly and of little use: skip it or look for something else.',
     eisTitle: 'Eisenhower matrix', axUrgent: 'Urgent', axNotUrgent: 'Not urgent', axImp: 'Important', axNotImp: 'Not important',
     howTitle: 'How it is calculated',
@@ -392,8 +389,7 @@ const T = {
       '<b>MoSCoW</b>: multiplies by ×1 (Must), ×0.75 (Should), ×0.5 (Could). "Won\'t" items are excluded.',
       '<b>Eisenhower</b>: multiplies by ×1.2 / ×1 / ×0.8 / ×0.6 depending on the quadrant.',
       '<b>Waiting rule</b>: an item still in its waiting period stays in the ranking but is not recommended.',
-      '<b>Budget</b>: going down the ranking, each ready item is marked "Buy" if it fits the remaining budget, otherwise "Over budget".',
-      '<b>Bundles</b>: linked items (also in a chain: A with B, B with C) form a bundle. The bundle takes the position of its best item, and waiting and budget apply to the whole group.',
+      '<b>Bundles</b>: linked items (also in a chain: A with B, B with C) form a bundle. The bundle takes the position of its best item, and the waiting rule applies to the whole group.',
     ],
     dbDown: "Can't reach the database: changes may not be saved. Check your connection and reload the page.",
     localFail: 'This browser does not allow saving data: use "Download backup" before closing the page.',
@@ -412,12 +408,12 @@ const T = {
   fr: {
     subtitle: "Matrice pondérée, MoSCoW, Eisenhower, coût par utilisation, règle d'attente et lots.",
     'tab.items': '1 · Articles', 'tab.scores': '2 · Notes', 'tab.results': '★ Résultats', 'tab.settings': '3 · Réglages',
-    'sub.budget': 'Budget et devise', 'sub.wait': "Règle d'attente", 'sub.criteria': 'Critères', 'sub.data': 'Données et sauvegarde', 'sub.how': 'Fonctionnement',
+    'sub.currency': 'Devise', 'sub.wait': "Règle d'attente", 'sub.criteria': 'Critères', 'sub.data': 'Données et sauvegarde', 'sub.how': 'Fonctionnement',
     hintsToggle: 'Afficher les descriptions', 'grp.base': 'Quoi et combien', 'grp.priority': 'Priorité', 'grp.usage': 'Utilisation', 'grp.scores': 'Notes des critères', 'h.scores': "De 1 (mauvais) à 10 (excellent) pour chaque critère de la matrice. Le prix et le coût par utilisation sont calculés automatiquement. Les mêmes notes sont dans l'onglet Notes.", autoScore: 'automatique', 'grp.state': 'État',
     critDescPh: 'Description (facultative)', critLegend: 'Signification des critères', howLink: 'Comment le score est calculé →',
     'state.active': 'Actif', 'state.bought': 'Acheté', 'state.dropped': 'Plus nécessaire', 'state.snoozed': 'Reporté',
     snoozeFor: 'Reporter de', 'unit.days': 'jours', 'unit.months': 'mois', snoozedUntil: d => `Reporté jusqu'au ${d}`,
-    postponedTitle: 'Reportés', postponedHelp: "Hors classement et budget jusqu'à la date indiquée, puis ils reviennent d'eux-mêmes.", backOn: d => `revient le ${d}`,
+    postponedTitle: 'Reportés', postponedHelp: "Hors classement jusqu'à la date indiquée, puis ils reviennent d'eux-mêmes.", backOn: d => `revient le ${d}`,
     'sub.methods': 'Méthodes de classement',
     methodsHelp: "Choisissez les méthodes qui composent le score. Une méthode désactivée ne compte pas : la matrice vaut 10 pour tous, MoSCoW et Eisenhower multiplient par 1. Si vous désactivez MoSCoW, les articles « Won't have » reviennent aussi dans le classement. Le coût par utilisation et la règle d'attente restent actifs.",
     'm.matrix': 'Matrice de décision pondérée', 'm.matrix.d': 'Notes de 1 à 10 sur des critères pondérés, prix et coût par utilisation compris.',
@@ -427,7 +423,7 @@ const T = {
     matrixOff: "La matrice pondérée est désactivée dans Réglages → Méthodes de classement : les notes n'influencent pas le classement.",
     allOff: "Toutes les méthodes de classement sont désactivées : l'ordre suit uniquement le prix, du moins cher au plus cher.",
     yes: 'oui', no: 'non', matrixScore: 'Score', scoresBy: 'Notes par critère', edit: "Modifier l'article", editShort: 'Modifier', listTitle: 'Vos articles', doneEdit: 'Terminé', itemsHelp: "Cliquez sur une ligne pour voir toutes les données de l'article ou le modifier.", showDetails: 'Afficher les détails', waitCol: 'Attente',
-    archiveTitle: 'Archive', archiveHelp: 'Articles achetés ou devenus inutiles : ils ne comptent ni dans le classement ni dans le budget.', restore: 'Restaurer',
+    archiveTitle: 'Archive', archiveHelp: 'Articles achetés ou devenus inutiles : ils ne comptent pas dans le classement.', restore: 'Restaurer',
     boughtOn: d => `acheté le ${d}`, droppedOn: d => `archivé le ${d}`, archSummary: (n, x) => `Déjà achetés : ${n} articles, ${x} au total.`,
     'h.state': "Acheté et Plus nécessaire déplacent l'article dans l'archive. Reporté le retire du classement jusqu'à la date indiquée, puis il revient tout seul.",
     'h.name': 'Comment vous le reconnaissez dans la liste.', 'h.price': 'Prix prévu, livraison comprise.',
@@ -436,7 +432,6 @@ const T = {
     'h.added': "Depuis quand vous en avez envie. La période d'attente commence à cette date.", 'h.urgent': "Nécessaire bientôt, par exemple parce que quelque chose s'est cassé.",
     'h.important': 'A un vrai effet sur votre vie ou votre travail.', 'h.notes': 'Liens, modèle, magasin, doutes. Les notes apparaissent aussi dans les résultats.',
     'h.together': "Articles à acheter en même temps (même magasin, l'un ne sert à rien sans l'autre). Ensemble, ils forment un lot.",
-    'h.budget': 'Le montant que vous voulez dépenser maintenant pour cette liste. Les résultats montrent ce qui tient dedans, en suivant le classement.',
     'h.currency': 'Change seulement le symbole affiché : les montants ne sont pas convertis.',
     'h.threshold': "À partir de ce prix, un achat est considéré comme gros et demande l'attente longue.",
     'h.waitShort': "Jours d'attente pour les articles sous le seuil avant qu'ils puissent être conseillés.", 'h.waitLong': "Jours d'attente pour les articles à partir du seuil.",
@@ -464,7 +459,7 @@ const T = {
     urgent: 'Urgent', important: 'Important', notes: 'Notes', notesPh: 'Lien, modèle, magasin, doutes…',
     together: 'À acheter avec :', unnamed: 'sans nom', cpu: 'Coût par utilisation', quadrant: 'Quadrant',
     waitLeft: n => `⏳ encore ${n} ${n === 1 ? 'jour' : 'jours'} d'attente`, waitDone: "✓ période d'attente terminée", na: 'n.d.',
-    budgetTitle: "Budget et règle d'attente", budget: 'Budget disponible', threshold: 'Seuil « gros achat »',
+    threshold: 'Seuil « gros achat »',
     waitShort: 'Attente sous le seuil (jours)', waitLong: 'Attente au-dessus du seuil (jours)', currency: 'Devise',
     waitHelp: "Un article n'est achetable qu'après la période d'attente, comptée à partir de sa date « Envie depuis le ».",
     critTitle: 'Critères de la matrice pondérée',
@@ -476,21 +471,21 @@ const T = {
     scoresHelp: 'Notez chaque article de 1 (mauvais) à 10 (excellent). Les valeurs en italique sont calculées automatiquement à partir du prix et du coût par utilisation.',
     thItem: 'Article', thMatrix: 'Score<br>matrice', excludedBadge: 'exclu', scoreOf: (c, i) => `${c} pour ${i}`,
     recoTitle: 'Prochain achat conseillé', bundleSuffix: ' (lot)', total: 'Total',
-    recoHelp: "Meilleur score parmi les articles dont l'attente est terminée et qui tiennent dans le budget.",
-    noReco: 'Aucun achat conseillé pour le moment', noRecoWait: "Les meilleurs articles sont encore en période d'attente.", noRecoBudget: 'Aucun article ne tient dans le budget.',
-    kBudget: 'Budget', kSpend: 'À dépenser maintenant (articles « Acheter »)', kLeft: 'Budget restant', kWaiting: 'Articles en attente',
+    recoHelp: "Meilleur score parmi les articles dont l'attente est terminée.",
+    noReco: 'Aucun achat conseillé pour le moment', noRecoWait: "Les meilleurs articles sont encore en période d'attente.", noRecoNone: 'Aucun article dans le classement.',
+    kReady: 'Prêts à acheter', kWaiting: 'En attente', kPostponed: 'Reportés',
     rankTitle: 'Classement', thPrice: 'Prix', thCpu: 'Coût/util.', thFinal: 'Score final', thFinalSub: 'matrice × MoSCoW × Eisenhower', thStatus: 'Statut',
     noActive: 'Aucun article actif.', excludedList: "Exclus (Won't have) :", with: 'avec',
-    'st.buy': 'Acheter', 'st.wait': 'En attente', 'st.over': 'Hors budget', 'st.excluded': 'Exclu',
+    'st.buy': 'Prêt', 'st.wait': 'En attente', 'st.excluded': 'Exclu',
     daysLeft: n => `encore ${n} j`, waitsBundle: 'attend le reste du lot',
     bundlesTitle: 'Lots (à acheter ensemble)',
-    bundlesHelp: "Un lot ne s'achète que lorsque tous ses articles ont fini leur attente et que le total tient dans le budget. Les articles « Won't have » sont exclus des lots.",
+    bundlesHelp: "Un lot n'est prêt que lorsque tous ses articles ont fini leur attente. Les articles « Won't have » sont exclus des lots.",
     vcTitle: 'Valeur et rapport qualité-prix', vcHelp: "Réunit tous les critères des Notes sur deux axes : la valeur est la moyenne pondérée des notes manuelles (utilité, facilité…), le rapport qualité-prix celle des critères automatiques (prix, coût par utilisation). La limite entre haut et bas est 5,5.",
     vcNeed: "Ce graphique demande au moins un critère manuel et un critère automatique (prix ou coût par utilisation) avec un poids supérieur à zéro. Ajoutez-les dans Réglages → Critères.",
     axVal: 'Valeur élevée', axNoVal: 'Valeur faible', axConv: 'Avantageux', axNoConv: 'Cher', vcShort: (v, c) => `valeur ${v} · prix ${c}`, vcFact: 'Valeur / prix',
     'v1.s': 'Bonne affaire', 'v1.h': 'Grande valeur, petit coût : en tête de liste.',
     'v2.s': 'Investissement', 'v2.h': 'Grande valeur mais coûteux : économisez ou attendez une offre.',
-    'v3.s': 'Petit plaisir', 'v3.h': 'Pas cher mais peu utile : seulement s’il reste du budget.',
+    'v3.s': 'Petit plaisir', 'v3.h': 'Pas cher mais peu utile : seulement si vous avez de quoi.',
     'v4.s': 'À éviter', 'v4.h': 'Cher et peu utile : laissez tomber ou cherchez autre chose.',
     eisTitle: "Matrice d'Eisenhower", axUrgent: 'Urgent', axNotUrgent: 'Pas urgent', axImp: 'Important', axNotImp: 'Pas important',
     howTitle: 'Mode de calcul',
@@ -499,8 +494,7 @@ const T = {
       "<b>MoSCoW</b> : multiplie par ×1 (Must), ×0,75 (Should), ×0,5 (Could). Les « Won't » sont exclus.",
       '<b>Eisenhower</b> : multiplie par ×1,2 / ×1 / ×0,8 / ×0,6 selon le quadrant.',
       "<b>Règle d'attente</b> : un article encore en période d'attente reste dans le classement mais n'est pas conseillé.",
-      "<b>Budget</b> : en parcourant le classement, chaque article prêt passe en « Acheter » s'il tient dans le budget restant, sinon « Hors budget ».",
-      "<b>Lots</b> : les articles liés (même en chaîne : A avec B, B avec C) forment un lot. Le lot prend la position de son meilleur article, et l'attente et le budget s'appliquent à tout le groupe.",
+      "<b>Lots</b> : les articles liés (même en chaîne : A avec B, B avec C) forment un lot. Le lot prend la position de son meilleur article, et l'attente s'applique à tout le groupe.",
     ],
     dbDown: 'Impossible de joindre la base de données : les modifications risquent de ne pas être enregistrées. Vérifiez la connexion et rechargez la page.',
     localFail: "Ce navigateur ne permet pas d'enregistrer les données : utilisez « Télécharger une sauvegarde » avant de fermer la page.",
@@ -542,9 +536,9 @@ const fmtDate = iso => iso ? new Date(String(iso).length === 10 ? iso + 'T00:00'
 
 const MOSCOW = {M:{label:'Must have', f:1.0}, S:{label:'Should have', f:0.75}, C:{label:'Could have', f:0.5}, W:{label:"Won't have", f:0}};
 const QF = {q1:1.2, q2:1.0, q3:0.8, q4:0.6};
-const SETTINGS_KEYS = ['budget', 'waitShort', 'waitLong', 'threshold', 'currency', 'methods', 'criteria', 'lastBackup'];
+const SETTINGS_KEYS = ['waitShort', 'waitLong', 'threshold', 'currency', 'methods', 'criteria', 'lastBackup'];
 const defaultSettings = () => ({
-  budget: 400, waitShort: 2, waitLong: 30, threshold: 100, currency: 'EUR', lastBackup: null,
+  waitShort: 2, waitLong: 30, threshold: 100, currency: 'EUR', lastBackup: null,
   methods: {matrix:true, moscow:true, eisenhower:true},
   criteria: [
     {id:'price', name:t('crit.price'), weight:20, auto:'price'},
@@ -786,8 +780,6 @@ function compute() {
 
   const ranked = active.slice().sort((a, b) => (per[b.id].final - per[a.id].final) || ((+a.price || 0) - (+b.price || 0)));
   const priceOf = id => +byId[id].price || 0;
-  let spent = 0;
-  const budget = +S.budget || 0;
   const done = new Set(), bundles = [];
   for (const i of ranked) {
     if (done.has(i.id)) continue;
@@ -796,8 +788,7 @@ function compute() {
     const total = g.reduce((a, id) => a + priceOf(id), 0);
     let st;
     if (g.some(id => per[id].remaining > 0)) st = 'wait';
-    else if (spent + total <= budget) { st = 'buy'; spent += total; }
-    else st = 'over';
+    else st = 'buy';
     g.forEach(id => per[id].status = st);
     if (g.length > 1) bundles.push({ids:g.slice().sort((a, b) => per[b].final - per[a].final), total, status:st});
   }
@@ -805,13 +796,13 @@ function compute() {
   for (const i of live) if (isW(i)) per[i.id].status = 'excluded';
   for (const i of S.items) if (isArchived(i)) per[i.id].status = 'archived';
   const postponed = live.filter(i => isPostponed(i) && !isW(i)).sort((a, b) => a.snoozeUntil < b.snoozeUntil ? -1 : 1);
-  return {per, ranked, bundles, byId, live, postponed, excluded:live.filter(i => isW(i)), spent, budget, totW};
+  return {per, ranked, bundles, byId, live, postponed, excluded:live.filter(i => isW(i)), totW};
 }
 
 /* ================= viste ================= */
 const waitText = (p, i) => p.snoozed ? '💤 ' + t('snoozedUntil', fmtDate(i.snoozeUntil)) : p.remaining > 0 ? t('waitLeft', p.remaining) : t('waitDone');
 const cpuText = p => p.cpu == null ? t('na') : money(p.cpu);
-const ST_CLS = {buy:'b-ok', wait:'b-warn', over:'b-bad', excluded:'b-gray'};
+const ST_CLS = {buy:'b-ok', wait:'b-warn', excluded:'b-gray'};
 const statusBadge = s => `<span class="badge ${ST_CLS[s]}">${t('st.' + s)}</span>`;
 const pct = (c, D) => D.totW ? Math.round(100 * (+c.weight || 0) / D.totW) : 0;
 
@@ -943,9 +934,9 @@ function viewItems(D) {
     </table></div></div>${viewArchive()}`;
 }
 
-const SUBS = ['budget', 'wait', 'methods', 'criteria', 'data', 'how'];
-let sub = 'budget';
-try { sub = localStorage.getItem('bdt:sub') || 'budget'; } catch (e) {}
+const SUBS = ['currency', 'wait', 'methods', 'criteria', 'data', 'how'];
+let sub = 'currency';
+try { sub = localStorage.getItem('bdt:sub') || 'currency'; } catch (e) {}
 
 function backupInfoText() {
   const parts = [S.lastBackup ? t('lastDl', fmtDate(S.lastBackup)) : t('noDl')];
@@ -954,13 +945,12 @@ function backupInfoText() {
 }
 
 function viewSettings(D) {
-  if (!SUBS.includes(sub)) sub = 'budget';
+  if (!SUBS.includes(sub)) sub = 'currency';
   const nav = `<div class="subtabs">${SUBS.map(s => `<button id="sub-${s}" data-sub="${s}" class="${s === sub ? 'on' : ''}">${t('sub.' + s)}</button>`).join('')}</div>`;
   let body = '';
-  if (sub === 'budget') {
-    body = `<div class="card"><h2>${t('sub.budget')}</h2>
+  if (sub === 'currency') {
+    body = `<div class="card"><h2>${t('sub.currency')}</h2>
       <div class="grid">
-        <label>${t('budget')} (${esc(curSym())})<input id="set-budget" type="number" min="0" data-k="set:budget" value="${esc(S.budget)}">${hint('budget')}</label>
         <label>${t('currency')}<select id="set-currency" data-k="set:currency">${CURRENCIES.map(c => `<option ${S.currency === c ? 'selected' : ''}>${c}</option>`).join('')}</select>${hint('currency')}</label>
       </div></div>`;
   } else if (sub === 'wait') {
@@ -1058,13 +1048,12 @@ function viewResults(D) {
         ${nextGroup.map(id => `<div class="spread"><span style="font-size:17px;font-weight:700;min-width:0">${nameOf(id)}</span><span>${money(+D.byId[id].price || 0)}</span></div>`).join('')}
         ${nextGroup.length > 1 ? `<div class="spread" style="border-top:1px solid var(--line);margin-top:6px;padding-top:6px"><span>${t('total')}</span><b>${money(nextGroup.reduce((a, id) => a + (+D.byId[id].price || 0), 0))}</b></div>` : ''}
         <p class="small mute" style="margin:6px 0 0">${t('recoHelp')}</p></div>`
-    : `<div class="card"><h2>${t('noReco')}</h2><p class="small mute" style="margin:0">${waiting.length ? t('noRecoWait') : t('noRecoBudget')}</p></div>`;
+    : `<div class="card"><h2>${t('noReco')}</h2><p class="small mute" style="margin:0">${waiting.length ? t('noRecoWait') : t('noRecoNone')}</p></div>`;
 
   const kpis = `<div class="card kpis">
-    <div class="kpi"><div class="v">${money(D.budget)}</div><div class="l">${t('kBudget')}</div></div>
-    <div class="kpi"><div class="v">${money(D.spent)}</div><div class="l">${t('kSpend')}</div></div>
-    <div class="kpi"><div class="v">${money(Math.max(0, D.budget - D.spent))}</div><div class="l">${t('kLeft')}</div></div>
+    <div class="kpi"><div class="v">${D.ranked.filter(i => D.per[i.id].status === 'buy').length}</div><div class="l">${t('kReady')}</div></div>
     <div class="kpi"><div class="v">${waiting.length}</div><div class="l">${t('kWaiting')}</div></div>
+    <div class="kpi"><div class="v">${D.postponed.length}</div><div class="l">${t('kPostponed')}</div></div>
   </div>${archLine ? `<div style="margin:-6px 0 14px">${archLine}</div>` : ''}`;
 
   const rows = D.ranked.map((i, n) => {
@@ -1185,7 +1174,7 @@ function renderBanners(extra) {
 }
 
 /* ================= eventi ================= */
-const NUM = new Set(['price', 'uses', 'life', 'weight', 'budget', 'threshold', 'waitShort', 'waitLong', 'snoozeN']);
+const NUM = new Set(['price', 'uses', 'life', 'weight', 'threshold', 'waitShort', 'waitLong', 'snoozeN']);
 function onEdit(e) {
   const k = e.target.dataset.k; if (!k || !loaded) return;
   const [kind, id, field] = k.split(':');

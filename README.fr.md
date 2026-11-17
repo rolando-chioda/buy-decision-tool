@@ -16,12 +16,11 @@ Un seul fichier HTML qui vous aide à décider **quoi acheter en premier**. Il c
 
 Il propose aussi :
 
-- **Lots** : liez les articles à acheter ensemble. Un lot est classé, budgété et conseillé comme un seul achat.
+- **Lots** : liez les articles à acheter ensemble. Un lot est classé et conseillé comme un seul achat.
 - **Valeur et rapport qualité-prix** : une matrice à quatre secteurs (Bonne affaire, Investissement, Petit plaisir, À éviter) qui réunit tous les critères sur deux axes : les notes manuelles donnent la valeur, le prix et le coût par utilisation donnent le rapport qualité-prix.
-- **Budget** : en parcourant le classement, il indique ce que vous pouvez acheter maintenant, ce qui est encore en attente et ce qui dépasse le budget.
 - **Notes** pour chaque article (liens, modèles, magasins, doutes).
-- **État** de chaque article : *Acheté* et *Plus nécessaire* le déplacent dans une archive (hors classement et budget) ; *Reporté de N jours ou mois* le retire du classement jusqu'à cette date et l'affiche parmi les *Reportés* dans les résultats.
-- **Descriptions** sous chaque champ et réglage, que vous pouvez masquer une fois connues. Les réglages sont regroupés en sous-onglets : budget et devise, règle d'attente, critères, données et sauvegarde, fonctionnement.
+- **État** de chaque article : *Acheté* et *Plus nécessaire* le déplacent dans une archive (hors classement) ; *Reporté de N jours ou mois* le retire du classement jusqu'à cette date et l'affiche parmi les *Reportés* dans les résultats.
+- **Descriptions** sous chaque champ et réglage, que vous pouvez masquer une fois connues. Les réglages sont regroupés en sous-onglets : devise, règle d'attente, critères, données et sauvegarde, fonctionnement.
 - **Langues** : français, anglais, italien. La page suit la langue du navigateur et propose un sélecteur.
 - **Devises** : EUR, USD, GBP, CHF, CAD, AUD, JPY.
 - **Sauvegarde** : téléchargez vos données en JSON et réimportez-les n'importe où.
@@ -53,8 +52,7 @@ score final = score de la matrice pondérée × facteur MoSCoW × facteur Eisenh
 - Matrice pondérée : moyenne des notes de 1 à 10, pondérée par les poids des critères. Les critères automatiques donnent 10 à l'article le moins cher et 1 au plus cher (linéaire entre les deux).
 - MoSCoW : Must ×1, Should ×0,75, Could ×0,5, Won't = exclu.
 - Eisenhower : urgent et important ×1,2, important seulement ×1, urgent seulement ×0,8, ni l'un ni l'autre ×0,6.
-- Règle d'attente : un article encore en attente reste dans le classement mais n'est pas conseillé.
-- Budget : en parcourant le classement, chaque article (ou lot) prêt passe en **Acheter** s'il tient dans le budget restant, sinon **Hors budget**.
+- Règle d'attente : un article encore en attente reste dans le classement mais n'est pas conseillé. Les autres sont **Prêts** : le premier du classement est le prochain achat conseillé.
 
 Chacune des trois méthodes (matrice, MoSCoW, Eisenhower) peut être désactivée dans **Réglages → Méthodes de classement**, avec un lien vers la page Wikipédia de chacune. Si les trois sont désactivées, le classement suit uniquement le prix.
 

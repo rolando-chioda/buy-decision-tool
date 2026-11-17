@@ -16,12 +16,11 @@ Un unico file HTML che ti aiuta a decidere **cosa comprare prima**. Combina cinq
 
 In più:
 
-- **Pacchetti**: collega gli articoli da comprare insieme. Un pacchetto viene classificato, conteggiato nel budget e consigliato come un unico acquisto.
+- **Pacchetti**: collega gli articoli da comprare insieme. Un pacchetto viene classificato e consigliato come un unico acquisto.
 - **Valore e convenienza**: una matrice a quattro settori (Affare, Investimento, Sfizio, Da evitare) che unisce tutti i criteri in due assi: i voti manuali danno il valore, prezzo e costo per utilizzo danno la convenienza.
-- **Budget**: scorrendo la classifica, indica cosa puoi comprare ora, cosa è ancora in attesa e cosa è fuori budget.
 - **Note** per ogni articolo (link, modelli, negozi, dubbi).
-- **Stato** di ogni articolo: *Comprato* e *Non serve più* lo spostano in un archivio (fuori da classifica e budget); *Rimandato di N giorni o mesi* lo toglie dalla classifica fino a quella data e lo mostra fra i *Rimandati* nei risultati.
-- **Descrizioni** sotto ogni campo e impostazione, che puoi nascondere quando le conosci. Le impostazioni sono raggruppate in sotto-schede: budget e valuta, regola dell'attesa, criteri, dati e backup, come funziona.
+- **Stato** di ogni articolo: *Comprato* e *Non serve più* lo spostano in un archivio (fuori dalla classifica); *Rimandato di N giorni o mesi* lo toglie dalla classifica fino a quella data e lo mostra fra i *Rimandati* nei risultati.
+- **Descrizioni** sotto ogni campo e impostazione, che puoi nascondere quando le conosci. Le impostazioni sono raggruppate in sotto-schede: valuta, regola dell'attesa, criteri, dati e backup, come funziona.
 - **Lingue**: italiano, inglese, francese. La pagina segue la lingua del browser e ha un selettore.
 - **Valute**: EUR, USD, GBP, CHF, CAD, AUD, JPY.
 - **Backup**: scarica i dati in JSON e reimportali ovunque.
@@ -53,8 +52,7 @@ punteggio finale = punteggio matrice pesata × fattore MoSCoW × fattore Eisenho
 - Matrice pesata: media dei voti 1–10, pesata con i pesi dei criteri. I criteri automatici danno 10 all'articolo più conveniente e 1 al più caro (lineare in mezzo).
 - MoSCoW: Must ×1, Should ×0,75, Could ×0,5, Won't = escluso.
 - Eisenhower: urgente e importante ×1,2, solo importante ×1, solo urgente ×0,8, nessuno dei due ×0,6.
-- Regola dell'attesa: un articolo ancora in attesa resta in classifica ma non viene consigliato.
-- Budget: scorrendo la classifica, ogni articolo (o pacchetto) pronto diventa **Compra** se entra nel budget residuo, altrimenti **Fuori budget**.
+- Regola dell'attesa: un articolo ancora in attesa resta in classifica ma non viene consigliato. Gli altri sono **Pronti**: il primo della classifica è il prossimo acquisto consigliato.
 
 Ognuno dei tre metodi (matrice, MoSCoW, Eisenhower) si può disattivare in **Impostazioni → Metodi di classifica**, dove trovi anche il link alla pagina Wikipedia di ciascuno. Con tutti e tre disattivati, la classifica segue solo il prezzo.
 
