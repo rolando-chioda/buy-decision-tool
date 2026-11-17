@@ -17,6 +17,8 @@ In più:
 - **Pacchetti**: collega gli articoli da comprare insieme. Un pacchetto viene classificato, conteggiato nel budget e consigliato come un unico acquisto.
 - **Budget**: scorrendo la classifica, indica cosa puoi comprare ora, cosa è ancora in attesa e cosa è fuori budget.
 - **Note** per ogni articolo (link, modelli, negozi, dubbi).
+- **Stato** di ogni articolo: *Comprato* e *Non serve più* lo spostano in un archivio (fuori da classifica e budget); *Rimandato di N giorni o mesi* lo tiene fuori dai consigli fino a quella data.
+- **Descrizioni** sotto ogni campo e impostazione, che puoi nascondere quando le conosci. Le impostazioni sono raggruppate in sotto-schede: budget e valuta, regola dell'attesa, criteri, dati e backup, come funziona.
 - **Lingue**: italiano, inglese, francese. La pagina segue la lingua del browser e ha un selettore.
 - **Valute**: EUR, USD, GBP, CHF, CAD, AUD, JPY.
 - **Backup**: scarica i dati in JSON e reimportali ovunque.

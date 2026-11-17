@@ -41,6 +41,20 @@ h2{font-size:17px;margin:0 0 10px}
 .sub{color:var(--mute);margin:0}
 .mute{color:var(--mute)}
 .small{font-size:13px}
+.hint{display:block;font-size:12px;color:var(--mute);line-height:1.35;font-weight:400;margin-top:2px}
+.group{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:600;margin:16px 0 8px}
+.checkcell{display:flex;flex-direction:column;justify-content:flex-end;gap:2px}
+.subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.subtabs button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);color:var(--mute);border-radius:999px;padding:5px 12px;cursor:pointer}
+.subtabs button.on{background:var(--acc-soft);border-color:var(--acc);color:var(--acc);font-weight:600}
+.subtabs button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.actions{display:grid;gap:12px}
+.action{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.action .btn{min-width:220px}
+.action span{flex:1;min-width:200px}
+.linkbtn{background:none;border:0;color:var(--acc);font:inherit;cursor:pointer;padding:0;text-decoration:underline}
+.tools label.check{font-size:12px;color:var(--mute)}
+.archived{opacity:.85}
 header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 .tools{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .tools select{width:auto;padding:4px 8px;font-size:13px}
@@ -132,26 +146,20 @@ footer{margin-top:28px;display:flex;flex-direction:column;gap:10px}
         <option value="en">English</option>
         <option value="fr">Français</option>
       </select>
+      <label class="check"><input type="checkbox" id="hints-toggle"> <span data-i18n="hintsToggle"></span></label>
       <div class="sync" id="sync" data-s="loading"><i></i><span></span></div>
     </div>
   </header>
   <div id="banners"></div>
   <nav id="tabs">
     <button id="tab-items" data-tab="items" data-i18n="tab.items"></button>
-    <button id="tab-criteria" data-tab="criteria" data-i18n="tab.criteria"></button>
     <button id="tab-scores" data-tab="scores" data-i18n="tab.scores"></button>
     <button id="tab-results" data-tab="results" data-i18n="tab.results"></button>
+    <button id="tab-settings" data-tab="settings" data-i18n="tab.settings"></button>
   </nav>
   <main id="view"></main>
   <footer>
-    <div class="row">
-      <button class="btn" id="btn-export" data-act="export" data-i18n="btn.export"></button>
-      <button class="btn" id="btn-import" data-act="import" data-i18n="btn.import"></button>
-      <button class="btn" id="btn-example" data-act="example" data-i18n="btn.example"></button>
-      <button class="btn del" id="btn-clear" data-act="clear" data-i18n="btn.clear"></button>
-      <input type="file" id="file" accept="application/json,.json" hidden>
-    </div>
-    <div class="small mute" id="backup-info"></div>
+    <input type="file" id="file" accept="application/json,.json" hidden>
     <div class="small mute" id="storage-info"></div>
     <div class="small mute" data-i18n="disclaimer"></div>
   </footer>
@@ -164,7 +172,30 @@ footer{margin-top:28px;display:flex;flex-direction:column;gap:10px}
 const T = {
   it: {
     subtitle: "Matrice pesata, MoSCoW, Eisenhower, costo per utilizzo, regola dell'attesa e pacchetti.",
-    'tab.items': '1 · Articoli', 'tab.criteria': '2 · Criteri e regole', 'tab.scores': '3 · Valutazioni', 'tab.results': '4 · Risultati',
+    'tab.items': '1 · Articoli', 'tab.scores': '2 · Valutazioni', 'tab.results': '3 · Risultati', 'tab.settings': '4 · Impostazioni',
+    'sub.budget': 'Budget e valuta', 'sub.wait': "Regola dell'attesa", 'sub.criteria': 'Criteri', 'sub.data': 'Dati e backup', 'sub.how': 'Come funziona',
+    hintsToggle: 'Mostra descrizioni', 'grp.base': 'Cosa e quanto', 'grp.priority': 'Priorità', 'grp.usage': 'Utilizzo', 'grp.state': 'Stato',
+    critDescPh: 'Descrizione (facoltativa)', critLegend: 'Cosa significano i criteri', howLink: 'Come viene calcolato il punteggio →',
+    'state.active': 'Attivo', 'state.bought': 'Comprato', 'state.dropped': 'Non serve più', 'state.snoozed': 'Rimandato',
+    snoozeFor: 'Rimanda di', 'unit.days': 'giorni', 'unit.months': 'mesi', snoozedUntil: d => `Rimandato fino al ${d}`,
+    archiveTitle: 'Archivio', archiveHelp: 'Articoli comprati o che non servono più: non entrano in classifica né nel budget.', restore: 'Ripristina',
+    boughtOn: d => `comprato il ${d}`, droppedOn: d => `archiviato il ${d}`, archSummary: (n, x) => `Già comprati: ${n} articoli, ${x} in totale.`,
+    'h.state': "Comprato e Non serve più spostano l'articolo nell'archivio. Rimandato lo tiene fuori dai consigli fino alla data indicata, poi torna attivo da solo.",
+    'h.name': 'Come lo riconosci nella lista.', 'h.price': 'Prezzo previsto, spedizione inclusa.',
+    'h.moscow': "Quanto è indispensabile. Must: non puoi farne a meno. Should: importante. Could: sarebbe bello. Won't: non ora, escluso dalla classifica.",
+    'h.uses': 'Quante volte al mese pensi di usarlo. Serve per il costo per utilizzo.', 'h.life': 'Per quanti mesi pensi di usarlo prima di cambiarlo.',
+    'h.added': 'Da quando lo desideri. Da questa data parte il periodo di attesa.', 'h.urgent': 'Serve a breve, per esempio perché qualcosa si è rotto.',
+    'h.important': 'Ha un effetto reale sulla tua vita o sul tuo lavoro.', 'h.notes': 'Link, modello, negozio, dubbi. Le note compaiono anche nei risultati.',
+    'h.together': "Articoli da comprare nello stesso momento (stesso negozio, uno non serve senza l'altro). Insieme formano un pacchetto.",
+    'h.budget': 'La cifra che vuoi spendere adesso per questa lista. I risultati indicano cosa ci sta dentro, seguendo la classifica.',
+    'h.currency': 'Cambia solo il simbolo mostrato: gli importi non vengono convertiti.',
+    'h.threshold': "Da questo prezzo in su un acquisto è considerato importante e richiede l'attesa lunga.",
+    'h.waitShort': 'Giorni di attesa per gli articoli sotto la soglia, prima che possano essere consigliati.', 'h.waitLong': 'Giorni di attesa per gli articoli dalla soglia in su.',
+    'h.weight': 'Il peso dice quanto conta un criterio rispetto agli altri; la quota è la sua parte sul totale.', 'h.manual': 'I criteri a voto manuale li valuti tu nella scheda Valutazioni.',
+    'h.auto.price': "Calcolato dal prezzo: l'articolo più economico prende 10, il più caro 1.", 'h.auto.cpu': 'Calcolato dal costo per utilizzo: il più conveniente prende 10, il meno conveniente 1.',
+    'h.export': 'Scarica un file JSON con articoli e impostazioni, da tenere come copia di sicurezza.', 'h.import': 'Sostituisce tutti i dati attuali con quelli di un file di backup.',
+    'h.example': 'Sostituisce i dati con 5 articoli di esempio, utile per provare lo strumento.', 'h.clear': 'Cancella tutti gli articoli e ripristina le impostazioni predefinite.',
+    'cd.util': 'Quanto ti serve e quanto è fatto bene.', 'cd.ease': 'Quanto è semplice da installare e usare.', 'cd.dur': 'Quanto ti aspetti che duri senza problemi.',
     'sync.loading': 'Caricamento…', 'sync.saving': 'Salvataggio…', 'sync.saved': 'Salvato', 'sync.error': 'Errore di salvataggio', 'sync.offline': 'Non salvato', 'sync.local': 'Salvato in questo browser',
     'btn.export': 'Scarica backup (JSON)', 'btn.import': 'Importa JSON', 'btn.example': 'Carica esempio', 'btn.clear': 'Svuota tutto',
     disclaimer: 'Strumento di supporto: i risultati sono indicativi e la decisione finale è tua. Nessuna garanzia.',
@@ -231,7 +262,30 @@ const T = {
   },
   en: {
     subtitle: 'Weighted matrix, MoSCoW, Eisenhower, cost per use, waiting rule and bundles.',
-    'tab.items': '1 · Items', 'tab.criteria': '2 · Criteria & rules', 'tab.scores': '3 · Scores', 'tab.results': '4 · Results',
+    'tab.items': '1 · Items', 'tab.scores': '2 · Scores', 'tab.results': '3 · Results', 'tab.settings': '4 · Settings',
+    'sub.budget': 'Budget & currency', 'sub.wait': 'Waiting rule', 'sub.criteria': 'Criteria', 'sub.data': 'Data & backup', 'sub.how': 'How it works',
+    hintsToggle: 'Show descriptions', 'grp.base': 'What and how much', 'grp.priority': 'Priority', 'grp.usage': 'Usage', 'grp.state': 'Status',
+    critDescPh: 'Description (optional)', critLegend: 'What the criteria mean', howLink: 'How the score is calculated →',
+    'state.active': 'Active', 'state.bought': 'Bought', 'state.dropped': 'No longer needed', 'state.snoozed': 'Postponed',
+    snoozeFor: 'Postpone by', 'unit.days': 'days', 'unit.months': 'months', snoozedUntil: d => `Postponed until ${d}`,
+    archiveTitle: 'Archive', archiveHelp: 'Items you bought or no longer need: they are left out of the ranking and the budget.', restore: 'Restore',
+    boughtOn: d => `bought on ${d}`, droppedOn: d => `archived on ${d}`, archSummary: (n, x) => `Bought so far: ${n} items, ${x} in total.`,
+    'h.state': 'Bought and No longer needed move the item to the archive. Postponed keeps it out of recommendations until the date shown, then it becomes active again by itself.',
+    'h.name': 'How you recognise it in the list.', 'h.price': 'Expected price, shipping included.',
+    'h.moscow': "How essential it is. Must: you can't do without it. Should: important. Could: nice to have. Won't: not now, left out of the ranking.",
+    'h.uses': 'How many times a month you expect to use it. Used for cost per use.', 'h.life': 'How many months you expect to use it before replacing it.',
+    'h.added': 'Since when you have wanted it. The waiting period starts from this date.', 'h.urgent': 'Needed soon, for example because something broke.',
+    'h.important': 'Makes a real difference to your life or work.', 'h.notes': 'Links, model, shop, doubts. Notes also appear in the results.',
+    'h.together': 'Items to buy at the same time (same shop, one is useless without the other). Together they form a bundle.',
+    'h.budget': 'The amount you want to spend now on this list. The results show what fits, following the ranking.',
+    'h.currency': 'Only changes the symbol shown: amounts are not converted.',
+    'h.threshold': 'From this price up, a purchase counts as big and gets the long wait.',
+    'h.waitShort': 'Days to wait for items below the threshold before they can be recommended.', 'h.waitLong': 'Days to wait for items at or above the threshold.',
+    'h.weight': 'The weight says how much a criterion counts compared with the others; the share is its part of the total.', 'h.manual': 'Manual criteria are the ones you score in the Scores tab.',
+    'h.auto.price': 'Calculated from price: the cheapest item gets 10, the most expensive 1.', 'h.auto.cpu': 'Calculated from cost per use: the best value gets 10, the worst 1.',
+    'h.export': 'Downloads a JSON file with items and settings, to keep as a safety copy.', 'h.import': 'Replaces all current data with the content of a backup file.',
+    'h.example': 'Replaces your data with 5 example items, handy to try the tool.', 'h.clear': 'Deletes all items and restores the default settings.',
+    'cd.util': 'How much you need it and how well it is made.', 'cd.ease': 'How easy it is to set up and use.', 'cd.dur': 'How long you expect it to last without problems.',
     'sync.loading': 'Loading…', 'sync.saving': 'Saving…', 'sync.saved': 'Saved', 'sync.error': 'Save failed', 'sync.offline': 'Not saved', 'sync.local': 'Saved in this browser',
     'btn.export': 'Download backup (JSON)', 'btn.import': 'Import JSON', 'btn.example': 'Load example', 'btn.clear': 'Clear all',
     disclaimer: 'A decision aid: results are indicative and the final decision is yours. No warranty.',
@@ -298,7 +352,30 @@ const T = {
   },
   fr: {
     subtitle: "Matrice pondérée, MoSCoW, Eisenhower, coût par utilisation, règle d'attente et lots.",
-    'tab.items': '1 · Articles', 'tab.criteria': '2 · Critères et règles', 'tab.scores': '3 · Notes', 'tab.results': '4 · Résultats',
+    'tab.items': '1 · Articles', 'tab.scores': '2 · Notes', 'tab.results': '3 · Résultats', 'tab.settings': '4 · Réglages',
+    'sub.budget': 'Budget et devise', 'sub.wait': "Règle d'attente", 'sub.criteria': 'Critères', 'sub.data': 'Données et sauvegarde', 'sub.how': 'Fonctionnement',
+    hintsToggle: 'Afficher les descriptions', 'grp.base': 'Quoi et combien', 'grp.priority': 'Priorité', 'grp.usage': 'Utilisation', 'grp.state': 'État',
+    critDescPh: 'Description (facultative)', critLegend: 'Signification des critères', howLink: 'Comment le score est calculé →',
+    'state.active': 'Actif', 'state.bought': 'Acheté', 'state.dropped': 'Plus nécessaire', 'state.snoozed': 'Reporté',
+    snoozeFor: 'Reporter de', 'unit.days': 'jours', 'unit.months': 'mois', snoozedUntil: d => `Reporté jusqu'au ${d}`,
+    archiveTitle: 'Archive', archiveHelp: 'Articles achetés ou devenus inutiles : ils ne comptent ni dans le classement ni dans le budget.', restore: 'Restaurer',
+    boughtOn: d => `acheté le ${d}`, droppedOn: d => `archivé le ${d}`, archSummary: (n, x) => `Déjà achetés : ${n} articles, ${x} au total.`,
+    'h.state': "Acheté et Plus nécessaire déplacent l'article dans l'archive. Reporté le garde hors des conseils jusqu'à la date indiquée, puis il redevient actif tout seul.",
+    'h.name': 'Comment vous le reconnaissez dans la liste.', 'h.price': 'Prix prévu, livraison comprise.',
+    'h.moscow': "À quel point il est indispensable. Must : impossible de s'en passer. Should : important. Could : ce serait bien. Won't : pas maintenant, exclu du classement.",
+    'h.uses': "Combien de fois par mois vous pensez l'utiliser. Sert au coût par utilisation.", 'h.life': "Pendant combien de mois vous pensez l'utiliser avant de le remplacer.",
+    'h.added': "Depuis quand vous en avez envie. La période d'attente commence à cette date.", 'h.urgent': "Nécessaire bientôt, par exemple parce que quelque chose s'est cassé.",
+    'h.important': 'A un vrai effet sur votre vie ou votre travail.', 'h.notes': 'Liens, modèle, magasin, doutes. Les notes apparaissent aussi dans les résultats.',
+    'h.together': "Articles à acheter en même temps (même magasin, l'un ne sert à rien sans l'autre). Ensemble, ils forment un lot.",
+    'h.budget': 'Le montant que vous voulez dépenser maintenant pour cette liste. Les résultats montrent ce qui tient dedans, en suivant le classement.',
+    'h.currency': 'Change seulement le symbole affiché : les montants ne sont pas convertis.',
+    'h.threshold': "À partir de ce prix, un achat est considéré comme gros et demande l'attente longue.",
+    'h.waitShort': "Jours d'attente pour les articles sous le seuil avant qu'ils puissent être conseillés.", 'h.waitLong': "Jours d'attente pour les articles à partir du seuil.",
+    'h.weight': "Le poids indique l'importance d'un critère par rapport aux autres ; la part est sa portion du total.", 'h.manual': "Les critères à note manuelle sont ceux que vous notez dans l'onglet Notes.",
+    'h.auto.price': "Calculé à partir du prix : l'article le moins cher reçoit 10, le plus cher 1.", 'h.auto.cpu': 'Calculé à partir du coût par utilisation : le plus avantageux reçoit 10, le moins avantageux 1.',
+    'h.export': 'Télécharge un fichier JSON avec articles et réglages, à garder comme copie de sécurité.', 'h.import': "Remplace toutes les données actuelles par celles d'un fichier de sauvegarde.",
+    'h.example': "Remplace vos données par 5 articles d'exemple, pratique pour essayer l'outil.", 'h.clear': 'Supprime tous les articles et rétablit les réglages par défaut.',
+    'cd.util': "À quel point vous en avez besoin et sa qualité.", 'cd.ease': "Sa facilité d'installation et d'utilisation.", 'cd.dur': "Combien de temps vous pensez qu'il durera sans problème.",
     'sync.loading': 'Chargement…', 'sync.saving': 'Enregistrement…', 'sync.saved': 'Enregistré', 'sync.error': "Échec de l'enregistrement", 'sync.offline': 'Non enregistré', 'sync.local': 'Enregistré dans ce navigateur',
     'btn.export': 'Télécharger une sauvegarde (JSON)', 'btn.import': 'Importer un JSON', 'btn.example': "Charger l'exemple", 'btn.clear': 'Tout effacer',
     disclaimer: "Outil d'aide : les résultats sont indicatifs et la décision finale vous appartient. Aucune garantie.",
@@ -385,7 +462,7 @@ const money = v => { try { return new Intl.NumberFormat(locale(), {style:'curren
 const curSym = () => { try { return new Intl.NumberFormat(locale(), {style:'currency', currency:S.currency || 'EUR'}).formatToParts(0).find(p => p.type === 'currency').value; } catch (e) { return S.currency; } };
 const n1 = v => (Math.round(v * 10) / 10).toLocaleString(locale(), {minimumFractionDigits:1, maximumFractionDigits:1});
 const fnum = v => v.toLocaleString(locale());
-const fmtDate = iso => iso ? new Date(iso).toLocaleDateString(locale(), {day:'numeric', month:'short', year:'numeric'}) : '';
+const fmtDate = iso => iso ? new Date(String(iso).length === 10 ? iso + 'T00:00' : iso).toLocaleDateString(locale(), {day:'numeric', month:'short', year:'numeric'}) : '';
 
 const MOSCOW = {M:{label:'Must have', f:1.0}, S:{label:'Should have', f:0.75}, C:{label:'Could have', f:0.5}, W:{label:"Won't have", f:0}};
 const QF = {q1:1.2, q2:1.0, q3:0.8, q4:0.6};
@@ -395,9 +472,9 @@ const defaultSettings = () => ({
   criteria: [
     {id:'price', name:t('crit.price'), weight:20, auto:'price'},
     {id:'cpu', name:t('crit.cpu'), weight:15, auto:'cpu'},
-    {id:'util', name:t('crit.util'), weight:30},
-    {id:'ease', name:t('crit.ease'), weight:15},
-    {id:'dur', name:t('crit.dur'), weight:20},
+    {id:'util', name:t('crit.util'), desc:t('cd.util'), weight:30},
+    {id:'ease', name:t('crit.ease'), desc:t('cd.ease'), weight:15},
+    {id:'dur', name:t('crit.dur'), desc:t('cd.dur'), weight:20},
   ],
 });
 function exampleData() {
@@ -415,6 +492,12 @@ function exampleData() {
   return {...defaultSettings(), items};
 }
 const critName = c => c.auto ? t('crit.' + c.auto) : c.name;
+const isArchived = i => i.state === 'bought' || i.state === 'dropped';
+function snoozeDate(n, unit) {
+  const d = new Date(); n = Math.max(1, +n || 1);
+  if (unit === 'days') d.setDate(d.getDate() + n); else d.setMonth(d.getMonth() + n);
+  return isoDay(d);
+}
 
 /* ================= stato ================= */
 let S = {...defaultSettings(), items:[]};
@@ -422,6 +505,9 @@ let mode = null;            // 'claude' | 'local'
 let db = null, autoBackup = null, loaded = false, dbOk = null;
 let tab = 'items';
 try { tab = localStorage.getItem('bdt:tab') || 'items'; } catch (e) {}
+if (tab === 'criteria') tab = 'settings';
+let showHints = true;
+try { showHints = localStorage.getItem('bdt:hints') !== '0'; } catch (e) {}
 
 /* ================= piccoli componenti ================= */
 function toast(msg) {
@@ -554,7 +640,8 @@ async function connect() {
 /* ================= calcolo ================= */
 function compute() {
   const cpuOf = i => (+i.uses > 0 && +i.life > 0) ? (+i.price || 0) / (+i.uses * +i.life) : null;
-  const active = S.items.filter(i => i.moscow !== 'W');
+  const live = S.items.filter(i => !isArchived(i));
+  const active = live.filter(i => i.moscow !== 'W');
   const range = vals => { const v = vals.filter(x => x != null && isFinite(x)); return v.length ? [Math.min(...v), Math.max(...v)] : [0, 0]; };
   const [pmin, pmax] = range(active.map(i => +i.price || 0));
   const [cmin, cmax] = range(active.map(cpuOf));
@@ -581,8 +668,10 @@ function compute() {
     const final = matrix * mF * QF[q];
     const waitDays = (+i.price || 0) >= (+S.threshold || 0) ? (+S.waitLong || 0) : (+S.waitShort || 0);
     const added = i.added ? new Date(i.added + 'T00:00') : today;
-    const remaining = Math.max(0, Math.ceil((added.getTime() + waitDays * DAY - today.getTime()) / DAY));
-    per[i.id] = {cpu, sc, matrix, q, mF, final, waitDays, remaining};
+    const waitLeft = Math.max(0, Math.ceil((added.getTime() + waitDays * DAY - today.getTime()) / DAY));
+    const snoozeLeft = i.state === 'snoozed' && i.snoozeUntil ? Math.max(0, Math.ceil((new Date(i.snoozeUntil + 'T00:00').getTime() - today.getTime()) / DAY)) : 0;
+    const remaining = Math.max(waitLeft, snoozeLeft);
+    per[i.id] = {cpu, sc, matrix, q, mF, final, waitDays, remaining, snoozed:snoozeLeft > 0 && snoozeLeft >= waitLeft};
   }
 
   const activeIds = new Set(active.map(i => i.id));
@@ -615,12 +704,13 @@ function compute() {
     g.forEach(id => per[id].status = st);
     if (g.length > 1) bundles.push({ids:g.slice().sort((a, b) => per[b].final - per[a].final), total, status:st});
   }
-  for (const i of S.items) if (i.moscow === 'W') per[i.id].status = 'excluded';
-  return {per, ranked, bundles, byId, excluded:S.items.filter(i => i.moscow === 'W'), spent, budget, totW};
+  for (const i of live) if (i.moscow === 'W') per[i.id].status = 'excluded';
+  for (const i of S.items) if (isArchived(i)) per[i.id].status = 'archived';
+  return {per, ranked, bundles, byId, live, excluded:live.filter(i => i.moscow === 'W'), spent, budget, totW};
 }
 
 /* ================= viste ================= */
-const waitText = p => p.remaining > 0 ? t('waitLeft', p.remaining) : t('waitDone');
+const waitText = (p, i) => p.snoozed ? '💤 ' + t('snoozedUntil', fmtDate(i.snoozeUntil)) : p.remaining > 0 ? t('waitLeft', p.remaining) : t('waitDone');
 const cpuText = p => p.cpu == null ? t('na') : money(p.cpu);
 const ST_CLS = {buy:'b-ok', wait:'b-warn', over:'b-bad', excluded:'b-gray'};
 const statusBadge = s => `<span class="badge ${ST_CLS[s]}">${t('st.' + s)}</span>`;
@@ -632,67 +722,120 @@ function emptyState(text) {
     <button class="btn" id="empty-example" data-act="example">${t('btn.example')}</button></div></div>`;
 }
 
+const hint = k => showHints ? `<span class="hint">${t('h.' + k)}</span>` : '';
+const critDesc = c => c.auto ? t('h.auto.' + c.auto) : (c.desc ?? (['util', 'ease', 'dur'].includes(c.id) ? t('cd.' + c.id) : ''));
+const groupTitle = k => `<div class="group">${t(k).replace(/\s*:\s*$/, '')}</div>`;
+
+function viewArchive() {
+  const arch = S.items.filter(isArchived);
+  if (!arch.length) return '';
+  return `<div class="card archived"><h2>${t('archiveTitle')}</h2><p class="small mute" style="margin-top:0">${t('archiveHelp')}</p>
+    ${arch.map(i => `<div class="bundle spread">
+      <span style="min-width:0"><b>${esc(i.name) || t('unnamed')}</b> · ${money(+i.price || 0)}<br>
+        <span class="small mute">${t('state.' + i.state)}${i.closedAt ? ' · ' + (i.state === 'bought' ? t('boughtOn', fmtDate(i.closedAt)) : t('droppedOn', fmtDate(i.closedAt))) : ''}</span></span>
+      <span class="row"><button class="btn" data-act="restore" data-id="${i.id}">${t('restore')}</button><button class="btn del" data-act="delItem" data-id="${i.id}">${t('del')}</button></span>
+    </div>`).join('')}</div>`;
+}
+
 function viewItems(D) {
-  if (!S.items.length) return emptyState(t('emptyItems'));
-  const cards = S.items.map(i => {
+  const liveItems = S.items.filter(i => !isArchived(i));
+  if (!liveItems.length) return emptyState(t('emptyItems')) + viewArchive();
+  const cards = liveItems.map(i => {
     const p = D.per[i.id];
+    const st = i.state || 'active';
     return `<div class="card">
-      <div class="spread" style="margin-bottom:10px">
-        <input class="name" id="name-${i.id}" data-k="item:${i.id}:name" value="${esc(i.name)}" placeholder="${esc(t('namePh'))}" style="flex:1;min-width:0">
+      <div class="spread">
+        <input class="name" id="name-${i.id}" data-k="item:${i.id}:name" value="${esc(i.name)}" placeholder="${esc(t('namePh'))}" aria-label="${esc(t('namePh'))}" style="flex:1;min-width:0">
         <button class="btn del" data-act="delItem" data-id="${i.id}">${t('del')}</button>
       </div>
+      ${hint('name')}
+      <div class="grid" style="margin-top:12px">
+        <label>${t('grp.state')}<select id="state-${i.id}" data-k="item:${i.id}:state">
+          ${['active', 'bought', 'dropped', 'snoozed'].map(s => `<option value="${s}" ${st === s ? 'selected' : ''}>${t('state.' + s)}</option>`).join('')}
+        </select>${hint('state')}</label>
+        ${st === 'snoozed' ? `<label>${t('snoozeFor')}<span class="row" style="flex-wrap:nowrap">
+          <input id="snoozeN-${i.id}" type="number" min="1" step="1" data-k="item:${i.id}:snoozeN" value="${esc(i.snoozeN || 1)}" style="width:80px" aria-label="${esc(t('snoozeFor'))}">
+          <select id="snoozeUnit-${i.id}" data-k="item:${i.id}:snoozeUnit" aria-label="${esc(t('snoozeFor'))}">${['days', 'months'].map(u => `<option value="${u}" ${(i.snoozeUnit || 'months') === u ? 'selected' : ''}>${t('unit.' + u)}</option>`).join('')}</select>
+        </span><span class="hint" data-d="${i.id}:until">${t('snoozedUntil', fmtDate(i.snoozeUntil))}</span></label>` : ''}
+      </div>
+      ${groupTitle('grp.base')}
       <div class="grid">
-        <label>${t('price')} (${esc(curSym())})<input id="price-${i.id}" type="number" min="0" step="1" data-k="item:${i.id}:price" value="${esc(i.price)}"></label>
+        <label>${t('price')} (${esc(curSym())})<input id="price-${i.id}" type="number" min="0" step="1" data-k="item:${i.id}:price" value="${esc(i.price)}">${hint('price')}</label>
+        <label>${t('added')}<input id="added-${i.id}" type="date" data-k="item:${i.id}:added" value="${esc(i.added)}">${hint('added')}</label>
+      </div>
+      ${groupTitle('grp.priority')}
+      <div class="grid">
         <label>MoSCoW<select id="moscow-${i.id}" data-k="item:${i.id}:moscow">
           ${Object.entries(MOSCOW).map(([k, m]) => `<option value="${k}" ${i.moscow === k ? 'selected' : ''}>${m.label}</option>`).join('')}
-        </select></label>
-        <label>${t('uses')}<input id="uses-${i.id}" type="number" min="0" step="1" data-k="item:${i.id}:uses" value="${esc(i.uses)}"></label>
-        <label>${t('life')}<input id="life-${i.id}" type="number" min="0" step="1" data-k="item:${i.id}:life" value="${esc(i.life)}"></label>
-        <label>${t('added')}<input id="added-${i.id}" type="date" data-k="item:${i.id}:added" value="${esc(i.added)}"></label>
-        <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:6px">
-          <label class="check"><input id="urgent-${i.id}" type="checkbox" data-k="item:${i.id}:urgent" ${i.urgent ? 'checked' : ''}> ${t('urgent')}</label>
-          <label class="check"><input id="important-${i.id}" type="checkbox" data-k="item:${i.id}:important" ${i.important ? 'checked' : ''}> ${t('important')}</label>
-        </div>
+        </select>${hint('moscow')}</label>
+        <div class="checkcell"><label class="check"><input id="urgent-${i.id}" type="checkbox" data-k="item:${i.id}:urgent" ${i.urgent ? 'checked' : ''}> ${t('urgent')}</label>${hint('urgent')}</div>
+        <div class="checkcell"><label class="check"><input id="important-${i.id}" type="checkbox" data-k="item:${i.id}:important" ${i.important ? 'checked' : ''}> ${t('important')}</label>${hint('important')}</div>
       </div>
-      <label style="margin-top:10px">${t('notes')}<textarea id="notes-${i.id}" data-k="item:${i.id}:notes" placeholder="${esc(t('notesPh'))}">${esc(i.notes)}</textarea></label>
-      ${S.items.length > 1 ? `<div style="margin-top:10px">
-        <div class="small mute" style="margin-bottom:6px">${t('together')}</div>
-        <div class="chips">${S.items.filter(o => o.id !== i.id).map(o => {
+      ${groupTitle('grp.usage')}
+      <div class="grid">
+        <label>${t('uses')}<input id="uses-${i.id}" type="number" min="0" step="1" data-k="item:${i.id}:uses" value="${esc(i.uses)}">${hint('uses')}</label>
+        <label>${t('life')}<input id="life-${i.id}" type="number" min="0" step="1" data-k="item:${i.id}:life" value="${esc(i.life)}">${hint('life')}</label>
+      </div>
+      ${groupTitle('notes')}
+      <textarea id="notes-${i.id}" data-k="item:${i.id}:notes" placeholder="${esc(t('notesPh'))}" aria-label="${esc(t('notes'))}">${esc(i.notes)}</textarea>
+      ${hint('notes')}
+      ${liveItems.length > 1 ? `${groupTitle('together')}
+        <div class="chips">${liveItems.filter(o => o.id !== i.id).map(o => {
           const on = (i.links || []).includes(o.id);
           return `<button class="chip ${on ? 'on' : ''}" data-act="toggleLink" data-id="${i.id}" data-other="${o.id}">${on ? '🔗 ' : '+ '}${esc(o.name) || t('unnamed')}</button>`;
-        }).join('')}</div></div>` : ''}
+        }).join('')}</div>${hint('together')}` : ''}
       <div class="derived">
         <span>${t('cpu')}: <b data-d="${i.id}:cpu">${cpuText(p)}</b></span>
         <span>${t('quadrant')}: <b data-d="${i.id}:quad">${t(p.q + '.l')}</b></span>
-        <span data-d="${i.id}:wait">${waitText(p)}</span>
+        <span data-d="${i.id}:wait">${waitText(p, i)}</span>
       </div>
     </div>`;
   }).join('');
-  return `${cards}<button class="btn primary" id="add-item" data-act="addItem">${t('add')}</button>`;
+  return `${cards}<button class="btn primary" id="add-item" data-act="addItem" style="margin-bottom:14px">${t('add')}</button>${viewArchive()}`;
 }
 
-function viewCriteria(D) {
-  const rows = S.criteria.map(c => `<tr>
-      <td>${c.auto ? `<b>${esc(critName(c))}</b>` : `<input id="cname-${c.id}" data-k="crit:${c.id}:name" value="${esc(c.name)}" style="min-width:160px">`}</td>
-      <td>${c.auto ? `<span class="badge b-acc">${t('auto')}</span>` : `<span class="badge b-gray">${t('manual')}</span>`}</td>
-      <td style="min-width:160px"><input id="cweight-${c.id}" type="range" min="0" max="50" data-k="crit:${c.id}:weight" value="${esc(c.weight)}" aria-label="${esc(t('weightOf', critName(c)))}"></td>
-      <td class="num"><b data-d="crit:${c.id}:pct">${pct(c, D)}%</b></td>
-      <td><button class="btn del" data-act="delCrit" data-id="${c.id}" aria-label="${esc(t('delCrit'))}">✕</button></td>
-    </tr>`).join('');
-  return `<div class="card">
-      <h2>${t('budgetTitle')}</h2>
+const SUBS = ['budget', 'wait', 'criteria', 'data', 'how'];
+let sub = 'budget';
+try { sub = localStorage.getItem('bdt:sub') || 'budget'; } catch (e) {}
+
+function backupInfoText() {
+  const parts = [S.lastBackup ? t('lastDl', fmtDate(S.lastBackup)) : t('noDl')];
+  if (autoBackup?.last) parts.push(t('lastAuto', fmtDate(autoBackup.last)) + (autoBackup.file ? ` (${autoBackup.file})` : ''));
+  return parts.join(' · ');
+}
+
+function viewSettings(D) {
+  if (!SUBS.includes(sub)) sub = 'budget';
+  const nav = `<div class="subtabs">${SUBS.map(s => `<button id="sub-${s}" data-sub="${s}" class="${s === sub ? 'on' : ''}">${t('sub.' + s)}</button>`).join('')}</div>`;
+  let body = '';
+  if (sub === 'budget') {
+    body = `<div class="card"><h2>${t('sub.budget')}</h2>
       <div class="grid">
-        <label>${t('budget')} (${esc(curSym())})<input id="set-budget" type="number" min="0" data-k="set:budget" value="${esc(S.budget)}"></label>
-        <label>${t('currency')}<select id="set-currency" data-k="set:currency">${CURRENCIES.map(c => `<option ${S.currency === c ? 'selected' : ''}>${c}</option>`).join('')}</select></label>
-        <label>${t('threshold')} (${esc(curSym())})<input id="set-threshold" type="number" min="0" data-k="set:threshold" value="${esc(S.threshold)}"></label>
-        <label>${t('waitShort')}<input id="set-waitShort" type="number" min="0" data-k="set:waitShort" value="${esc(S.waitShort)}"></label>
-        <label>${t('waitLong')}<input id="set-waitLong" type="number" min="0" data-k="set:waitLong" value="${esc(S.waitLong)}"></label>
-      </div>
-      <p class="small mute" style="margin:10px 0 0">${t('waitHelp')}</p>
-    </div>
-    <div class="card">
-      <h2>${t('critTitle')}</h2>
+        <label>${t('budget')} (${esc(curSym())})<input id="set-budget" type="number" min="0" data-k="set:budget" value="${esc(S.budget)}">${hint('budget')}</label>
+        <label>${t('currency')}<select id="set-currency" data-k="set:currency">${CURRENCIES.map(c => `<option ${S.currency === c ? 'selected' : ''}>${c}</option>`).join('')}</select>${hint('currency')}</label>
+      </div></div>`;
+  } else if (sub === 'wait') {
+    body = `<div class="card"><h2>${t('sub.wait')}</h2>
+      <p class="small mute" style="margin-top:0">${t('waitHelp')}</p>
+      <div class="grid">
+        <label>${t('threshold')} (${esc(curSym())})<input id="set-threshold" type="number" min="0" data-k="set:threshold" value="${esc(S.threshold)}">${hint('threshold')}</label>
+        <label>${t('waitShort')}<input id="set-waitShort" type="number" min="0" data-k="set:waitShort" value="${esc(S.waitShort)}">${hint('waitShort')}</label>
+        <label>${t('waitLong')}<input id="set-waitLong" type="number" min="0" data-k="set:waitLong" value="${esc(S.waitLong)}">${hint('waitLong')}</label>
+      </div></div>`;
+  } else if (sub === 'criteria') {
+    const rows = S.criteria.map(c => `<tr>
+        <td style="min-width:220px">${c.auto
+          ? `<b>${esc(critName(c))}</b><span class="hint">${esc(critDesc(c))}</span>`
+          : `<input id="cname-${c.id}" data-k="crit:${c.id}:name" value="${esc(c.name)}" aria-label="${esc(t('thCrit'))}">
+             <input id="cdesc-${c.id}" data-k="crit:${c.id}:desc" value="${esc(critDesc(c))}" placeholder="${esc(t('critDescPh'))}" aria-label="${esc(t('critDescPh'))}" style="margin-top:6px;font-size:13px">`}</td>
+        <td>${c.auto ? `<span class="badge b-acc">${t('auto')}</span>` : `<span class="badge b-gray">${t('manual')}</span>`}</td>
+        <td style="min-width:140px"><input id="cweight-${c.id}" type="range" min="0" max="50" data-k="crit:${c.id}:weight" value="${esc(c.weight)}" aria-label="${esc(t('weightOf', critName(c)))}"></td>
+        <td class="num"><b data-d="crit:${c.id}:pct">${pct(c, D)}%</b></td>
+        <td><button class="btn del" data-act="delCrit" data-id="${c.id}" aria-label="${esc(t('delCrit'))}">✕</button></td>
+      </tr>`).join('');
+    body = `<div class="card"><h2>${t('critTitle')}</h2>
       <p class="small mute" style="margin-top:0">${t('critHelp')}</p>
+      ${showHints ? `<p class="hint" style="margin-top:0">${t('h.weight')} ${t('h.manual')}</p>` : ''}
       <div class="tablewrap"><table>
         <thead><tr><th>${t('thCrit')}</th><th>${t('thType')}</th><th>${t('thWeight')}</th><th class="num">${t('thShare')}</th><th></th></tr></thead>
         <tbody>${rows}</tbody>
@@ -700,28 +843,39 @@ function viewCriteria(D) {
       <div class="row" style="margin-top:12px">
         <button class="btn primary" id="add-crit" data-act="addCrit">${t('addCrit')}</button>
         ${['price', 'cpu'].filter(a => !S.criteria.some(c => c.auto === a)).map(a => `<button class="btn" data-act="addAuto" data-auto="${a}">+ ${t('crit.' + a)} (auto)</button>`).join('')}
-      </div>
-    </div>
-    <div class="card">
-      <h2>${t('multTitle')}</h2>
+      </div></div>`;
+  } else if (sub === 'data') {
+    const action = (act, cls = '') => `<div class="action"><button class="btn ${cls}" id="btn-${act}" data-act="${act}">${t('btn.' + act)}</button><span class="small mute">${t('h.' + act)}</span></div>`;
+    body = `<div class="card"><h2>${t('sub.data')}</h2>
+      <p class="small mute" style="margin-top:0">${mode ? t('storage.' + mode) : ''}</p>
+      <div class="actions">${action('export', 'primary')}${action('import')}${action('example')}${action('clear', 'del')}</div>
+      <p class="small mute" id="backup-info" style="margin:14px 0 0">${backupInfoText()}</p>
+      </div>`;
+  } else {
+    body = `<div class="card"><h2>${t('howTitle')}</h2>
+      <ol class="small">${t('how').map(h => `<li>${h}</li>`).join('')}</ol></div>
+      <div class="card"><h2>${t('multTitle')}</h2>
       <div class="grid small">
         <div><b>MoSCoW</b><br>${Object.values(MOSCOW).map(m => `${m.label}: ×${fnum(m.f)}`).join('<br>')}</div>
         <div><b>Eisenhower</b><br>${Object.keys(QF).map(q => `${t(q + '.l')}: ×${fnum(QF[q])}`).join('<br>')}</div>
-      </div>
-    </div>`;
+      </div></div>`;
+  }
+  return nav + body;
 }
 
 function viewScores(D) {
-  if (!S.items.length) return emptyState(t('emptyScores'));
-  const head = S.criteria.map(c => `<th class="num">${esc(critName(c))}<br><span class="mute">${pct(c, D)}%</span></th>`).join('');
-  const rows = S.items.map(i => {
+  if (!D.live.length) return emptyState(t('emptyScores'));
+  const legend = `<div class="card"><h2>${t('critLegend')}</h2>
+    <ul class="small" style="margin:0;padding-left:18px">${S.criteria.map(c => `<li><b>${esc(critName(c))}</b> · ${pct(c, D)}%${critDesc(c) ? ` — ${esc(critDesc(c))}` : ''}</li>`).join('')}</ul></div>`;
+  const head = S.criteria.map(c => `<th class="num" title="${esc(critDesc(c))}">${esc(critName(c))}<br><span class="mute">${pct(c, D)}%</span></th>`).join('');
+  const rows = D.live.map(i => {
     const p = D.per[i.id];
     const cells = S.criteria.map(c => c.auto
       ? `<td class="num auto" data-d="${i.id}:sc:${c.id}">${n1(p.sc[c.id])}</td>`
       : `<td class="num"><input id="score-${i.id}-${c.id}" type="number" min="1" max="10" step="1" data-k="score:${i.id}:${c.id}" value="${esc(i.scores?.[c.id] ?? 5)}" aria-label="${esc(t('scoreOf', critName(c), i.name))}"></td>`).join('');
     return `<tr><td>${esc(i.name) || `<span class="mute">${t('unnamed')}</span>`} ${i.moscow === 'W' ? `<span class="badge b-gray">${t('excludedBadge')}</span>` : ''}</td>${cells}<td class="num"><b data-d="${i.id}:matrix">${n1(p.matrix)}</b></td></tr>`;
   }).join('');
-  return `<div class="card">
+  return `${legend}<div class="card">
     <p class="small mute" style="margin-top:0">${t('scoresHelp')}</p>
     <div class="tablewrap"><table>
       <thead><tr><th>${t('thItem')}</th>${head}<th class="num">${t('thMatrix')}</th></tr></thead>
@@ -731,7 +885,9 @@ function viewScores(D) {
 }
 
 function viewResults(D) {
-  if (!S.items.length) return emptyState(t('emptyResults'));
+  if (!D.live.length) return emptyState(t('emptyResults')) + viewArchive();
+  const boughtItems = S.items.filter(i => i.state === 'bought');
+  const archLine = boughtItems.length ? `<p class="small mute" style="margin:10px 0 0">${t('archSummary', boughtItems.length, money(boughtItems.reduce((a, i) => a + (+i.price || 0), 0)))}</p>` : '';
   const max = Math.max(1e-9, ...D.ranked.map(i => D.per[i.id].final));
   const next = D.ranked.find(i => D.per[i.id].status === 'buy');
   const waiting = D.ranked.filter(i => D.per[i.id].status === 'wait');
@@ -750,7 +906,7 @@ function viewResults(D) {
     <div class="kpi"><div class="v">${money(D.spent)}</div><div class="l">${t('kSpend')}</div></div>
     <div class="kpi"><div class="v">${money(Math.max(0, D.budget - D.spent))}</div><div class="l">${t('kLeft')}</div></div>
     <div class="kpi"><div class="v">${waiting.length}</div><div class="l">${t('kWaiting')}</div></div>
-  </div>`;
+  </div>${archLine ? `<div style="margin:-6px 0 14px">${archLine}</div>` : ''}`;
 
   const rows = D.ranked.map((i, n) => {
     const p = D.per[i.id];
@@ -763,12 +919,12 @@ function viewResults(D) {
       <td class="num">${cpuText(p)}</td>
       <td style="min-width:150px"><div class="row" style="flex-wrap:nowrap"><div class="bar" style="flex:1"><i style="width:${100 * p.final / max}%"></i></div><b class="num">${n1(p.final)}</b></div>
         <span class="small mute">${n1(p.matrix)} × ${fnum(p.mF)} × ${fnum(QF[p.q])}</span></td>
-      <td>${statusBadge(p.status)}${p.status === 'wait' ? `<br><span class="small mute">${p.remaining > 0 ? t('daysLeft', p.remaining) : t('waitsBundle')}</span>` : ''}</td>
+      <td>${statusBadge(p.status)}${p.status === 'wait' ? `<br><span class="small mute">${p.snoozed ? t('snoozedUntil', fmtDate(i.snoozeUntil)) : p.remaining > 0 ? t('daysLeft', p.remaining) : t('waitsBundle')}</span>` : ''}</td>
     </tr>`;
   }).join('');
 
   const list = q => {
-    const its = S.items.filter(i => D.per[i.id].q === q);
+    const its = D.live.filter(i => D.per[i.id].q === q);
     return its.length ? `<ul>${its.map(i => `<li>${esc(i.name)}${i.moscow === 'W' ? ` <span class="mute">(${t('excludedBadge')})</span>` : ''}</li>`).join('')}</ul>` : '<p>—</p>';
   };
   const qbox = q => `<div class="q ${q}"><h3>${t(q + '.s')}</h3><p>${t(q + '.l')}. ${t(q + '.h')}</p>${list(q)}</div>`;
@@ -794,13 +950,11 @@ function viewResults(D) {
       <div class="ax"><span class="axv">${t('axNotImp')}</span></div>${qbox('q3')}${qbox('q4')}
     </div>
   </div>
-  <div class="card"><details><summary>${t('howTitle')}</summary>
-    <ol class="small">${t('how').map(h => `<li>${h}</li>`).join('')}</ol>
-  </details></div>`;
+  <p class="small"><button class="linkbtn" data-act="goHow">${t('howLink')}</button></p>`;
 }
 
 /* ================= render ================= */
-const VIEWS = {items:viewItems, criteria:viewCriteria, scores:viewScores, results:viewResults};
+const VIEWS = {items:viewItems, scores:viewScores, results:viewResults, settings:viewSettings};
 function render() {
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
   const v = document.getElementById('view');
@@ -810,6 +964,7 @@ function render() {
 function renderStatic() {
   document.documentElement.lang = lang;
   document.getElementById('lang').value = lang;
+  document.getElementById('hints-toggle').checked = showHints;
   document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
   setSync(syncState, syncMsg);
   document.getElementById('storage-info').textContent = mode ? t('storage.' + mode) : '';
@@ -823,7 +978,8 @@ function refreshDerived() {
     const p = D.per[i.id];
     map[`${i.id}:cpu`] = cpuText(p);
     map[`${i.id}:quad`] = t(p.q + '.l');
-    map[`${i.id}:wait`] = waitText(p);
+    map[`${i.id}:wait`] = waitText(p, i);
+    map[`${i.id}:until`] = t('snoozedUntil', fmtDate(i.snoozeUntil));
     map[`${i.id}:matrix`] = n1(p.matrix);
     for (const c of S.criteria) map[`${i.id}:sc:${c.id}`] = n1(p.sc[c.id]);
   }
@@ -831,9 +987,8 @@ function refreshDerived() {
   document.querySelectorAll('[data-d]').forEach(el => { if (el.dataset.d in map) el.textContent = map[el.dataset.d]; });
 }
 function renderBackupInfo() {
-  const parts = [S.lastBackup ? t('lastDl', fmtDate(S.lastBackup)) : t('noDl')];
-  if (autoBackup?.last) parts.push(t('lastAuto', fmtDate(autoBackup.last)) + (autoBackup.file ? ` (${autoBackup.file})` : ''));
-  document.getElementById('backup-info').textContent = parts.join(' · ');
+  const el = document.getElementById('backup-info');
+  if (el) el.textContent = backupInfoText();
 }
 function renderBanners(extra) {
   const b = [];
@@ -842,19 +997,28 @@ function renderBanners(extra) {
   if (loaded && dbOk !== false && S.items.length) {
     const last = [S.lastBackup, autoBackup?.last].filter(Boolean).map(d => new Date(d).getTime());
     const age = last.length ? Math.floor((Date.now() - Math.max(...last)) / DAY) : null;
-    if (age === null || age > 8) b.push(`<div class="banner warn">${age === null ? t('noBackup') : t('oldBackup', age)} ${t('useBackup')}</div>`);
+    if (age === null || age > 8) b.push(`<div class="banner warn spread"><span>${age === null ? t('noBackup') : t('oldBackup', age)}</span><button class="btn" id="banner-export" data-act="export">${t('btn.export')}</button></div>`);
   }
   document.getElementById('banners').innerHTML = b.join('');
 }
 
 /* ================= eventi ================= */
-const NUM = new Set(['price', 'uses', 'life', 'weight', 'budget', 'threshold', 'waitShort', 'waitLong']);
+const NUM = new Set(['price', 'uses', 'life', 'weight', 'budget', 'threshold', 'waitShort', 'waitLong', 'snoozeN']);
 function onEdit(e) {
   const k = e.target.dataset.k; if (!k || !loaded) return;
   const [kind, id, field] = k.split(':');
   const el = e.target;
   const val = el.type === 'checkbox' ? el.checked : (NUM.has(field) || NUM.has(id)) ? (el.value === '' ? '' : +el.value) : el.value;
-  if (kind === 'item') { const i = S.items.find(x => x.id === id); if (!i) return; i[field] = val; queueWrite('items/' + id); }
+  if (kind === 'item') {
+    const i = S.items.find(x => x.id === id); if (!i) return;
+    i[field] = val;
+    if (['state', 'snoozeN', 'snoozeUnit'].includes(field)) {
+      if (i.state === 'snoozed') { i.snoozeN = Math.max(1, +i.snoozeN || 1); i.snoozeUnit = i.snoozeUnit || 'months'; i.snoozeUntil = snoozeDate(i.snoozeN, i.snoozeUnit); }
+      else i.snoozeUntil = null;
+      if (field === 'state') { i.closedAt = isArchived(i) ? todayISO() : null; queueWrite('items/' + id, true); render(); return; }
+    }
+    queueWrite('items/' + id);
+  }
   else if (kind === 'crit') { const c = S.criteria.find(x => x.id === id); if (!c) return; c[field] = val; queueWrite('app/settings'); }
   else if (kind === 'score') { const i = S.items.find(x => x.id === id); if (!i) return; i.scores = i.scores || {}; i.scores[field] = el.value === '' ? 5 : clamp(+el.value, 1, 10); queueWrite('items/' + id); }
   else if (kind === 'set') { S[id] = val; queueWrite('app/settings'); if (id === 'currency') { render(); return; } }
@@ -866,6 +1030,15 @@ document.addEventListener('change', e => { if (e.target.type === 'checkbox' || (
 document.getElementById('lang').addEventListener('change', e => {
   lang = e.target.value; try { localStorage.setItem('bdt:lang', lang); } catch (err) {}
   needRender = false; renderAll();
+});
+document.getElementById('hints-toggle').addEventListener('change', e => {
+  showHints = e.target.checked; try { localStorage.setItem('bdt:hints', showHints ? '1' : '0'); } catch (err) {}
+  needRender = false; render();
+});
+document.getElementById('view').addEventListener('click', e => {
+  const s = e.target.closest('[data-sub]')?.dataset.sub; if (!s) return;
+  sub = s; try { localStorage.setItem('bdt:sub', sub); } catch (err) {}
+  needRender = false; render();
 });
 document.getElementById('tabs').addEventListener('click', e => {
   const tb = e.target.closest('button')?.dataset.tab; if (!tb) return;
@@ -948,6 +1121,14 @@ document.addEventListener('click', async e => {
     }
   } else if (act === 'import') {
     document.getElementById('file').click();
+  } else if (act === 'restore') {
+    const i = S.items.find(x => x.id === id); if (!i) return;
+    i.state = 'active'; i.closedAt = null; i.snoozeUntil = null;
+    queueWrite('items/' + id, true); render();
+  } else if (act === 'goHow') {
+    tab = 'settings'; sub = 'how';
+    try { localStorage.setItem('bdt:tab', tab); localStorage.setItem('bdt:sub', sub); } catch (err) {}
+    render(); window.scrollTo(0, 0);
   }
 });
 document.getElementById('file').addEventListener('change', async e => {
