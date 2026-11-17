@@ -15,7 +15,7 @@ The software is provided "as is", without warranty of any kind, as stated in the
 
 ## Italiano
 
-Buy Decision Tool è uno strumento di supporto alle decisioni. Classifiche, punteggi e consigli derivano solo dai dati, dai pesi e dalle regole che inserisci, e da un calcolo semplice che puoi leggere nel codice sorgente. Sono indicativi e possono essere sbagliati o inadatti alla tua situazione.
+Buy Decision Tool è uno strumento di supporto alle decisioni per i tuoi acquisti. Classifiche, punteggi e consigli derivano solo dai dati, dai pesi e dalle regole che inserisci, e da un calcolo semplice che puoi leggere nel codice sorgente. Sono indicativi e possono essere sbagliati o inadatti alla tua situazione.
 
 - Non è una consulenza finanziaria, legale o professionale.
 - Sei solo tu a decidere cosa comprare, quando e quanto spendere. Tu sei responsabile di queste decisioni e delle loro conseguenze.
