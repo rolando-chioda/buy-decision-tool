@@ -278,7 +278,7 @@ const T = {
     'v3.s': 'Sfizio', 'v3.h': 'Costa poco ma serve poco: solo se ti avanza qualcosa.',
     'v4.s': 'Da evitare', 'v4.h': 'Costa tanto e serve poco: lascia perdere o cerca altro.',
     eisTitle: 'Matrice di Eisenhower', axUrgent: 'Urgente', axNotUrgent: 'Non urgente', axImp: 'Importante', axNotImp: 'Non importante',
-    howTitle: 'Come viene calcolato',
+    howTitle: 'Come viene calcolato', howNote: 'Non è uno strumento per gestire un budget: se metti un articolo in lista è perché te lo puoi permettere. Serve solo a capire se e quando comprarlo.',
     how: [
       '<b>Matrice pesata</b>: media dei voti (1–10) pesata con i pesi dei criteri. Prezzo e costo per utilizzo sono votati in automatico.',
       '<b>MoSCoW</b>: moltiplica per ×1 (Must), ×0,75 (Should), ×0,5 (Could). I "Won\'t" sono esclusi.',
@@ -383,7 +383,7 @@ const T = {
     'v3.s': 'Treat', 'v3.h': 'Cheap but of little use: only if you have money to spare.',
     'v4.s': 'Avoid', 'v4.h': 'Costly and of little use: skip it or look for something else.',
     eisTitle: 'Eisenhower matrix', axUrgent: 'Urgent', axNotUrgent: 'Not urgent', axImp: 'Important', axNotImp: 'Not important',
-    howTitle: 'How it is calculated',
+    howTitle: 'How it is calculated', howNote: 'It is not a budgeting tool: if you put an item on the list, it is because you can afford it. It only helps you work out whether and when to buy it.',
     how: [
       '<b>Weighted matrix</b>: average of the scores (1–10) weighted by the criteria weights. Price and cost per use are scored automatically.',
       '<b>MoSCoW</b>: multiplies by ×1 (Must), ×0.75 (Should), ×0.5 (Could). "Won\'t" items are excluded.',
@@ -488,7 +488,7 @@ const T = {
     'v3.s': 'Petit plaisir', 'v3.h': 'Pas cher mais peu utile : seulement si vous avez de quoi.',
     'v4.s': 'À éviter', 'v4.h': 'Cher et peu utile : laissez tomber ou cherchez autre chose.',
     eisTitle: "Matrice d'Eisenhower", axUrgent: 'Urgent', axNotUrgent: 'Pas urgent', axImp: 'Important', axNotImp: 'Pas important',
-    howTitle: 'Mode de calcul',
+    howTitle: 'Mode de calcul', howNote: "Ce n'est pas un outil de gestion de budget : si vous mettez un article dans la liste, c'est que vous pouvez vous le permettre. Il sert seulement à décider si et quand l'acheter.",
     how: [
       '<b>Matrice pondérée</b> : moyenne des notes (1–10) pondérée par les poids des critères. Le prix et le coût par utilisation sont notés automatiquement.',
       "<b>MoSCoW</b> : multiplie par ×1 (Must), ×0,75 (Should), ×0,5 (Could). Les « Won't » sont exclus.",
@@ -1002,6 +1002,7 @@ function viewSettings(D) {
       </div>`;
   } else {
     body = `<div class="card"><h2>${t('howTitle')}</h2>
+      <div class="banner" style="margin:0 0 12px;background:var(--gray-soft)">${t('howNote')}</div>
       <ol class="small">${t('how').map(h => `<li>${h}</li>`).join('')}</ol></div>
       <div class="card"><h2>${t('multTitle')}</h2>
       <div class="grid small">
