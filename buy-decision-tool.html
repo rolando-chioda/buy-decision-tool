@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Buy Decision Tool</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Buy Decision Tool — one file, works everywhere.
+   Layout: one centered work column; tabs for the four steps, results as a ranked ledger */
+:root{
+  --bg:#f5f6f4;--card:#ffffff;--ink:#1c1f1d;--mute:#646b67;--line:#dfe3e0;
+  --acc:#2d6a4f;--acc-soft:#e2efe8;--on-acc:#ffffff;
+  --ok:#1f8a4c;--ok-soft:#e3f4ea;--warn:#a86400;--warn-soft:#fbf0dc;--bad:#c0392b;--bad-soft:#fbe5e2;
+  --gray-soft:#ecefed;--shade:rgba(20,24,22,.45);
+  --f-display:"Space Grotesk",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121614;--card:#1b201d;--ink:#e8ece9;--mute:#9aa49e;--line:#2f3632;
+  --acc:#74c69d;--acc-soft:#1d3229;--on-acc:#0f1a14;
+  --ok:#4cc27e;--ok-soft:#173022;--warn:#e6a23c;--warn-soft:#352a14;--bad:#ef6b5b;--bad-soft:#3a1d1a;
+  --gray-soft:#252b28;--shade:rgba(0,0,0,.6);color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#121614;--card:#1b201d;--ink:#e8ece9;--mute:#9aa49e;--line:#2f3632;
+  --acc:#74c69d;--acc-soft:#1d3229;--on-acc:#0f1a14;
+  --ok:#4cc27e;--ok-soft:#173022;--warn:#e6a23c;--warn-soft:#352a14;--bad:#ef6b5b;--bad-soft:#3a1d1a;
+  --gray-soft:#252b28;--shade:rgba(0,0,0,.6);color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body)}
+.wrap{max-width:1040px;margin:0 auto;padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance}
+h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:17px;margin:0 0 10px}
+.sub{color:var(--mute);margin:0}
+.mute{color:var(--mute)}
+.small{font-size:13px}
+header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.tools{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.tools select{width:auto;padding:4px 8px;font-size:13px}
+.sync{font-size:12px;color:var(--mute);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--mute);display:inline-block}
+.sync[data-s="saved"] i,.sync[data-s="local"] i{background:var(--ok)}
+.sync[data-s="saving"] i{background:var(--warn)}
+.sync[data-s="error"] i,.sync[data-s="offline"] i{background:var(--bad)}
+nav{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:18px;overflow-x:auto}
+nav button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;font:inherit;color:var(--mute);cursor:pointer;white-space:nowrap}
+nav button.on{color:var(--ink);border-color:var(--acc);font-weight:600}
+nav button:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 14px}
+label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mute)}
+label.check{flex-direction:row;align-items:center;gap:6px;font-size:14px;color:var(--ink)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%}
+textarea{resize:vertical;min-height:60px;line-height:1.4}
+input[type=checkbox]{width:18px;height:18px;padding:0;accent-color:var(--acc)}
+input[type=range]{padding:0;accent-color:var(--acc)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acc);outline-offset:-1px}
+.name{font-weight:600;font-size:16px}
+.btn{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 12px;cursor:pointer}
+.btn:hover{border-color:var(--acc)}
+.btn:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.btn.del{color:var(--bad)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.derived{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);font-size:13px}
+.derived b{font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--mute);border-radius:999px;padding:4px 10px;cursor:pointer}
+.chip.on{background:var(--acc-soft);border-color:var(--acc);color:var(--acc);font-weight:600}
+.note{white-space:pre-wrap;overflow-wrap:anywhere}
+.bundle{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:8px}
+.badge{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.b-ok{background:var(--ok-soft);color:var(--ok)}
+.b-warn{background:var(--warn-soft);color:var(--warn)}
+.b-bad{background:var(--bad-soft);color:var(--bad)}
+.b-gray{background:var(--gray-soft);color:var(--mute)}
+.b-acc{background:var(--acc-soft);color:var(--acc)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-family:inherit;font-size:14px;color:inherit}
+th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:12px;color:var(--mute);font-weight:600;letter-spacing:.02em}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+td input[type=number]{width:64px;text-align:right}
+.auto{color:var(--mute);font-style:italic}
+.bar{height:8px;background:var(--gray-soft);border-radius:4px;overflow:hidden;min-width:80px}
+.bar i{display:block;height:100%;background:var(--acc)}
+.quad{display:grid;grid-template-columns:auto 1fr 1fr;gap:8px}
+.quad .q{border-radius:10px;padding:12px;min-height:90px;min-width:0}
+.quad .q h3{margin:0 0 2px;font-size:14px}
+.quad .q p{margin:0 0 8px;font-size:12px;color:var(--mute)}
+.quad .q ul{margin:0;padding-left:18px;font-size:14px}
+.quad .ax{font-size:12px;color:var(--mute);display:flex;align-items:center;justify-content:center}
+.quad .axv{writing-mode:vertical-rl;transform:rotate(180deg)}
+.q1{background:var(--bad-soft)}.q2{background:var(--ok-soft)}.q3{background:var(--warn-soft)}.q4{background:var(--gray-soft)}
+.reco{border-left:4px solid var(--ok)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--bg);border-radius:10px;padding:10px 12px}
+.kpi .v{font-family:var(--f-display);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:12px;color:var(--mute)}
+.banner{border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+.banner.warn{background:var(--warn-soft);color:var(--ink)}
+.banner.bad{background:var(--bad-soft);color:var(--ink)}
+.empty{text-align:center;padding:32px 16px}
+details summary{cursor:pointer;color:var(--mute);font-size:14px}
+footer{margin-top:28px;display:flex;flex-direction:column;gap:10px}
+#modal{position:fixed;inset:0;background:var(--shade);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+#modal .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;max-width:420px;width:100%}
+#modal p{margin:0 0 14px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:14px;z-index:30;max-width:calc(100% - 32px)}
+@media (max-width:600px){.quad{grid-template-columns:1fr}.quad .ax{display:none}.tools{align-items:flex-start}}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Buy Decision Tool</h1>
+      <p class="sub" data-i18n="subtitle"></p>
+    </div>
+    <div class="tools">
+      <select id="lang" aria-label="Language">
+        <option value="it">Italiano</option>
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+      </select>
+      <div class="sync" id="sync" data-s="loading"><i></i><span></span></div>
+    </div>
+  </header>
+  <div id="banners"></div>
+  <nav id="tabs">
+    <button id="tab-items" data-tab="items" data-i18n="tab.items"></button>
+    <button id="tab-criteria" data-tab="criteria" data-i18n="tab.criteria"></button>
+    <button id="tab-scores" data-tab="scores" data-i18n="tab.scores"></button>
+    <button id="tab-results" data-tab="results" data-i18n="tab.results"></button>
+  </nav>
+  <main id="view"></main>
+  <footer>
+    <div class="row">
+      <button class="btn" id="btn-export" data-act="export" data-i18n="btn.export"></button>
+      <button class="btn" id="btn-import" data-act="import" data-i18n="btn.import"></button>
+      <button class="btn" id="btn-example" data-act="example" data-i18n="btn.example"></button>
+      <button class="btn del" id="btn-clear" data-act="clear" data-i18n="btn.clear"></button>
+      <input type="file" id="file" accept="application/json,.json" hidden>
+    </div>
+    <div class="small mute" id="backup-info"></div>
+    <div class="small mute" id="storage-info"></div>
+    <div class="small mute" data-i18n="disclaimer"></div>
+  </footer>
+</div>
+<div id="modal" hidden><div class="box"><p id="modal-msg"></p><div class="row" style="justify-content:flex-end"><button class="btn" id="modal-cancel" data-cancel></button><button class="btn primary" id="modal-ok" data-ok></button></div></div></div>
+<div id="toast" hidden></div>
+
+<script>
+/* ================= i18n ================= */
+const T = {
+  it: {
+    subtitle: "Matrice pesata, MoSCoW, Eisenhower, costo per utilizzo, regola dell'attesa e pacchetti.",
+    'tab.items': '1 · Articoli', 'tab.criteria': '2 · Criteri e regole', 'tab.scores': '3 · Valutazioni', 'tab.results': '4 · Risultati',
+    'sync.loading': 'Caricamento…', 'sync.saving': 'Salvataggio…', 'sync.saved': 'Salvato', 'sync.error': 'Errore di salvataggio', 'sync.offline': 'Non salvato', 'sync.local': 'Salvato in questo browser',
+    'btn.export': 'Scarica backup (JSON)', 'btn.import': 'Importa JSON', 'btn.example': 'Carica esempio', 'btn.clear': 'Svuota tutto',
+    disclaimer: 'Strumento di supporto: i risultati sono indicativi e la decisione finale è tua. Nessuna garanzia.',
+    'storage.local': 'I dati restano in questo browser. Usa "Scarica backup" per conservarne una copia.',
+    'storage.claude': 'I dati sono salvati nel database di questa pagina su claude.ai.',
+    cancel: 'Annulla', confirm: 'Conferma',
+    'q1.l': 'Urgente e importante', 'q1.s': 'Compra presto', 'q1.h': 'Serve davvero e serve ora.',
+    'q2.l': 'Importante, non urgente', 'q2.s': 'Pianifica', 'q2.h': 'Vale la pena: scegli con calma il momento migliore.',
+    'q3.l': 'Urgente, non importante', 'q3.s': 'Ridimensiona', 'q3.h': "Sembra urgente ma conta poco: cerca un'alternativa economica.",
+    'q4.l': 'Né urgente né importante', 'q4.s': 'Rimanda', 'q4.h': 'Probabilmente un desiderio: aspetta.',
+    emptyTitle: 'Nessun articolo',
+    emptyItems: 'Aggiungi le cose che vorresti comprare: prezzo, priorità, quanto le userai.',
+    emptyScores: 'Le valutazioni compaiono qui dopo aver aggiunto qualche articolo.',
+    emptyResults: 'La classifica compare qui dopo aver aggiunto qualche articolo.',
+    addFirst: '+ Aggiungi il primo articolo', add: '+ Aggiungi articolo', namePh: 'Nome articolo', del: 'Elimina',
+    price: 'Prezzo', uses: 'Utilizzi al mese', life: 'Durata prevista (mesi)', added: 'Desiderato dal',
+    urgent: 'Urgente', important: 'Importante', notes: 'Note', notesPh: 'Link, modello, negozio, dubbi…',
+    together: 'Da comprare insieme a:', unnamed: 'senza nome', cpu: 'Costo per utilizzo', quadrant: 'Quadrante',
+    waitLeft: n => `⏳ aspetta ancora ${n} ${n === 1 ? 'giorno' : 'giorni'}`, waitDone: '✓ attesa superata', na: 'n.d.',
+    budgetTitle: "Budget e regola dell'attesa", budget: 'Budget disponibile', threshold: 'Soglia "acquisto importante"',
+    waitShort: 'Attesa sotto soglia (giorni)', waitLong: 'Attesa sopra soglia (giorni)', currency: 'Valuta',
+    waitHelp: 'Un articolo diventa acquistabile solo dopo il periodo di attesa, contato dalla data "Desiderato dal".',
+    critTitle: 'Criteri della matrice pesata',
+    critHelp: "I pesi sono relativi: la quota è calcolata sul totale. I criteri automatici danno 10 all'articolo più conveniente e 1 al più caro.",
+    thCrit: 'Criterio', thType: 'Tipo', thWeight: 'Peso', thShare: 'Quota', auto: 'automatico', manual: 'voto manuale',
+    addCrit: '+ Aggiungi criterio', newCrit: 'Nuovo criterio', delCrit: 'Elimina criterio', weightOf: n => `Peso ${n}`,
+    'crit.price': 'Prezzo', 'crit.cpu': 'Costo per utilizzo', 'crit.util': 'Utilità / qualità', 'crit.ease': "Facilità d'uso", 'crit.dur': 'Affidabilità nel tempo',
+    multTitle: 'Moltiplicatori',
+    scoresHelp: 'Dai un voto da 1 (pessimo) a 10 (ottimo) a ogni articolo. I valori in corsivo sono calcolati in automatico da prezzo e costo per utilizzo.',
+    thItem: 'Articolo', thMatrix: 'Punteggio<br>matrice', excludedBadge: 'escluso', scoreOf: (c, i) => `${c} per ${i}`,
+    recoTitle: 'Prossimo acquisto consigliato', bundleSuffix: ' (pacchetto)', total: 'Totale',
+    recoHelp: "Punteggio più alto tra gli articoli che hanno superato l'attesa e rientrano nel budget.",
+    noReco: 'Nessun acquisto consigliato ora', noRecoWait: 'Gli articoli migliori sono ancora nel periodo di attesa.', noRecoBudget: 'Nessun articolo rientra nel budget.',
+    kBudget: 'Budget', kSpend: 'Da spendere ora (articoli "Compra")', kLeft: 'Budget residuo', kWaiting: 'Articoli in attesa',
+    rankTitle: 'Classifica', thPrice: 'Prezzo', thCpu: 'Costo/uso', thFinal: 'Punteggio finale', thFinalSub: 'matrice × MoSCoW × Eisenhower', thStatus: 'Stato',
+    noActive: 'Nessun articolo attivo.', excludedList: "Esclusi (Won't have):", with: 'insieme a',
+    'st.buy': 'Compra', 'st.wait': 'In attesa', 'st.over': 'Fuori budget', 'st.excluded': 'Escluso',
+    daysLeft: n => `ancora ${n} gg`, waitsBundle: 'attende il resto del pacchetto',
+    bundlesTitle: 'Pacchetti (da comprare insieme)',
+    bundlesHelp: "Un pacchetto si compra solo quando tutti i suoi articoli hanno superato l'attesa e il totale entra nel budget. Gli articoli \"Won't have\" non entrano nei pacchetti.",
+    eisTitle: 'Matrice di Eisenhower', axUrgent: 'Urgente', axNotUrgent: 'Non urgente', axImp: 'Importante', axNotImp: 'Non importante',
+    howTitle: 'Come viene calcolato',
+    how: [
+      '<b>Matrice pesata</b>: media dei voti (1–10) pesata con i pesi dei criteri. Prezzo e costo per utilizzo sono votati in automatico.',
+      '<b>MoSCoW</b>: moltiplica per ×1 (Must), ×0,75 (Should), ×0,5 (Could). I "Won\'t" sono esclusi.',
+      '<b>Eisenhower</b>: moltiplica per ×1,2 / ×1 / ×0,8 / ×0,6 secondo il quadrante.',
+      "<b>Regola dell'attesa</b>: un articolo ancora nel periodo di attesa resta in classifica ma non viene consigliato.",
+      '<b>Budget</b>: scorrendo la classifica, ogni articolo pronto viene messo in "Compra" se entra nel budget residuo, altrimenti "Fuori budget".',
+      '<b>Pacchetti</b>: gli articoli collegati (anche a catena: A con B, B con C) formano un pacchetto. Il pacchetto prende la posizione del suo articolo migliore, e attesa e budget valgono per tutto il gruppo.',
+    ],
+    dbDown: 'Non riesco a raggiungere il database: le modifiche potrebbero non essere salvate. Controlla la connessione e ricarica la pagina.',
+    localFail: 'Questo browser non permette di salvare i dati: usa "Scarica backup" prima di chiudere la pagina.',
+    noBackup: 'Non hai ancora un backup.', oldBackup: n => `L'ultimo backup ha ${n} giorni.`, useBackup: 'Usa "Scarica backup" in fondo alla pagina.',
+    lastDl: d => `Ultimo backup scaricato: ${d}`, noDl: 'Nessun backup scaricato', lastAuto: d => `Ultimo backup automatico: ${d}`,
+    tCleared: 'Dati cancellati', tDlOk: 'Backup scaricato', tDlFail: 'Download non riuscito', tImported: n => `Importati ${n} articoli`,
+    tImportFail: 'Impossibile importare: ', badFile: 'il file non contiene articoli e criteri', quota: 'Spazio esaurito: elimina qualche articolo',
+    connLost: 'Connessione persa: ricarica la pagina', dbUnavailable: 'Database non disponibile', tExample: 'Esempio caricato',
+    askDel: n => `Eliminare "${n}"?`, askClear: 'Cancellare tutti gli articoli? Criteri e regole tornano a quelli predefiniti. Conviene scaricare prima un backup.',
+    askImport: (n, f) => `Sostituire tutti i dati attuali con i ${n} articoli di "${f}"?`, askExample: "Sostituire i dati attuali con l'esempio?",
+    okDel: 'Elimina', okClear: 'Svuota', okImport: 'Importa', okExample: 'Carica',
+    loadingItems: 'Caricamento dei tuoi articoli…',
+    ex: ['Streamer AirPlay per giradischi', 'Kit Raspberry Pi + DAC (fai da te)', 'Puntina di ricambio', 'Casse attive Bluetooth', 'Lampada da lettura vintage'],
+    exNotes: ['Esempio. Verificare che abbia ingresso phono, altrimenti serve un preamplificatore.', 'Esempio. Alternativa economica allo streamer: serve tempo per configurarlo.', "Esempio. Stesso negozio dello streamer: un'unica spedizione.", 'Esempio.', 'Esempio.'],
+  },
+  en: {
+    subtitle: 'Weighted matrix, MoSCoW, Eisenhower, cost per use, waiting rule and bundles.',
+    'tab.items': '1 · Items', 'tab.criteria': '2 · Criteria & rules', 'tab.scores': '3 · Scores', 'tab.results': '4 · Results',
+    'sync.loading': 'Loading…', 'sync.saving': 'Saving…', 'sync.saved': 'Saved', 'sync.error': 'Save failed', 'sync.offline': 'Not saved', 'sync.local': 'Saved in this browser',
+    'btn.export': 'Download backup (JSON)', 'btn.import': 'Import JSON', 'btn.example': 'Load example', 'btn.clear': 'Clear all',
+    disclaimer: 'A decision aid: results are indicative and the final decision is yours. No warranty.',
+    'storage.local': 'Your data stays in this browser. Use "Download backup" to keep a copy.',
+    'storage.claude': "Your data is saved in this page's database on claude.ai.",
+    cancel: 'Cancel', confirm: 'Confirm',
+    'q1.l': 'Urgent and important', 'q1.s': 'Buy soon', 'q1.h': 'You really need it, and now.',
+    'q2.l': 'Important, not urgent', 'q2.s': 'Plan it', 'q2.h': 'Worth it: pick the best moment calmly.',
+    'q3.l': 'Urgent, not important', 'q3.s': 'Scale down', 'q3.h': 'Feels urgent but matters little: look for a cheaper option.',
+    'q4.l': 'Neither urgent nor important', 'q4.s': 'Postpone', 'q4.h': 'Probably a want: wait.',
+    emptyTitle: 'No items yet',
+    emptyItems: 'Add the things you would like to buy: price, priority, how much you will use them.',
+    emptyScores: 'Scores appear here once you add some items.',
+    emptyResults: 'The ranking appears here once you add some items.',
+    addFirst: '+ Add your first item', add: '+ Add item', namePh: 'Item name', del: 'Delete',
+    price: 'Price', uses: 'Uses per month', life: 'Expected lifespan (months)', added: 'Wanted since',
+    urgent: 'Urgent', important: 'Important', notes: 'Notes', notesPh: 'Link, model, shop, doubts…',
+    together: 'Buy together with:', unnamed: 'unnamed', cpu: 'Cost per use', quadrant: 'Quadrant',
+    waitLeft: n => `⏳ wait ${n} more ${n === 1 ? 'day' : 'days'}`, waitDone: '✓ waiting period over', na: 'n/a',
+    budgetTitle: 'Budget and waiting rule', budget: 'Available budget', threshold: '"Big purchase" threshold',
+    waitShort: 'Wait below threshold (days)', waitLong: 'Wait above threshold (days)', currency: 'Currency',
+    waitHelp: 'An item becomes buyable only after the waiting period, counted from its "Wanted since" date.',
+    critTitle: 'Weighted matrix criteria',
+    critHelp: 'Weights are relative: the share is computed on the total. Automatic criteria give 10 to the cheapest item and 1 to the most expensive.',
+    thCrit: 'Criterion', thType: 'Type', thWeight: 'Weight', thShare: 'Share', auto: 'automatic', manual: 'manual score',
+    addCrit: '+ Add criterion', newCrit: 'New criterion', delCrit: 'Delete criterion', weightOf: n => `Weight of ${n}`,
+    'crit.price': 'Price', 'crit.cpu': 'Cost per use', 'crit.util': 'Usefulness / quality', 'crit.ease': 'Ease of use', 'crit.dur': 'Long-term reliability',
+    multTitle: 'Multipliers',
+    scoresHelp: 'Score each item from 1 (poor) to 10 (excellent). Values in italics are calculated automatically from price and cost per use.',
+    thItem: 'Item', thMatrix: 'Matrix<br>score', excludedBadge: 'excluded', scoreOf: (c, i) => `${c} for ${i}`,
+    recoTitle: 'Recommended next purchase', bundleSuffix: ' (bundle)', total: 'Total',
+    recoHelp: 'Highest score among items past their waiting period and within budget.',
+    noReco: 'No purchase recommended right now', noRecoWait: 'The best items are still in their waiting period.', noRecoBudget: 'No item fits the budget.',
+    kBudget: 'Budget', kSpend: 'To spend now ("Buy" items)', kLeft: 'Budget left', kWaiting: 'Items waiting',
+    rankTitle: 'Ranking', thPrice: 'Price', thCpu: 'Cost/use', thFinal: 'Final score', thFinalSub: 'matrix × MoSCoW × Eisenhower', thStatus: 'Status',
+    noActive: 'No active items.', excludedList: "Excluded (Won't have):", with: 'together with',
+    'st.buy': 'Buy', 'st.wait': 'Waiting', 'st.over': 'Over budget', 'st.excluded': 'Excluded',
+    daysLeft: n => `${n} ${n === 1 ? 'day' : 'days'} left`, waitsBundle: 'waiting for the rest of the bundle',
+    bundlesTitle: 'Bundles (buy together)',
+    bundlesHelp: 'A bundle is bought only when all its items are past their waiting period and the total fits the budget. "Won\'t have" items are left out of bundles.',
+    eisTitle: 'Eisenhower matrix', axUrgent: 'Urgent', axNotUrgent: 'Not urgent', axImp: 'Important', axNotImp: 'Not important',
+    howTitle: 'How it is calculated',
+    how: [
+      '<b>Weighted matrix</b>: average of the scores (1–10) weighted by the criteria weights. Price and cost per use are scored automatically.',
+      '<b>MoSCoW</b>: multiplies by ×1 (Must), ×0.75 (Should), ×0.5 (Could). "Won\'t" items are excluded.',
+      '<b>Eisenhower</b>: multiplies by ×1.2 / ×1 / ×0.8 / ×0.6 depending on the quadrant.',
+      '<b>Waiting rule</b>: an item still in its waiting period stays in the ranking but is not recommended.',
+      '<b>Budget</b>: going down the ranking, each ready item is marked "Buy" if it fits the remaining budget, otherwise "Over budget".',
+      '<b>Bundles</b>: linked items (also in a chain: A with B, B with C) form a bundle. The bundle takes the position of its best item, and waiting and budget apply to the whole group.',
+    ],
+    dbDown: "Can't reach the database: changes may not be saved. Check your connection and reload the page.",
+    localFail: 'This browser does not allow saving data: use "Download backup" before closing the page.',
+    noBackup: "You don't have a backup yet.", oldBackup: n => `Your last backup is ${n} days old.`, useBackup: 'Use "Download backup" at the bottom of the page.',
+    lastDl: d => `Last downloaded backup: ${d}`, noDl: 'No backup downloaded yet', lastAuto: d => `Last automatic backup: ${d}`,
+    tCleared: 'Data cleared', tDlOk: 'Backup downloaded', tDlFail: 'Download failed', tImported: n => `Imported ${n} items`,
+    tImportFail: 'Import failed: ', badFile: 'the file has no items and criteria', quota: 'Storage full: delete some items',
+    connLost: 'Connection lost: reload the page', dbUnavailable: 'Database unavailable', tExample: 'Example loaded',
+    askDel: n => `Delete "${n}"?`, askClear: 'Delete all items? Criteria and rules go back to the defaults. Download a backup first if you want to keep them.',
+    askImport: (n, f) => `Replace all your current data with the ${n} items in "${f}"?`, askExample: 'Replace your current data with the example?',
+    okDel: 'Delete', okClear: 'Clear', okImport: 'Import', okExample: 'Load',
+    loadingItems: 'Loading your items…',
+    ex: ['AirPlay streamer for turntable', 'Raspberry Pi + DAC kit (DIY)', 'Replacement stylus', 'Bluetooth active speakers', 'Vintage reading lamp'],
+    exNotes: ['Example. Check it has a phono input, otherwise a preamp is needed.', 'Example. Cheaper alternative to the streamer: takes time to set up.', 'Example. Same shop as the streamer: one shipment.', 'Example.', 'Example.'],
+  },
+  fr: {
+    subtitle: "Matrice pondérée, MoSCoW, Eisenhower, coût par utilisation, règle d'attente et lots.",
+    'tab.items': '1 · Articles', 'tab.criteria': '2 · Critères et règles', 'tab.scores': '3 · Notes', 'tab.results': '4 · Résultats',
+    'sync.loading': 'Chargement…', 'sync.saving': 'Enregistrement…', 'sync.saved': 'Enregistré', 'sync.error': "Échec de l'enregistrement", 'sync.offline': 'Non enregistré', 'sync.local': 'Enregistré dans ce navigateur',
+    'btn.export': 'Télécharger une sauvegarde (JSON)', 'btn.import': 'Importer un JSON', 'btn.example': "Charger l'exemple", 'btn.clear': 'Tout effacer',
+    disclaimer: "Outil d'aide : les résultats sont indicatifs et la décision finale vous appartient. Aucune garantie.",
+    'storage.local': 'Vos données restent dans ce navigateur. Utilisez « Télécharger une sauvegarde » pour en garder une copie.',
+    'storage.claude': 'Vos données sont enregistrées dans la base de données de cette page sur claude.ai.',
+    cancel: 'Annuler', confirm: 'Confirmer',
+    'q1.l': 'Urgent et important', 'q1.s': 'Acheter bientôt', 'q1.h': 'Vous en avez vraiment besoin, et maintenant.',
+    'q2.l': 'Important, pas urgent', 'q2.s': 'Planifier', 'q2.h': 'Ça vaut le coup : choisissez le bon moment sans vous presser.',
+    'q3.l': 'Urgent, pas important', 'q3.s': 'Réduire', 'q3.h': 'Semble urgent mais compte peu : cherchez une option moins chère.',
+    'q4.l': 'Ni urgent ni important', 'q4.s': 'Reporter', 'q4.h': 'Sans doute une envie : attendez.',
+    emptyTitle: 'Aucun article',
+    emptyItems: "Ajoutez ce que vous aimeriez acheter : prix, priorité, fréquence d'utilisation.",
+    emptyScores: 'Les notes apparaissent ici une fois des articles ajoutés.',
+    emptyResults: 'Le classement apparaît ici une fois des articles ajoutés.',
+    addFirst: '+ Ajouter un premier article', add: '+ Ajouter un article', namePh: "Nom de l'article", del: 'Supprimer',
+    price: 'Prix', uses: 'Utilisations par mois', life: 'Durée de vie prévue (mois)', added: 'Envie depuis le',
+    urgent: 'Urgent', important: 'Important', notes: 'Notes', notesPh: 'Lien, modèle, magasin, doutes…',
+    together: 'À acheter avec :', unnamed: 'sans nom', cpu: 'Coût par utilisation', quadrant: 'Quadrant',
+    waitLeft: n => `⏳ encore ${n} ${n === 1 ? 'jour' : 'jours'} d'attente`, waitDone: "✓ période d'attente terminée", na: 'n.d.',
+    budgetTitle: "Budget et règle d'attente", budget: 'Budget disponible', threshold: 'Seuil « gros achat »',
+    waitShort: 'Attente sous le seuil (jours)', waitLong: 'Attente au-dessus du seuil (jours)', currency: 'Devise',
+    waitHelp: "Un article n'est achetable qu'après la période d'attente, comptée à partir de sa date « Envie depuis le ».",
+    critTitle: 'Critères de la matrice pondérée',
+    critHelp: "Les poids sont relatifs : la part est calculée sur le total. Les critères automatiques donnent 10 à l'article le moins cher et 1 au plus cher.",
+    thCrit: 'Critère', thType: 'Type', thWeight: 'Poids', thShare: 'Part', auto: 'automatique', manual: 'note manuelle',
+    addCrit: '+ Ajouter un critère', newCrit: 'Nouveau critère', delCrit: 'Supprimer le critère', weightOf: n => `Poids de ${n}`,
+    'crit.price': 'Prix', 'crit.cpu': 'Coût par utilisation', 'crit.util': 'Utilité / qualité', 'crit.ease': "Facilité d'utilisation", 'crit.dur': 'Fiabilité dans le temps',
+    multTitle: 'Multiplicateurs',
+    scoresHelp: 'Notez chaque article de 1 (mauvais) à 10 (excellent). Les valeurs en italique sont calculées automatiquement à partir du prix et du coût par utilisation.',
+    thItem: 'Article', thMatrix: 'Score<br>matrice', excludedBadge: 'exclu', scoreOf: (c, i) => `${c} pour ${i}`,
+    recoTitle: 'Prochain achat conseillé', bundleSuffix: ' (lot)', total: 'Total',
+    recoHelp: "Meilleur score parmi les articles dont l'attente est terminée et qui tiennent dans le budget.",
+    noReco: 'Aucun achat conseillé pour le moment', noRecoWait: "Les meilleurs articles sont encore en période d'attente.", noRecoBudget: 'Aucun article ne tient dans le budget.',
+    kBudget: 'Budget', kSpend: 'À dépenser maintenant (articles « Acheter »)', kLeft: 'Budget restant', kWaiting: 'Articles en attente',
+    rankTitle: 'Classement', thPrice: 'Prix', thCpu: 'Coût/util.', thFinal: 'Score final', thFinalSub: 'matrice × MoSCoW × Eisenhower', thStatus: 'Statut',
+    noActive: 'Aucun article actif.', excludedList: "Exclus (Won't have) :", with: 'avec',
+    'st.buy': 'Acheter', 'st.wait': 'En attente', 'st.over': 'Hors budget', 'st.excluded': 'Exclu',
+    daysLeft: n => `encore ${n} j`, waitsBundle: 'attend le reste du lot',
+    bundlesTitle: 'Lots (à acheter ensemble)',
+    bundlesHelp: "Un lot ne s'achète que lorsque tous ses articles ont fini leur attente et que le total tient dans le budget. Les articles « Won't have » sont exclus des lots.",
+    eisTitle: "Matrice d'Eisenhower", axUrgent: 'Urgent', axNotUrgent: 'Pas urgent', axImp: 'Important', axNotImp: 'Pas important',
+    howTitle: 'Mode de calcul',
+    how: [
+      '<b>Matrice pondérée</b> : moyenne des notes (1–10) pondérée par les poids des critères. Le prix et le coût par utilisation sont notés automatiquement.',
+      "<b>MoSCoW</b> : multiplie par ×1 (Must), ×0,75 (Should), ×0,5 (Could). Les « Won't » sont exclus.",
+      '<b>Eisenhower</b> : multiplie par ×1,2 / ×1 / ×0,8 / ×0,6 selon le quadrant.',
+      "<b>Règle d'attente</b> : un article encore en période d'attente reste dans le classement mais n'est pas conseillé.",
+      "<b>Budget</b> : en parcourant le classement, chaque article prêt passe en « Acheter » s'il tient dans le budget restant, sinon « Hors budget ».",
+      "<b>Lots</b> : les articles liés (même en chaîne : A avec B, B avec C) forment un lot. Le lot prend la position de son meilleur article, et l'attente et le budget s'appliquent à tout le groupe.",
+    ],
+    dbDown: 'Impossible de joindre la base de données : les modifications risquent de ne pas être enregistrées. Vérifiez la connexion et rechargez la page.',
+    localFail: "Ce navigateur ne permet pas d'enregistrer les données : utilisez « Télécharger une sauvegarde » avant de fermer la page.",
+    noBackup: "Vous n'avez pas encore de sauvegarde.", oldBackup: n => `Votre dernière sauvegarde date de ${n} jours.`, useBackup: 'Utilisez « Télécharger une sauvegarde » en bas de la page.',
+    lastDl: d => `Dernière sauvegarde téléchargée : ${d}`, noDl: 'Aucune sauvegarde téléchargée', lastAuto: d => `Dernière sauvegarde automatique : ${d}`,
+    tCleared: 'Données effacées', tDlOk: 'Sauvegarde téléchargée', tDlFail: 'Échec du téléchargement', tImported: n => `${n} articles importés`,
+    tImportFail: 'Import impossible : ', badFile: 'le fichier ne contient ni articles ni critères', quota: 'Espace plein : supprimez quelques articles',
+    connLost: 'Connexion perdue : rechargez la page', dbUnavailable: 'Base de données indisponible', tExample: 'Exemple chargé',
+    askDel: n => `Supprimer « ${n} » ?`, askClear: "Supprimer tous les articles ? Les critères et règles reviennent aux valeurs par défaut. Téléchargez d'abord une sauvegarde si vous voulez les garder.",
+    askImport: (n, f) => `Remplacer toutes vos données par les ${n} articles de « ${f} » ?`, askExample: "Remplacer vos données actuelles par l'exemple ?",
+    okDel: 'Supprimer', okClear: 'Effacer', okImport: 'Importer', okExample: 'Charger',
+    loadingItems: 'Chargement de vos articles…',
+    ex: ['Streamer AirPlay pour platine vinyle', 'Kit Raspberry Pi + DAC (DIY)', 'Diamant de rechange', 'Enceintes actives Bluetooth', 'Lampe de lecture vintage'],
+    exNotes: ["Exemple. Vérifier qu'il a une entrée phono, sinon il faut un préampli.", 'Exemple. Alternative économique au streamer : demande du temps de configuration.', 'Exemple. Même magasin que le streamer : un seul envoi.', 'Exemple.', 'Exemple.'],
+  },
+};
+const LANGS = ['it', 'en', 'fr'];
+let lang = 'en';
+try { lang = localStorage.getItem('bdt:lang') || ''; } catch (e) {}
+if (!LANGS.includes(lang)) lang = LANGS.find(l => (navigator.language || '').toLowerCase().startsWith(l)) || 'en';
+const t = (k, ...a) => { const v = T[lang][k] ?? T.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
+const locale = () => { const n = navigator.language || ''; return n.toLowerCase().startsWith(lang) ? n : {it:'it-IT', en:'en-GB', fr:'fr-FR'}[lang]; };
+
+/* ================= utilità ================= */
+const DAY = 864e5;
+const uid = () => Math.random().toString(36).slice(2, 10);
+const isoDay = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const todayISO = () => isoDay(new Date());
+const isoMinus = n => isoDay(new Date(Date.now() - n * DAY));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const clone = o => JSON.parse(JSON.stringify(o));
+const CURRENCIES = ['EUR', 'USD', 'GBP', 'CHF', 'CAD', 'AUD', 'JPY'];
+const money = v => { try { return new Intl.NumberFormat(locale(), {style:'currency', currency:S.currency || 'EUR'}).format(v); } catch (e) { return (+v).toFixed(2); } };
+const curSym = () => { try { return new Intl.NumberFormat(locale(), {style:'currency', currency:S.currency || 'EUR'}).formatToParts(0).find(p => p.type === 'currency').value; } catch (e) { return S.currency; } };
+const n1 = v => (Math.round(v * 10) / 10).toLocaleString(locale(), {minimumFractionDigits:1, maximumFractionDigits:1});
+const fnum = v => v.toLocaleString(locale());
+const fmtDate = iso => iso ? new Date(iso).toLocaleDateString(locale(), {day:'numeric', month:'short', year:'numeric'}) : '';
+
+const MOSCOW = {M:{label:'Must have', f:1.0}, S:{label:'Should have', f:0.75}, C:{label:'Could have', f:0.5}, W:{label:"Won't have", f:0}};
+const QF = {q1:1.2, q2:1.0, q3:0.8, q4:0.6};
+const SETTINGS_KEYS = ['budget', 'waitShort', 'waitLong', 'threshold', 'currency', 'criteria', 'lastBackup'];
+const defaultSettings = () => ({
+  budget: 400, waitShort: 2, waitLong: 30, threshold: 100, currency: 'EUR', lastBackup: null,
+  criteria: [
+    {id:'price', name:t('crit.price'), weight:20, auto:'price'},
+    {id:'cpu', name:t('crit.cpu'), weight:15, auto:'cpu'},
+    {id:'util', name:t('crit.util'), weight:30},
+    {id:'ease', name:t('crit.ease'), weight:15},
+    {id:'dur', name:t('crit.dur'), weight:20},
+  ],
+});
+function exampleData() {
+  const n = t('ex'), no = t('exNotes');
+  const it = (k, price, moscow, urgent, important, uses, life, ago, util, ease, dur) =>
+    ({id:'ex' + (k + 1), created:k + 1, name:n[k], price, moscow, urgent, important, uses, life, added:isoMinus(ago), scores:{util, ease, dur}, notes:no[k], links:[]});
+  const items = [
+    it(0, 249, 'M', true, true, 20, 60, 35, 9, 9, 8),
+    it(1, 110, 'S', false, true, 20, 48, 10, 7, 4, 6),
+    it(2, 60, 'S', false, true, 20, 24, 5, 8, 9, 7),
+    it(3, 180, 'C', false, false, 8, 60, 40, 6, 8, 7),
+    it(4, 90, 'W', false, false, 15, 120, 3, 4, 9, 8),
+  ];
+  items[0].links = ['ex3']; items[2].links = ['ex1'];
+  return {...defaultSettings(), items};
+}
+const critName = c => c.auto ? t('crit.' + c.auto) : c.name;
+
+/* ================= stato ================= */
+let S = {...defaultSettings(), items:[]};
+let mode = null;            // 'claude' | 'local'
+let db = null, autoBackup = null, loaded = false, dbOk = null;
+let tab = 'items';
+try { tab = localStorage.getItem('bdt:tab') || 'items'; } catch (e) {}
+
+/* ================= piccoli componenti ================= */
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.hidden = false;
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, 2600);
+}
+function ask(msg, okLabel) {
+  return new Promise(res => {
+    const m = document.getElementById('modal');
+    document.getElementById('modal-msg').textContent = msg;
+    document.getElementById('modal-ok').textContent = okLabel || t('confirm');
+    document.getElementById('modal-cancel').textContent = t('cancel');
+    m.hidden = false;
+    document.getElementById('modal-ok').focus();
+    m.onclick = e => {
+      if (e.target.closest('[data-ok]')) { m.hidden = true; res(true); }
+      else if (e.target.closest('[data-cancel]') || e.target === m) { m.hidden = true; res(false); }
+    };
+  });
+}
+let syncState = 'loading', syncMsg = null;
+function setSync(state, msg) {
+  syncState = state; syncMsg = msg || null;
+  const el = document.getElementById('sync');
+  el.dataset.s = state;
+  el.querySelector('span').textContent = syncMsg || t('sync.' + state);
+}
+
+/* ================= salvataggio ================= */
+// Modalità "local": tutto in localStorage. Modalità "claude": database dell'artifact (app/settings + items/<id>).
+const LOCAL_KEY = 'bdt:data';
+let localTimer = null;
+function saveLocal() {
+  try {
+    const o = {}; SETTINGS_KEYS.forEach(k => o[k] = S[k] ?? null); o.items = S.items;
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(o));
+    setSync('local');
+  } catch (e) { setSync('error'); renderBanners(t('localFail')); }
+}
+const pending = new Set(), inflight = new Map();
+let flushTimer = null;
+function bodyFor(path) {
+  if (path === 'app/settings') { const o = {}; SETTINGS_KEYS.forEach(k => o[k] = S[k] ?? null); return clone(o); }
+  const it = S.items.find(i => i.id === path.split('/')[1]);
+  return it ? clone(it) : null;
+}
+function queueWrite(path, now) {
+  if (mode === 'local') { setSync('saving'); clearTimeout(localTimer); localTimer = setTimeout(saveLocal, now ? 0 : 400); return; }
+  if (!db) return;
+  pending.add(path); setSync('saving');
+  clearTimeout(flushTimer); flushTimer = setTimeout(flush, now ? 0 : 700);
+}
+const busy = path => pending.has(path) || inflight.has(path);
+async function writeOne(path) {
+  const prev = inflight.get(path) || Promise.resolve();
+  const p = prev.catch(() => {}).then(() => { const b = bodyFor(path); return b ? db.doc(path).set(b) : db.doc(path).delete(); });
+  inflight.set(path, p);
+  try { await p; } finally { if (inflight.get(path) === p) inflight.delete(path); }
+}
+async function flush() {
+  const paths = [...pending]; pending.clear();
+  try {
+    await Promise.all(paths.map(writeOne));
+    if (!pending.size && !inflight.size) setSync('saved');
+  } catch (e) {
+    if (e && e.code === 'unavailable') { paths.forEach(p => pending.add(p)); flushTimer = setTimeout(flush, 1500 + Math.random() * 1500); return; }
+    setSync('error', e?.code === 'quota_exceeded' ? t('quota') : null);
+  }
+}
+
+/* ================= caricamento ================= */
+let needRender = false;
+const editing = () => { const a = document.activeElement; return a && document.getElementById('view').contains(a) && /INPUT|TEXTAREA|SELECT/.test(a.tagName); };
+function scheduleRender() { if (editing()) needRender = true; else render(); }
+document.addEventListener('focusout', () => setTimeout(() => { if (needRender && !editing()) { needRender = false; render(); } }, 0));
+
+function startLocal(dbFailed) {
+  mode = 'local';
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(LOCAL_KEY)); } catch (e) {}
+  if (!d) { try { d = JSON.parse(localStorage.getItem('prioritizza-acquisti-v1')); } catch (e) {} }  // dati della prima versione
+  if (!d || !Array.isArray(d.items)) d = exampleData();
+  SETTINGS_KEYS.forEach(k => { if (d[k] !== undefined) S[k] = clone(d[k]); });
+  S.items = d.items.map((i, n) => ({notes:'', links:[], scores:{}, created:n + 1, ...i}));
+  loaded = true; dbOk = dbFailed ? false : null;
+  setSync(dbFailed ? 'offline' : 'local', dbFailed ? t('dbUnavailable') : null);
+  saveLocalQuiet();
+  renderAll();
+}
+function saveLocalQuiet() { try { localStorage.setItem(LOCAL_KEY, JSON.stringify({...Object.fromEntries(SETTINGS_KEYS.map(k => [k, S[k] ?? null])), items:S.items})); } catch (e) {} }
+
+async function connect() {
+  const inClaude = !!(window.claude && typeof window.claude.use === 'function');
+  if (inClaude) { try { db = await window.claude.use('db'); } catch (e) { db = null; } }
+  if (!db) { startLocal(inClaude); return; }
+  mode = 'claude';
+  const timer = setTimeout(() => { if (!loaded) { dbOk = false; renderBanners(); } }, 10000);
+  let gotItems = false, gotSettings = false;
+  const ready = () => { if (gotItems && gotSettings && !loaded) { loaded = true; dbOk = true; clearTimeout(timer); setSync('saved'); renderAll(); } };
+
+  db.collection('items').onSnapshot(snap => {
+    const local = Object.fromEntries(S.items.map(i => [i.id, i]));
+    const next = [];
+    for (const d of snap.docs) {
+      if (busy('items/' + d.id)) { if (local[d.id]) next.push(local[d.id]); }
+      else next.push({...clone(d.data()), id:d.id});
+    }
+    for (const i of S.items) if (busy('items/' + i.id) && !next.some(n => n.id === i.id)) next.push(i);
+    next.sort((a, b) => (a.created || 0) - (b.created || 0));
+    const changed = JSON.stringify(next) !== JSON.stringify(S.items);
+    S.items = next;
+    if (!snap.metadata.fromCache) { gotItems = true; if (dbOk === false && loaded) { dbOk = true; renderBanners(); } }
+    if (loaded && changed) scheduleRender(); else ready();
+  }, () => { dbOk = false; setSync('error', t('connLost')); renderBanners(); });
+
+  db.doc('app/settings').onSnapshot(snap => {
+    if (!busy('app/settings') && snap.exists) {
+      const d = snap.data(); let changed = false;
+      for (const k of SETTINGS_KEYS) if (k in d && JSON.stringify(d[k]) !== JSON.stringify(S[k])) { S[k] = clone(d[k]); changed = true; }
+      if (loaded && changed) { scheduleRender(); renderBackupInfo(); }
+    }
+    if (!snap.metadata.fromCache) gotSettings = true;
+    ready();
+  }, () => {});
+
+  db.doc('app/backup').onSnapshot(snap => { autoBackup = snap.exists ? snap.data() : null; renderBackupInfo(); renderBanners(); }, () => {});
+}
+
+/* ================= calcolo ================= */
+function compute() {
+  const cpuOf = i => (+i.uses > 0 && +i.life > 0) ? (+i.price || 0) / (+i.uses * +i.life) : null;
+  const active = S.items.filter(i => i.moscow !== 'W');
+  const range = vals => { const v = vals.filter(x => x != null && isFinite(x)); return v.length ? [Math.min(...v), Math.max(...v)] : [0, 0]; };
+  const [pmin, pmax] = range(active.map(i => +i.price || 0));
+  const [cmin, cmax] = range(active.map(cpuOf));
+  const lin = (v, mn, mx) => v == null ? 1 : mx === mn ? 10 : clamp(1 + 9 * (mx - v) / (mx - mn), 1, 10);
+  const totW = S.criteria.reduce((a, c) => a + Math.max(0, +c.weight || 0), 0);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+
+  const per = {};
+  for (const i of S.items) {
+    const cpu = cpuOf(i);
+    const sc = {};
+    let sum = 0;
+    for (const c of S.criteria) {
+      let s;
+      if (c.auto === 'price') s = lin(+i.price || 0, pmin, pmax);
+      else if (c.auto === 'cpu') s = lin(cpu, cmin, cmax);
+      else s = clamp(+(i.scores?.[c.id] ?? 5) || 1, 1, 10);
+      sc[c.id] = s;
+      sum += s * Math.max(0, +c.weight || 0);
+    }
+    const matrix = totW ? sum / totW : 0;
+    const q = i.urgent && i.important ? 'q1' : i.important ? 'q2' : i.urgent ? 'q3' : 'q4';
+    const mF = MOSCOW[i.moscow]?.f ?? 0.5;
+    const final = matrix * mF * QF[q];
+    const waitDays = (+i.price || 0) >= (+S.threshold || 0) ? (+S.waitLong || 0) : (+S.waitShort || 0);
+    const added = i.added ? new Date(i.added + 'T00:00') : today;
+    const remaining = Math.max(0, Math.ceil((added.getTime() + waitDays * DAY - today.getTime()) / DAY));
+    per[i.id] = {cpu, sc, matrix, q, mF, final, waitDays, remaining};
+  }
+
+  const activeIds = new Set(active.map(i => i.id));
+  const byId = Object.fromEntries(S.items.map(i => [i.id, i]));
+  for (const i of active) {
+    if (per[i.id].group) continue;
+    const group = [], stack = [i.id], seen = new Set([i.id]);
+    while (stack.length) {
+      const id = stack.pop(); group.push(id);
+      for (const o of byId[id].links || []) if (activeIds.has(o) && !seen.has(o)) { seen.add(o); stack.push(o); }
+    }
+    for (const id of group) per[id].group = group;
+  }
+  for (const i of S.items) if (!per[i.id].group) per[i.id].group = [i.id];
+
+  const ranked = active.slice().sort((a, b) => per[b.id].final - per[a.id].final);
+  const priceOf = id => +byId[id].price || 0;
+  let spent = 0;
+  const budget = +S.budget || 0;
+  const done = new Set(), bundles = [];
+  for (const i of ranked) {
+    if (done.has(i.id)) continue;
+    const g = per[i.id].group;
+    g.forEach(id => done.add(id));
+    const total = g.reduce((a, id) => a + priceOf(id), 0);
+    let st;
+    if (g.some(id => per[id].remaining > 0)) st = 'wait';
+    else if (spent + total <= budget) { st = 'buy'; spent += total; }
+    else st = 'over';
+    g.forEach(id => per[id].status = st);
+    if (g.length > 1) bundles.push({ids:g.slice().sort((a, b) => per[b].final - per[a].final), total, status:st});
+  }
+  for (const i of S.items) if (i.moscow === 'W') per[i.id].status = 'excluded';
+  return {per, ranked, bundles, byId, excluded:S.items.filter(i => i.moscow === 'W'), spent, budget, totW};
+}
+
+/* ================= viste ================= */
+const waitText = p => p.remaining > 0 ? t('waitLeft', p.remaining) : t('waitDone');
+const cpuText = p => p.cpu == null ? t('na') : money(p.cpu);
+const ST_CLS = {buy:'b-ok', wait:'b-warn', over:'b-bad', excluded:'b-gray'};
+const statusBadge = s => `<span class="badge ${ST_CLS[s]}">${t('st.' + s)}</span>`;
+const pct = (c, D) => D.totW ? Math.round(100 * (+c.weight || 0) / D.totW) : 0;
+
+function emptyState(text) {
+  return `<div class="card empty"><h2>${t('emptyTitle')}</h2><p class="mute">${text}</p>
+    <div class="row" style="justify-content:center"><button class="btn primary" id="empty-add" data-act="addItem">${t('addFirst')}</button>
+    <button class="btn" id="empty-example" data-act="example">${t('btn.example')}</button></div></div>`;
+}
+
+function viewItems(D) {
+  if (!S.items.length) return emptyState(t('emptyItems'));
+  const cards = S.items.map(i => {
+    const p = D.per[i.id];
+    return `<div class="card">
+      <div class="spread" style="margin-bottom:10px">
+        <input class="name" id="name-${i.id}" data-k="item:${i.id}:name" value="${esc(i.name)}" placeholder="${esc(t('namePh'))}" style="flex:1;min-width:0">
+        <button class="btn del" data-act="delItem" data-id="${i.id}">${t('del')}</button>
+      </div>
+      <div class="grid">
+        <label>${t('price')} (${esc(curSym())})<input id="price-${i.id}" type="number" min="0" step="1" data-k="item:${i.id}:price" value="${esc(i.price)}"></label>
+        <label>MoSCoW<select id="moscow-${i.id}" data-k="item:${i.id}:moscow">
+          ${Object.entries(MOSCOW).map(([k, m]) => `<option value="${k}" ${i.moscow === k ? 'selected' : ''}>${m.label}</option>`).join('')}
+        </select></label>
+        <label>${t('uses')}<input id="uses-${i.id}" type="number" min="0" step="1" data-k="item:${i.id}:uses" value="${esc(i.uses)}"></label>
+        <label>${t('life')}<input id="life-${i.id}" type="number" min="0" step="1" data-k="item:${i.id}:life" value="${esc(i.life)}"></label>
+        <label>${t('added')}<input id="added-${i.id}" type="date" data-k="item:${i.id}:added" value="${esc(i.added)}"></label>
+        <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:6px">
+          <label class="check"><input id="urgent-${i.id}" type="checkbox" data-k="item:${i.id}:urgent" ${i.urgent ? 'checked' : ''}> ${t('urgent')}</label>
+          <label class="check"><input id="important-${i.id}" type="checkbox" data-k="item:${i.id}:important" ${i.important ? 'checked' : ''}> ${t('important')}</label>
+        </div>
+      </div>
+      <label style="margin-top:10px">${t('notes')}<textarea id="notes-${i.id}" data-k="item:${i.id}:notes" placeholder="${esc(t('notesPh'))}">${esc(i.notes)}</textarea></label>
+      ${S.items.length > 1 ? `<div style="margin-top:10px">
+        <div class="small mute" style="margin-bottom:6px">${t('together')}</div>
+        <div class="chips">${S.items.filter(o => o.id !== i.id).map(o => {
+          const on = (i.links || []).includes(o.id);
+          return `<button class="chip ${on ? 'on' : ''}" data-act="toggleLink" data-id="${i.id}" data-other="${o.id}">${on ? '🔗 ' : '+ '}${esc(o.name) || t('unnamed')}</button>`;
+        }).join('')}</div></div>` : ''}
+      <div class="derived">
+        <span>${t('cpu')}: <b data-d="${i.id}:cpu">${cpuText(p)}</b></span>
+        <span>${t('quadrant')}: <b data-d="${i.id}:quad">${t(p.q + '.l')}</b></span>
+        <span data-d="${i.id}:wait">${waitText(p)}</span>
+      </div>
+    </div>`;
+  }).join('');
+  return `${cards}<button class="btn primary" id="add-item" data-act="addItem">${t('add')}</button>`;
+}
+
+function viewCriteria(D) {
+  const rows = S.criteria.map(c => `<tr>
+      <td>${c.auto ? `<b>${esc(critName(c))}</b>` : `<input id="cname-${c.id}" data-k="crit:${c.id}:name" value="${esc(c.name)}" style="min-width:160px">`}</td>
+      <td>${c.auto ? `<span class="badge b-acc">${t('auto')}</span>` : `<span class="badge b-gray">${t('manual')}</span>`}</td>
+      <td style="min-width:160px"><input id="cweight-${c.id}" type="range" min="0" max="50" data-k="crit:${c.id}:weight" value="${esc(c.weight)}" aria-label="${esc(t('weightOf', critName(c)))}"></td>
+      <td class="num"><b data-d="crit:${c.id}:pct">${pct(c, D)}%</b></td>
+      <td><button class="btn del" data-act="delCrit" data-id="${c.id}" aria-label="${esc(t('delCrit'))}">✕</button></td>
+    </tr>`).join('');
+  return `<div class="card">
+      <h2>${t('budgetTitle')}</h2>
+      <div class="grid">
+        <label>${t('budget')} (${esc(curSym())})<input id="set-budget" type="number" min="0" data-k="set:budget" value="${esc(S.budget)}"></label>
+        <label>${t('currency')}<select id="set-currency" data-k="set:currency">${CURRENCIES.map(c => `<option ${S.currency === c ? 'selected' : ''}>${c}</option>`).join('')}</select></label>
+        <label>${t('threshold')} (${esc(curSym())})<input id="set-threshold" type="number" min="0" data-k="set:threshold" value="${esc(S.threshold)}"></label>
+        <label>${t('waitShort')}<input id="set-waitShort" type="number" min="0" data-k="set:waitShort" value="${esc(S.waitShort)}"></label>
+        <label>${t('waitLong')}<input id="set-waitLong" type="number" min="0" data-k="set:waitLong" value="${esc(S.waitLong)}"></label>
+      </div>
+      <p class="small mute" style="margin:10px 0 0">${t('waitHelp')}</p>
+    </div>
+    <div class="card">
+      <h2>${t('critTitle')}</h2>
+      <p class="small mute" style="margin-top:0">${t('critHelp')}</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>${t('thCrit')}</th><th>${t('thType')}</th><th>${t('thWeight')}</th><th class="num">${t('thShare')}</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn primary" id="add-crit" data-act="addCrit">${t('addCrit')}</button>
+        ${['price', 'cpu'].filter(a => !S.criteria.some(c => c.auto === a)).map(a => `<button class="btn" data-act="addAuto" data-auto="${a}">+ ${t('crit.' + a)} (auto)</button>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <h2>${t('multTitle')}</h2>
+      <div class="grid small">
+        <div><b>MoSCoW</b><br>${Object.values(MOSCOW).map(m => `${m.label}: ×${fnum(m.f)}`).join('<br>')}</div>
+        <div><b>Eisenhower</b><br>${Object.keys(QF).map(q => `${t(q + '.l')}: ×${fnum(QF[q])}`).join('<br>')}</div>
+      </div>
+    </div>`;
+}
+
+function viewScores(D) {
+  if (!S.items.length) return emptyState(t('emptyScores'));
+  const head = S.criteria.map(c => `<th class="num">${esc(critName(c))}<br><span class="mute">${pct(c, D)}%</span></th>`).join('');
+  const rows = S.items.map(i => {
+    const p = D.per[i.id];
+    const cells = S.criteria.map(c => c.auto
+      ? `<td class="num auto" data-d="${i.id}:sc:${c.id}">${n1(p.sc[c.id])}</td>`
+      : `<td class="num"><input id="score-${i.id}-${c.id}" type="number" min="1" max="10" step="1" data-k="score:${i.id}:${c.id}" value="${esc(i.scores?.[c.id] ?? 5)}" aria-label="${esc(t('scoreOf', critName(c), i.name))}"></td>`).join('');
+    return `<tr><td>${esc(i.name) || `<span class="mute">${t('unnamed')}</span>`} ${i.moscow === 'W' ? `<span class="badge b-gray">${t('excludedBadge')}</span>` : ''}</td>${cells}<td class="num"><b data-d="${i.id}:matrix">${n1(p.matrix)}</b></td></tr>`;
+  }).join('');
+  return `<div class="card">
+    <p class="small mute" style="margin-top:0">${t('scoresHelp')}</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>${t('thItem')}</th>${head}<th class="num">${t('thMatrix')}</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+  </div>`;
+}
+
+function viewResults(D) {
+  if (!S.items.length) return emptyState(t('emptyResults'));
+  const max = Math.max(1e-9, ...D.ranked.map(i => D.per[i.id].final));
+  const next = D.ranked.find(i => D.per[i.id].status === 'buy');
+  const waiting = D.ranked.filter(i => D.per[i.id].status === 'wait');
+  const nameOf = id => esc(D.byId[id].name) || t('unnamed');
+  const nextGroup = next ? D.per[next.id].group : [];
+
+  const reco = next
+    ? `<div class="card reco"><h2>${t('recoTitle')}${nextGroup.length > 1 ? t('bundleSuffix') : ''}</h2>
+        ${nextGroup.map(id => `<div class="spread"><span style="font-size:17px;font-weight:700;min-width:0">${nameOf(id)}</span><span>${money(+D.byId[id].price || 0)}</span></div>`).join('')}
+        ${nextGroup.length > 1 ? `<div class="spread" style="border-top:1px solid var(--line);margin-top:6px;padding-top:6px"><span>${t('total')}</span><b>${money(nextGroup.reduce((a, id) => a + (+D.byId[id].price || 0), 0))}</b></div>` : ''}
+        <p class="small mute" style="margin:6px 0 0">${t('recoHelp')}</p></div>`
+    : `<div class="card"><h2>${t('noReco')}</h2><p class="small mute" style="margin:0">${waiting.length ? t('noRecoWait') : t('noRecoBudget')}</p></div>`;
+
+  const kpis = `<div class="card kpis">
+    <div class="kpi"><div class="v">${money(D.budget)}</div><div class="l">${t('kBudget')}</div></div>
+    <div class="kpi"><div class="v">${money(D.spent)}</div><div class="l">${t('kSpend')}</div></div>
+    <div class="kpi"><div class="v">${money(Math.max(0, D.budget - D.spent))}</div><div class="l">${t('kLeft')}</div></div>
+    <div class="kpi"><div class="v">${waiting.length}</div><div class="l">${t('kWaiting')}</div></div>
+  </div>`;
+
+  const rows = D.ranked.map((i, n) => {
+    const p = D.per[i.id];
+    return `<tr>
+      <td class="num">${n + 1}</td>
+      <td style="min-width:200px"><b>${esc(i.name)}</b><br><span class="small mute">${MOSCOW[i.moscow].label} · ${t(p.q + '.s')}</span>
+        ${p.group.length > 1 ? `<br><span class="small" style="color:var(--acc)">🔗 ${t('with')} ${p.group.filter(id => id !== i.id).map(nameOf).join(', ')}</span>` : ''}
+        ${i.notes ? `<div class="small mute note" style="margin-top:4px">${esc(i.notes)}</div>` : ''}</td>
+      <td class="num">${money(+i.price || 0)}</td>
+      <td class="num">${cpuText(p)}</td>
+      <td style="min-width:150px"><div class="row" style="flex-wrap:nowrap"><div class="bar" style="flex:1"><i style="width:${100 * p.final / max}%"></i></div><b class="num">${n1(p.final)}</b></div>
+        <span class="small mute">${n1(p.matrix)} × ${fnum(p.mF)} × ${fnum(QF[p.q])}</span></td>
+      <td>${statusBadge(p.status)}${p.status === 'wait' ? `<br><span class="small mute">${p.remaining > 0 ? t('daysLeft', p.remaining) : t('waitsBundle')}</span>` : ''}</td>
+    </tr>`;
+  }).join('');
+
+  const list = q => {
+    const its = S.items.filter(i => D.per[i.id].q === q);
+    return its.length ? `<ul>${its.map(i => `<li>${esc(i.name)}${i.moscow === 'W' ? ` <span class="mute">(${t('excludedBadge')})</span>` : ''}</li>`).join('')}</ul>` : '<p>—</p>';
+  };
+  const qbox = q => `<div class="q ${q}"><h3>${t(q + '.s')}</h3><p>${t(q + '.l')}. ${t(q + '.h')}</p>${list(q)}</div>`;
+
+  return `${reco}${kpis}
+  <div class="card"><h2>${t('rankTitle')}</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th class="num">#</th><th>${t('thItem')}</th><th class="num">${t('thPrice')}</th><th class="num">${t('thCpu')}</th><th>${t('thFinal')}<br><span class="mute">${t('thFinalSub')}</span></th><th>${t('thStatus')}</th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="6" class="mute">${t('noActive')}</td></tr>`}</tbody>
+    </table></div>
+    ${D.excluded.length ? `<p class="small mute" style="margin:12px 0 0">${t('excludedList')} ${D.excluded.map(i => esc(i.name)).join(', ')}</p>` : ''}
+  </div>
+  ${D.bundles.length ? `<div class="card"><h2>${t('bundlesTitle')}</h2>
+    ${D.bundles.map(b => `<div class="bundle">
+      <div class="spread"><span style="min-width:0">${b.ids.map(nameOf).join(' + ')}</span><span class="row"><b>${money(b.total)}</b>${statusBadge(b.status)}</span></div>
+    </div>`).join('')}
+    <p class="small mute" style="margin:10px 0 0">${t('bundlesHelp')}</p>
+  </div>` : ''}
+  <div class="card"><h2>${t('eisTitle')}</h2>
+    <div class="quad">
+      <div></div><div class="ax">${t('axUrgent')}</div><div class="ax">${t('axNotUrgent')}</div>
+      <div class="ax"><span class="axv">${t('axImp')}</span></div>${qbox('q1')}${qbox('q2')}
+      <div class="ax"><span class="axv">${t('axNotImp')}</span></div>${qbox('q3')}${qbox('q4')}
+    </div>
+  </div>
+  <div class="card"><details><summary>${t('howTitle')}</summary>
+    <ol class="small">${t('how').map(h => `<li>${h}</li>`).join('')}</ol>
+  </details></div>`;
+}
+
+/* ================= render ================= */
+const VIEWS = {items:viewItems, criteria:viewCriteria, scores:viewScores, results:viewResults};
+function render() {
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  const v = document.getElementById('view');
+  if (!loaded) { v.innerHTML = `<div class="card empty"><p class="mute">${t('loadingItems')}</p></div>`; return; }
+  v.innerHTML = VIEWS[tab](compute());
+}
+function renderStatic() {
+  document.documentElement.lang = lang;
+  document.getElementById('lang').value = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
+  setSync(syncState, syncMsg);
+  document.getElementById('storage-info').textContent = mode ? t('storage.' + mode) : '';
+}
+function renderAll() { renderStatic(); renderBanners(); renderBackupInfo(); render(); }
+function refreshDerived() {
+  if (tab === 'results') { render(); return; }
+  const D = compute();
+  const map = {};
+  for (const i of S.items) {
+    const p = D.per[i.id];
+    map[`${i.id}:cpu`] = cpuText(p);
+    map[`${i.id}:quad`] = t(p.q + '.l');
+    map[`${i.id}:wait`] = waitText(p);
+    map[`${i.id}:matrix`] = n1(p.matrix);
+    for (const c of S.criteria) map[`${i.id}:sc:${c.id}`] = n1(p.sc[c.id]);
+  }
+  for (const c of S.criteria) map[`crit:${c.id}:pct`] = pct(c, D) + '%';
+  document.querySelectorAll('[data-d]').forEach(el => { if (el.dataset.d in map) el.textContent = map[el.dataset.d]; });
+}
+function renderBackupInfo() {
+  const parts = [S.lastBackup ? t('lastDl', fmtDate(S.lastBackup)) : t('noDl')];
+  if (autoBackup?.last) parts.push(t('lastAuto', fmtDate(autoBackup.last)) + (autoBackup.file ? ` (${autoBackup.file})` : ''));
+  document.getElementById('backup-info').textContent = parts.join(' · ');
+}
+function renderBanners(extra) {
+  const b = [];
+  if (extra) b.push(`<div class="banner bad">${esc(extra)}</div>`);
+  if (dbOk === false) b.push(`<div class="banner bad">${t('dbDown')}</div>`);
+  if (loaded && dbOk !== false && S.items.length) {
+    const last = [S.lastBackup, autoBackup?.last].filter(Boolean).map(d => new Date(d).getTime());
+    const age = last.length ? Math.floor((Date.now() - Math.max(...last)) / DAY) : null;
+    if (age === null || age > 8) b.push(`<div class="banner warn">${age === null ? t('noBackup') : t('oldBackup', age)} ${t('useBackup')}</div>`);
+  }
+  document.getElementById('banners').innerHTML = b.join('');
+}
+
+/* ================= eventi ================= */
+const NUM = new Set(['price', 'uses', 'life', 'weight', 'budget', 'threshold', 'waitShort', 'waitLong']);
+function onEdit(e) {
+  const k = e.target.dataset.k; if (!k || !loaded) return;
+  const [kind, id, field] = k.split(':');
+  const el = e.target;
+  const val = el.type === 'checkbox' ? el.checked : (NUM.has(field) || NUM.has(id)) ? (el.value === '' ? '' : +el.value) : el.value;
+  if (kind === 'item') { const i = S.items.find(x => x.id === id); if (!i) return; i[field] = val; queueWrite('items/' + id); }
+  else if (kind === 'crit') { const c = S.criteria.find(x => x.id === id); if (!c) return; c[field] = val; queueWrite('app/settings'); }
+  else if (kind === 'score') { const i = S.items.find(x => x.id === id); if (!i) return; i.scores = i.scores || {}; i.scores[field] = el.value === '' ? 5 : clamp(+el.value, 1, 10); queueWrite('items/' + id); }
+  else if (kind === 'set') { S[id] = val; queueWrite('app/settings'); if (id === 'currency') { render(); return; } }
+  refreshDerived();
+}
+document.addEventListener('input', e => { if (e.target.type !== 'checkbox' && e.target.tagName !== 'SELECT') onEdit(e); });
+document.addEventListener('change', e => { if (e.target.type === 'checkbox' || (e.target.tagName === 'SELECT' && e.target.id !== 'lang')) onEdit(e); });
+
+document.getElementById('lang').addEventListener('change', e => {
+  lang = e.target.value; try { localStorage.setItem('bdt:lang', lang); } catch (err) {}
+  needRender = false; renderAll();
+});
+document.getElementById('tabs').addEventListener('click', e => {
+  const tb = e.target.closest('button')?.dataset.tab; if (!tb) return;
+  tab = tb; try { localStorage.setItem('bdt:tab', tab); } catch (err) {}
+  needRender = false; render();
+});
+
+async function replaceAll(d) {
+  const oldIds = S.items.map(i => i.id);
+  const def = defaultSettings();
+  SETTINGS_KEYS.forEach(k => { if (k !== 'lastBackup') S[k] = clone(d[k] ?? def[k]); });
+  S.items = (d.items || []).map((i, n) => ({notes:'', links:[], scores:{}, ...clone(i), id:String(i.id || '').replace(/[^A-Za-z0-9_\-]/g, '') || uid(), created:i.created || Date.now() + n}));
+  renderAll();
+  if (mode === 'local') { saveLocal(); return; }
+  if (!db) return;
+  oldIds.forEach(id => pending.add('items/' + id));
+  S.items.forEach(i => pending.add('items/' + i.id));
+  pending.add('app/settings');
+  setSync('saving'); clearTimeout(flushTimer);
+  await flush();
+}
+
+async function exportBackup() {
+  const data = {exportedAt:new Date().toISOString()};
+  SETTINGS_KEYS.forEach(k => data[k] = S[k]);
+  data.items = S.items;
+  const json = JSON.stringify(data, null, 2), filename = `buy-decision-backup-${todayISO()}.json`;
+  if (mode === 'claude') {
+    const dl = await window.claude.use('downloads');
+    if (!dl) { toast(t('tDlFail')); return false; }
+    try { await dl.save({filename, data:json}); }
+    catch (err) { if (err?.code !== 'declined') toast(t('tDlFail')); return false; }
+  } else {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([json], {type:'application/json'}));
+    a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+  return true;
+}
+
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-act]'); if (!b || !loaded) return;
+  const act = b.dataset.act, id = b.dataset.id;
+  if (act === 'addItem') {
+    const it = {id:uid(), name:'', price:0, moscow:'S', urgent:false, important:true, uses:4, life:24, added:todayISO(), scores:{}, notes:'', links:[], created:Date.now()};
+    S.items.push(it);
+    if (tab !== 'items') { tab = 'items'; try { localStorage.setItem('bdt:tab', tab); } catch (err) {} }
+    queueWrite('items/' + it.id, true); render();
+    document.getElementById('name-' + it.id)?.focus();
+  } else if (act === 'delItem') {
+    const i = S.items.find(x => x.id === id);
+    if (!await ask(t('askDel', i?.name || t('unnamed')), t('okDel'))) return;
+    for (const x of S.items) if ((x.links || []).includes(id)) { x.links = x.links.filter(l => l !== id); queueWrite('items/' + x.id, true); }
+    S.items = S.items.filter(x => x.id !== id);
+    queueWrite('items/' + id, true); render();
+  } else if (act === 'toggleLink') {
+    const a = S.items.find(x => x.id === id), o = S.items.find(x => x.id === b.dataset.other);
+    if (!a || !o) return;
+    a.links = a.links || []; o.links = o.links || [];
+    if (a.links.includes(o.id)) { a.links = a.links.filter(l => l !== o.id); o.links = o.links.filter(l => l !== a.id); }
+    else { a.links.push(o.id); o.links.push(a.id); }
+    queueWrite('items/' + a.id, true); queueWrite('items/' + o.id, true); render();
+  } else if (act === 'addCrit') {
+    S.criteria.push({id:uid(), name:t('newCrit'), weight:10}); queueWrite('app/settings', true); render();
+  } else if (act === 'addAuto') {
+    S.criteria.unshift({id:b.dataset.auto, name:t('crit.' + b.dataset.auto), weight:15, auto:b.dataset.auto}); queueWrite('app/settings', true); render();
+  } else if (act === 'delCrit') {
+    S.criteria = S.criteria.filter(x => x.id !== id); queueWrite('app/settings', true); render();
+  } else if (act === 'clear') {
+    if (!await ask(t('askClear'), t('okClear'))) return;
+    await replaceAll({...defaultSettings(), items:[]}); toast(t('tCleared'));
+  } else if (act === 'example') {
+    if (S.items.length && !await ask(t('askExample'), t('okExample'))) return;
+    await replaceAll(exampleData()); toast(t('tExample'));
+  } else if (act === 'export') {
+    if (await exportBackup()) {
+      S.lastBackup = new Date().toISOString(); queueWrite('app/settings', true);
+      renderBackupInfo(); renderBanners(); toast(t('tDlOk'));
+    }
+  } else if (act === 'import') {
+    document.getElementById('file').click();
+  }
+});
+document.getElementById('file').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!Array.isArray(d.items) || !Array.isArray(d.criteria)) throw new Error(t('badFile'));
+    if (!await ask(t('askImport', d.items.length, f.name), t('okImport'))) return;
+    await replaceAll(d); toast(t('tImported', d.items.length));
+  } catch (err) { toast(t('tImportFail') + err.message); }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('modal').hidden) document.getElementById('modal-cancel').click(); });
+
+renderAll();
+connect();
+</script>
+</body>
+</html>

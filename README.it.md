@@ -1,0 +1,62 @@
+# Buy Decision Tool
+
+[English](README.md) · **Italiano** · [Français](README.fr.md)
+
+Un unico file HTML che ti aiuta a decidere **cosa comprare prima**. Combina cinque tecniche note in un'unica classifica:
+
+| Tecnica | Cosa fa qui |
+|---|---|
+| **Matrice decisionale pesata** | Dai a ogni articolo un voto da 1 a 10 su criteri che scegli e pesi tu. Prezzo e costo per utilizzo sono votati in automatico. |
+| **MoSCoW** | Must / Should / Could / Won't have. Moltiplica il punteggio; i "Won't have" sono esclusi. |
+| **Matrice di Eisenhower** | Urgente × importante. Moltiplica il punteggio e colloca ogni articolo in uno dei quattro quadranti. |
+| **Costo per utilizzo** | Prezzo ÷ (utilizzi al mese × durata prevista in mesi). |
+| **Regola dell'attesa** | Gli articoli aspettano qualche giorno (o settimana, sopra una soglia di prezzo) prima di poter essere consigliati. Filtra gli acquisti d'impulso. |
+
+In più:
+
+- **Pacchetti**: collega gli articoli da comprare insieme. Un pacchetto viene classificato, conteggiato nel budget e consigliato come un unico acquisto.
+- **Budget**: scorrendo la classifica, indica cosa puoi comprare ora, cosa è ancora in attesa e cosa è fuori budget.
+- **Note** per ogni articolo (link, modelli, negozi, dubbi).
+- **Lingue**: italiano, inglese, francese. La pagina segue la lingua del browser e ha un selettore.
+- **Valute**: EUR, USD, GBP, CHF, CAD, AUD, JPY.
+- **Backup**: scarica i dati in JSON e reimportali ovunque.
+
+## Usalo dove preferisci
+
+Non ci sono server né account. I dati restano dove apri la pagina.
+
+1. **Sul tuo computer.** Scarica [`buy-decision-tool.html`](buy-decision-tool.html) e aprilo con qualsiasi browser (Safari, Chrome, Firefox, Edge). I dati sono salvati nella memoria locale di quel browser.
+2. **Sul tuo sito o hosting.** È un file statico: mettilo su qualsiasi hosting statico (il tuo GitHub Pages, Netlify, un NAS, una intranet). I dati di ogni visitatore restano nel suo browser.
+3. **Nel tuo account claude.ai.** Chiedi a Claude di pubblicare `buy-decision-tool.html` come artifact con la capability `db` (e `downloads` per i backup). La pagina riconosce claude.ai da sola e salva nel database di quell'artifact invece che nel browser, così ritrovi la stessa lista su ogni dispositivo in cui hai fatto l'accesso.
+
+La pagina carica due font da Google Fonts. Se non sono disponibili (per esempio offline), usa i font di sistema e funziona comunque.
+
+## I tuoi dati
+
+- **Modalità browser** (opzioni 1 e 2): i dati stanno nel `localStorage` del browser per quella pagina. Se cancelli i dati dei siti, usi una finestra privata o cambi browser, riparti da una lista vuota. Usa spesso **Scarica backup** e **Importa JSON** per ripristinare.
+- **Modalità claude.ai** (opzione 3): i dati stanno nel database del tuo artifact, privati finché non condividi l'artifact.
+- Il file di backup è JSON semplice: puoi leggerlo, tenerlo nel tuo cloud o spostarlo da una modalità all'altra.
+
+La pagina mostra un promemoria quando l'ultimo backup ha più di 8 giorni.
+
+## Come si calcola il punteggio
+
+```
+punteggio finale = punteggio matrice pesata × fattore MoSCoW × fattore Eisenhower
+```
+
+- Matrice pesata: media dei voti 1–10, pesata con i pesi dei criteri. I criteri automatici danno 10 all'articolo più conveniente e 1 al più caro (lineare in mezzo).
+- MoSCoW: Must ×1, Should ×0,75, Could ×0,5, Won't = escluso.
+- Eisenhower: urgente e importante ×1,2, solo importante ×1, solo urgente ×0,8, nessuno dei due ×0,6.
+- Regola dell'attesa: un articolo ancora in attesa resta in classifica ma non viene consigliato.
+- Budget: scorrendo la classifica, ogni articolo (o pacchetto) pronto diventa **Compra** se entra nel budget residuo, altrimenti **Fuori budget**.
+
+Tutto è JavaScript semplice dentro il file HTML: puoi leggerlo e modificarlo.
+
+## Disclaimer
+
+È uno strumento di supporto, non una consulenza. I risultati dipendono solo da ciò che inserisci, possono essere sbagliati e la decisione finale è tua. Vedi [DISCLAIMER.md](DISCLAIMER.md#italiano).
+
+## Licenza
+
+[MIT](LICENSE) © 2026 Rolando Chioda

@@ -1,0 +1,8 @@
+# Personal data: local backups of your own purchase list
+backup/
+*.json
+
+# First prototype, superseded by buy-decision-tool.html
+prioritizza-acquisti.html
+
+.DS_Store
