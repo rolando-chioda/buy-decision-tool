@@ -71,7 +71,22 @@ tr.rdetail td{background:var(--bg);padding-top:0}
 .facts dt{font-size:12px;color:var(--mute)}
 .facts dd{margin:0;font-size:14px;overflow-wrap:anywhere}
 .facts .wide{grid-column:1/-1}
-.iform{padding:4px 0 6px}
+.iform{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px;margin:2px 0 10px;cursor:auto}
+.iform .fname{font-size:12px}
+.iform .fname input{font-size:17px;font-weight:600;padding:9px 11px}
+.iform input[type=number]{width:100%;text-align:left}
+.fsec{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
+.fsec h3{font-size:14px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.fnum{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--acc-soft);color:var(--acc);font-size:12px;font-family:var(--f-body);font-weight:700;flex:none}
+.fres{display:inline-flex;flex-wrap:wrap;gap:4px;margin-top:10px;padding:6px 10px;border-radius:8px;background:var(--bg);font-size:13px;color:var(--mute)}
+.fres b{color:var(--ink);font-variant-numeric:tabular-nums}
+.flabel{font-size:12px;color:var(--mute);margin:12px 0 6px}
+.toggles{display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;padding-top:18px}
+.toggles .hint{flex-basis:100%;margin:0}
+label.check.pill{border:1px solid var(--line);border-radius:999px;padding:6px 12px;background:var(--bg);cursor:pointer}
+label.check.pill:has(input:checked){border-color:var(--acc);background:var(--acc-soft)}
+.fbar{display:flex;justify-content:space-between;gap:10px;margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
+.fbar .primary{min-width:120px}
 .itable .ell{max-width:min(40ch,42vw)}
 header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 .tools{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
@@ -169,6 +184,9 @@ footer{margin-top:28px;display:flex;flex-direction:column;gap:10px}
   .kpi{padding:8px}
   .kpi .v{font-size:18px}
   input,select,textarea{font-size:16px}
+  .iform{padding:12px;margin-inline:-4px}
+  .iform .grid{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+  .toggles{padding-top:0}
   .tog{width:34px;height:34px}
   .facts{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
   .ltable,.ltable tbody{display:block}
@@ -237,7 +255,7 @@ const T = {
     subtitle: "Matrice pesata, MoSCoW, Eisenhower, costo per utilizzo, regola dell'attesa e pacchetti.",
     'tab.items': 'Articoli', 'tab.scores': 'Valutazioni', 'tab.results': '★ Risultati', 'tab.settings': 'Impostazioni',
     'sub.currency': 'Valuta', 'sub.wait': "Regola dell'attesa", 'sub.criteria': 'Criteri', 'sub.data': 'Dati e backup', 'sub.how': 'Come funziona',
-    hintsToggle: 'Mostra descrizioni', 'grp.base': 'Cosa e quanto', 'grp.priority': 'Priorità', 'grp.usage': 'Utilizzo', 'grp.scores': 'Voti dei criteri', 'h.scores': 'Da 1 (pessimo) a 10 (ottimo) per ogni criterio della matrice. Prezzo e costo per utilizzo sono calcolati in automatico. Gli stessi voti sono nella scheda Valutazioni.', autoScore: 'automatico', 'grp.state': 'Stato',
+    hintsToggle: 'Mostra descrizioni', 'grp.base': 'Prezzo e utilizzo', 'grp.notes': 'Note e acquisti collegati', 'grp.timing': 'Stato e attesa', autoCalc: 'Calcolati in automatico:', 'grp.priority': 'Priorità', 'grp.usage': 'Utilizzo', 'grp.scores': 'Voti dei criteri', 'h.scores': 'Da 1 (pessimo) a 10 (ottimo) per ogni criterio della matrice. Prezzo e costo per utilizzo sono calcolati in automatico. Gli stessi voti sono nella scheda Valutazioni.', autoScore: 'automatico', 'grp.state': 'Stato',
     critDescPh: 'Descrizione (facoltativa)', critLegend: 'Cosa significano i criteri', howLink: 'Come viene calcolato il punteggio →',
     'state.active': 'Attivo', 'state.bought': 'Comprato', 'state.dropped': 'Non serve più', 'state.snoozed': 'Rimandato',
     snoozeFor: 'Rimanda di', 'unit.days': 'giorni', 'unit.months': 'mesi', snoozedUntil: d => `Rimandato fino al ${d}`,
@@ -342,7 +360,7 @@ const T = {
     subtitle: 'Weighted matrix, MoSCoW, Eisenhower, cost per use, waiting rule and bundles.',
     'tab.items': 'Items', 'tab.scores': 'Scores', 'tab.results': '★ Results', 'tab.settings': 'Settings',
     'sub.currency': 'Currency', 'sub.wait': 'Waiting rule', 'sub.criteria': 'Criteria', 'sub.data': 'Data & backup', 'sub.how': 'How it works',
-    hintsToggle: 'Show descriptions', 'grp.base': 'What and how much', 'grp.priority': 'Priority', 'grp.usage': 'Usage', 'grp.scores': 'Criteria scores', 'h.scores': 'From 1 (poor) to 10 (excellent) for each matrix criterion. Price and cost per use are calculated automatically. The same scores are in the Scores tab.', autoScore: 'automatic', 'grp.state': 'Status',
+    hintsToggle: 'Show descriptions', 'grp.base': 'Price and use', 'grp.notes': 'Notes and linked purchases', 'grp.timing': 'Status and waiting', autoCalc: 'Calculated automatically:', 'grp.priority': 'Priority', 'grp.usage': 'Usage', 'grp.scores': 'Criteria scores', 'h.scores': 'From 1 (poor) to 10 (excellent) for each matrix criterion. Price and cost per use are calculated automatically. The same scores are in the Scores tab.', autoScore: 'automatic', 'grp.state': 'Status',
     critDescPh: 'Description (optional)', critLegend: 'What the criteria mean', howLink: 'How the score is calculated →',
     'state.active': 'Active', 'state.bought': 'Bought', 'state.dropped': 'No longer needed', 'state.snoozed': 'Postponed',
     snoozeFor: 'Postpone by', 'unit.days': 'days', 'unit.months': 'months', snoozedUntil: d => `Postponed until ${d}`,
@@ -447,7 +465,7 @@ const T = {
     subtitle: "Matrice pondérée, MoSCoW, Eisenhower, coût par utilisation, règle d'attente et lots.",
     'tab.items': 'Articles', 'tab.scores': 'Notes', 'tab.results': '★ Résultats', 'tab.settings': 'Réglages',
     'sub.currency': 'Devise', 'sub.wait': "Règle d'attente", 'sub.criteria': 'Critères', 'sub.data': 'Données et sauvegarde', 'sub.how': 'Fonctionnement',
-    hintsToggle: 'Afficher les descriptions', 'grp.base': 'Quoi et combien', 'grp.priority': 'Priorité', 'grp.usage': 'Utilisation', 'grp.scores': 'Notes des critères', 'h.scores': "De 1 (mauvais) à 10 (excellent) pour chaque critère de la matrice. Le prix et le coût par utilisation sont calculés automatiquement. Les mêmes notes sont dans l'onglet Notes.", autoScore: 'automatique', 'grp.state': 'État',
+    hintsToggle: 'Afficher les descriptions', 'grp.base': 'Prix et utilisation', 'grp.notes': 'Notes et achats liés', 'grp.timing': 'État et attente', autoCalc: 'Calculés automatiquement :', 'grp.priority': 'Priorité', 'grp.usage': 'Utilisation', 'grp.scores': 'Notes des critères', 'h.scores': "De 1 (mauvais) à 10 (excellent) pour chaque critère de la matrice. Le prix et le coût par utilisation sont calculés automatiquement. Les mêmes notes sont dans l'onglet Notes.", autoScore: 'automatique', 'grp.state': 'État',
     critDescPh: 'Description (facultative)', critLegend: 'Signification des critères', howLink: 'Comment le score est calculé →',
     'state.active': 'Actif', 'state.bought': 'Acheté', 'state.dropped': 'Plus nécessaire', 'state.snoozed': 'Reporté',
     snoozeFor: 'Reporter de', 'unit.days': 'jours', 'unit.months': 'mois', snoozedUntil: d => `Reporté jusqu'au ${d}`,
@@ -898,58 +916,53 @@ function viewItems(D) {
   const itemForm = i => {
     const p = D.per[i.id];
     const st = i.state || 'active';
-    return `<div class="iform">
-      <div class="spread">
-        <input class="name" id="name-${i.id}" data-k="item:${i.id}:name" value="${esc(i.name)}" placeholder="${esc(t('namePh'))}" aria-label="${esc(t('namePh'))}" style="flex:1;min-width:0">
-        <button class="btn primary" id="done-${i.id}" data-act="doneEdit" data-id="${i.id}">${t('doneEdit')}</button>
+    const manual = S.criteria.filter(c => !c.auto), autos = S.criteria.filter(c => c.auto);
+    const sec = (n, k, body) => `<section class="fsec"><h3><span class="fnum">${n}</span>${t(k).replace(/\s*:\s*$/, '')}</h3>${body}</section>`;
+    const parts = [];
+    parts.push(['grp.base', `<div class="grid">
+        <label>${t('price')} (${esc(curSym())})<input id="price-${i.id}" type="number" min="0" step="1" inputmode="decimal" data-k="item:${i.id}:price" value="${esc(i.price)}">${hint('price')}</label>
+        <label>${t('uses')}<input id="uses-${i.id}" type="number" min="0" step="1" inputmode="numeric" data-k="item:${i.id}:uses" value="${esc(i.uses)}">${hint('uses')}</label>
+        <label>${t('life')}<input id="life-${i.id}" type="number" min="0" step="1" inputmode="numeric" data-k="item:${i.id}:life" value="${esc(i.life)}">${hint('life')}</label>
       </div>
-      ${hint('name')}
-      <div class="grid" style="margin-top:12px">
+      <div class="fres">${t('cpu')}: <b data-d="${i.id}:cpu">${cpuText(p)}</b></div>`]);
+    parts.push(['grp.priority', `<div class="grid">
+        <label>MoSCoW<select id="moscow-${i.id}" data-k="item:${i.id}:moscow">
+          ${Object.entries(MOSCOW).map(([k, m]) => `<option value="${k}" ${i.moscow === k ? 'selected' : ''}>${m.label}</option>`).join('')}
+        </select>${hint('moscow')}</label>
+        <div class="toggles">
+          <label class="check pill"><input id="urgent-${i.id}" type="checkbox" data-k="item:${i.id}:urgent" ${i.urgent ? 'checked' : ''}> ${t('urgent')}</label>
+          <label class="check pill"><input id="important-${i.id}" type="checkbox" data-k="item:${i.id}:important" ${i.important ? 'checked' : ''}> ${t('important')}</label>
+          ${hint('urgent')}${hint('important')}
+        </div>
+      </div>
+      <div class="fres">${t('quadrant')}: <b data-d="${i.id}:quad">${t(p.q + '.l')}</b></div>`]);
+    if (on('matrix') && S.criteria.length) parts.push(['grp.scores', `${manual.length ? `<div class="grid">${manual.map(c =>
+        `<label>${esc(critName(c))}<input id="iscore-${i.id}-${c.id}" type="number" min="1" max="10" step="1" inputmode="numeric" data-k="score:${i.id}:${c.id}" value="${esc(i.scores?.[c.id] ?? 5)}">${showHints && critDesc(c) ? `<span class="hint">${esc(critDesc(c))}</span>` : ''}</label>`).join('')}
+      </div>` : ''}${hint('scores')}
+      ${autos.length ? `<div class="fres">${t('autoCalc')} ${autos.map(c => `${esc(critName(c))} <b data-d="${i.id}:sc:${c.id}">${n1(p.sc[c.id])}</b>`).join(' · ')}</div>` : ''}`]);
+    parts.push(['grp.notes', `<textarea id="notes-${i.id}" data-k="item:${i.id}:notes" placeholder="${esc(t('notesPh'))}" aria-label="${esc(t('notes'))}">${esc(i.notes)}</textarea>
+      ${hint('notes')}
+      ${liveItems.length > 1 ? `<div class="flabel">${t('together')}</div>
+        <div class="chips">${liveItems.filter(o => o.id !== i.id).map(o => {
+          const on = (i.links || []).includes(o.id);
+          return `<button class="chip ${on ? 'on' : ''}" data-act="toggleLink" data-id="${i.id}" data-other="${o.id}">${on ? '🔗 ' : '+ '}${esc(o.name) || t('unnamed')}</button>`;
+        }).join('')}</div>${hint('together')}` : ''}`]);
+    parts.push(['grp.timing', `<div class="grid">
         <label>${t('grp.state')}<select id="state-${i.id}" data-k="item:${i.id}:state">
           ${['active', 'bought', 'dropped', 'snoozed'].map(s => `<option value="${s}" ${st === s ? 'selected' : ''}>${t('state.' + s)}</option>`).join('')}
         </select>${hint('state')}</label>
         ${st === 'snoozed' ? `<label>${t('snoozeFor')}<span class="row" style="flex-wrap:nowrap">
-          <input id="snoozeN-${i.id}" type="number" min="1" step="1" data-k="item:${i.id}:snoozeN" value="${esc(i.snoozeN || 1)}" style="width:80px" aria-label="${esc(t('snoozeFor'))}">
+          <input id="snoozeN-${i.id}" type="number" min="1" step="1" inputmode="numeric" data-k="item:${i.id}:snoozeN" value="${esc(i.snoozeN || 1)}" style="max-width:90px" aria-label="${esc(t('snoozeFor'))}">
           <select id="snoozeUnit-${i.id}" data-k="item:${i.id}:snoozeUnit" aria-label="${esc(t('snoozeFor'))}">${['days', 'months'].map(u => `<option value="${u}" ${(i.snoozeUnit || 'months') === u ? 'selected' : ''}>${t('unit.' + u)}</option>`).join('')}</select>
         </span><span class="hint" data-d="${i.id}:until">${t('snoozedUntil', fmtDate(i.snoozeUntil))}</span></label>` : ''}
-      </div>
-      ${groupTitle('grp.base')}
-      <div class="grid">
-        <label>${t('price')} (${esc(curSym())})<input id="price-${i.id}" type="number" min="0" step="1" data-k="item:${i.id}:price" value="${esc(i.price)}">${hint('price')}</label>
         <label>${t('added')}<input id="added-${i.id}" type="date" data-k="item:${i.id}:added" value="${esc(i.added)}">${hint('added')}</label>
       </div>
-      ${groupTitle('grp.priority')}
-      <div class="grid">
-        <label>MoSCoW<select id="moscow-${i.id}" data-k="item:${i.id}:moscow">
-          ${Object.entries(MOSCOW).map(([k, m]) => `<option value="${k}" ${i.moscow === k ? 'selected' : ''}>${m.label}</option>`).join('')}
-        </select>${hint('moscow')}</label>
-        <div class="checkcell"><label class="check"><input id="urgent-${i.id}" type="checkbox" data-k="item:${i.id}:urgent" ${i.urgent ? 'checked' : ''}> ${t('urgent')}</label>${hint('urgent')}</div>
-        <div class="checkcell"><label class="check"><input id="important-${i.id}" type="checkbox" data-k="item:${i.id}:important" ${i.important ? 'checked' : ''}> ${t('important')}</label>${hint('important')}</div>
-      </div>
-      ${on('matrix') && S.criteria.length ? `${groupTitle('grp.scores')}
-      <div class="grid">${S.criteria.map(c => c.auto
-        ? `<div class="autocell"><span>${esc(critName(c))}</span><span class="autoval"><b data-d="${i.id}:sc:${c.id}">${n1(p.sc[c.id])}</b> <span class="badge b-gray">${t('autoScore')}</span></span>${showHints && critDesc(c) ? `<span class="hint">${esc(critDesc(c))}</span>` : ''}</div>`
-        : `<label>${esc(critName(c))}<input id="iscore-${i.id}-${c.id}" type="number" min="1" max="10" step="1" data-k="score:${i.id}:${c.id}" value="${esc(i.scores?.[c.id] ?? 5)}">${showHints && critDesc(c) ? `<span class="hint">${esc(critDesc(c))}</span>` : ''}</label>`).join('')}
-      </div>${hint('scores')}` : ''}
-      ${groupTitle('grp.usage')}
-      <div class="grid">
-        <label>${t('uses')}<input id="uses-${i.id}" type="number" min="0" step="1" data-k="item:${i.id}:uses" value="${esc(i.uses)}">${hint('uses')}</label>
-        <label>${t('life')}<input id="life-${i.id}" type="number" min="0" step="1" data-k="item:${i.id}:life" value="${esc(i.life)}">${hint('life')}</label>
-      </div>
-      ${groupTitle('notes')}
-      <textarea id="notes-${i.id}" data-k="item:${i.id}:notes" placeholder="${esc(t('notesPh'))}" aria-label="${esc(t('notes'))}">${esc(i.notes)}</textarea>
-      ${hint('notes')}
-      ${liveItems.length > 1 ? `${groupTitle('together')}
-        <div class="chips">${liveItems.filter(o => o.id !== i.id).map(o => {
-          const on = (i.links || []).includes(o.id);
-          return `<button class="chip ${on ? 'on' : ''}" data-act="toggleLink" data-id="${i.id}" data-other="${o.id}">${on ? '🔗 ' : '+ '}${esc(o.name) || t('unnamed')}</button>`;
-        }).join('')}</div>${hint('together')}` : ''}
-      <div class="derived">
-        <span>${t('cpu')}: <b data-d="${i.id}:cpu">${cpuText(p)}</b></span>
-        <span>${t('quadrant')}: <b data-d="${i.id}:quad">${t(p.q + '.l')}</b></span>
-        <span data-d="${i.id}:wait">${waitText(p, i)}</span>
-      </div>
-      <div class="row" style="margin-top:12px;justify-content:flex-end"><button class="btn del" data-act="delItem" data-id="${i.id}">${t('del')}</button></div>
+      <div class="fres"><span data-d="${i.id}:wait">${waitText(p, i)}</span></div>`]);
+    return `<div class="iform">
+      <label class="fname">${t('thItem')}<input class="name" id="name-${i.id}" data-k="item:${i.id}:name" value="${esc(i.name)}" placeholder="${esc(t('namePh'))}">${hint('name')}</label>
+      ${parts.map(([k, body], n) => sec(n + 1, k, body)).join('')}
+      <div class="fbar"><button class="btn del" data-act="delItem" data-id="${i.id}">${t('del')}</button>
+        <button class="btn primary" id="done-${i.id}" data-act="doneEdit" data-id="${i.id}">${t('doneEdit')}</button></div>
     </div>`;
   };
   const rows = sorted.map(i => {
