@@ -66,11 +66,6 @@ tr.rdetail td{background:var(--bg);padding-top:0}
 .tog{background:var(--card);border:1px solid var(--line);border-radius:6px;width:28px;height:28px;cursor:pointer;color:var(--ink);font:inherit;line-height:1}
 .tog:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
 .ell{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:min(46ch,48vw);font-weight:600}
-.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;margin:4px 0 12px}
-.facts div{min-width:0}
-.facts dt{font-size:12px;color:var(--mute)}
-.facts dd{margin:0;font-size:14px;overflow-wrap:anywhere}
-.facts .wide{grid-column:1/-1}
 .iform{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px;margin:2px 0 10px;cursor:auto}
 .iform .fname{font-size:12px}
 .iform .fname input{font-size:17px;font-weight:600;padding:9px 11px}
@@ -87,6 +82,22 @@ label.check.pill{border:1px solid var(--line);border-radius:999px;padding:6px 12
 label.check.pill:has(input:checked){border-color:var(--acc);background:var(--acc-soft)}
 .fbar{display:flex;justify-content:space-between;gap:10px;margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
 .fbar .primary{min-width:120px}
+.iview{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px;margin:2px 0 10px;cursor:auto}
+.vtop{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:12px;font-size:14px}
+.vscore{color:var(--mute)}.vscore b{color:var(--ink);font-size:16px}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;align-items:start}
+.vsec{border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.vsec h3{font-size:14px;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+.vsec dl{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;margin:0;font-size:14px;align-items:baseline}
+.vsec dl:empty{display:none}
+.vfoot{margin:8px 0 0;padding-top:8px;border-top:1px dashed var(--line);font-size:13px;color:var(--mute)}
+.vfoot b{color:var(--ink)}
+.vsec dt{color:var(--mute);font-size:13px}
+.vsec dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.vsec dd.key{font-weight:700}
+.vnote{margin:0;font-size:14px}
+.mbar{display:inline-block;width:56px;height:6px;border-radius:3px;background:var(--line);vertical-align:middle;margin-right:8px;overflow:hidden}
+.mbar i{display:block;height:100%;background:var(--acc)}
 .itable .ell{max-width:min(40ch,42vw)}
 header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 .tools{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
@@ -186,9 +197,9 @@ footer{margin-top:28px;display:flex;flex-direction:column;gap:10px}
   input,select,textarea{font-size:16px}
   .iform{padding:12px;margin-inline:-4px}
   .iform .grid{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+  .iview{padding:12px;margin-inline:-4px}
   .toggles{padding-top:0}
   .tog{width:34px;height:34px}
-  .facts{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
   .ltable,.ltable tbody{display:block}
   .ltable thead{display:none}
   .ltable tr.rrow{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
@@ -255,7 +266,7 @@ const T = {
     subtitle: "Matrice pesata, MoSCoW, Eisenhower, costo per utilizzo, regola dell'attesa e pacchetti.",
     'tab.items': 'Articoli', 'tab.scores': 'Valutazioni', 'tab.results': '★ Risultati', 'tab.settings': 'Impostazioni',
     'sub.currency': 'Valuta', 'sub.wait': "Regola dell'attesa", 'sub.criteria': 'Criteri', 'sub.data': 'Dati e backup', 'sub.how': 'Come funziona',
-    hintsToggle: 'Mostra descrizioni', 'grp.base': 'Prezzo e utilizzo', 'grp.notes': 'Note e acquisti collegati', 'grp.timing': 'Stato e attesa', autoCalc: 'Calcolati in automatico:', 'grp.priority': 'Priorità', 'grp.usage': 'Utilizzo', 'grp.scores': 'Voti dei criteri', 'h.scores': 'Da 1 (pessimo) a 10 (ottimo) per ogni criterio della matrice. Prezzo e costo per utilizzo sono calcolati in automatico. Gli stessi voti sono nella scheda Valutazioni.', autoScore: 'automatico', 'grp.state': 'Stato',
+    hintsToggle: 'Mostra descrizioni', 'grp.base': 'Prezzo e utilizzo', 'grp.notes': 'Note e acquisti collegati', 'grp.timing': 'Stato e attesa', autoCalc: 'Calcolati in automatico:', noNotes: 'Nessuna nota.', 'grp.priority': 'Priorità', 'grp.usage': 'Utilizzo', 'grp.scores': 'Voti dei criteri', 'h.scores': 'Da 1 (pessimo) a 10 (ottimo) per ogni criterio della matrice. Prezzo e costo per utilizzo sono calcolati in automatico. Gli stessi voti sono nella scheda Valutazioni.', autoScore: 'automatico', 'grp.state': 'Stato',
     critDescPh: 'Descrizione (facoltativa)', critLegend: 'Cosa significano i criteri', howLink: 'Come viene calcolato il punteggio →',
     'state.active': 'Attivo', 'state.bought': 'Comprato', 'state.dropped': 'Non serve più', 'state.snoozed': 'Rimandato',
     snoozeFor: 'Rimanda di', 'unit.days': 'giorni', 'unit.months': 'mesi', snoozedUntil: d => `Rimandato fino al ${d}`,
@@ -360,7 +371,7 @@ const T = {
     subtitle: 'Weighted matrix, MoSCoW, Eisenhower, cost per use, waiting rule and bundles.',
     'tab.items': 'Items', 'tab.scores': 'Scores', 'tab.results': '★ Results', 'tab.settings': 'Settings',
     'sub.currency': 'Currency', 'sub.wait': 'Waiting rule', 'sub.criteria': 'Criteria', 'sub.data': 'Data & backup', 'sub.how': 'How it works',
-    hintsToggle: 'Show descriptions', 'grp.base': 'Price and use', 'grp.notes': 'Notes and linked purchases', 'grp.timing': 'Status and waiting', autoCalc: 'Calculated automatically:', 'grp.priority': 'Priority', 'grp.usage': 'Usage', 'grp.scores': 'Criteria scores', 'h.scores': 'From 1 (poor) to 10 (excellent) for each matrix criterion. Price and cost per use are calculated automatically. The same scores are in the Scores tab.', autoScore: 'automatic', 'grp.state': 'Status',
+    hintsToggle: 'Show descriptions', 'grp.base': 'Price and use', 'grp.notes': 'Notes and linked purchases', 'grp.timing': 'Status and waiting', autoCalc: 'Calculated automatically:', noNotes: 'No notes.', 'grp.priority': 'Priority', 'grp.usage': 'Usage', 'grp.scores': 'Criteria scores', 'h.scores': 'From 1 (poor) to 10 (excellent) for each matrix criterion. Price and cost per use are calculated automatically. The same scores are in the Scores tab.', autoScore: 'automatic', 'grp.state': 'Status',
     critDescPh: 'Description (optional)', critLegend: 'What the criteria mean', howLink: 'How the score is calculated →',
     'state.active': 'Active', 'state.bought': 'Bought', 'state.dropped': 'No longer needed', 'state.snoozed': 'Postponed',
     snoozeFor: 'Postpone by', 'unit.days': 'days', 'unit.months': 'months', snoozedUntil: d => `Postponed until ${d}`,
@@ -465,7 +476,7 @@ const T = {
     subtitle: "Matrice pondérée, MoSCoW, Eisenhower, coût par utilisation, règle d'attente et lots.",
     'tab.items': 'Articles', 'tab.scores': 'Notes', 'tab.results': '★ Résultats', 'tab.settings': 'Réglages',
     'sub.currency': 'Devise', 'sub.wait': "Règle d'attente", 'sub.criteria': 'Critères', 'sub.data': 'Données et sauvegarde', 'sub.how': 'Fonctionnement',
-    hintsToggle: 'Afficher les descriptions', 'grp.base': 'Prix et utilisation', 'grp.notes': 'Notes et achats liés', 'grp.timing': 'État et attente', autoCalc: 'Calculés automatiquement :', 'grp.priority': 'Priorité', 'grp.usage': 'Utilisation', 'grp.scores': 'Notes des critères', 'h.scores': "De 1 (mauvais) à 10 (excellent) pour chaque critère de la matrice. Le prix et le coût par utilisation sont calculés automatiquement. Les mêmes notes sont dans l'onglet Notes.", autoScore: 'automatique', 'grp.state': 'État',
+    hintsToggle: 'Afficher les descriptions', 'grp.base': 'Prix et utilisation', 'grp.notes': 'Notes et achats liés', 'grp.timing': 'État et attente', autoCalc: 'Calculés automatiquement :', noNotes: 'Aucune note.', 'grp.priority': 'Priorité', 'grp.usage': 'Utilisation', 'grp.scores': 'Notes des critères', 'h.scores': "De 1 (mauvais) à 10 (excellent) pour chaque critère de la matrice. Le prix et le coût par utilisation sont calculés automatiquement. Les mêmes notes sont dans l'onglet Notes.", autoScore: 'automatique', 'grp.state': 'État',
     critDescPh: 'Description (facultative)', critLegend: 'Signification des critères', howLink: 'Comment le score est calculé →',
     'state.active': 'Actif', 'state.bought': 'Acheté', 'state.dropped': 'Plus nécessaire', 'state.snoozed': 'Reporté',
     snoozeFor: 'Reporter de', 'unit.days': 'jours', 'unit.months': 'mois', snoozedUntil: d => `Reporté jusqu'au ${d}`,
@@ -872,28 +883,23 @@ const hint = k => showHints ? `<span class="hint">${t('h.' + k)}</span>` : '';
 const critDesc = c => c.auto ? t('h.auto.' + c.auto) : (c.desc ?? (['util', 'ease', 'dur'].includes(c.id) ? t('cd.' + c.id) : ''));
 const groupTitle = k => `<div class="group">${t(k).replace(/\s*:\s*$/, '')}</div>`;
 
-function itemFacts(i, p, D) {
+function itemFacts(i, p, D, actions = '') {
   const yn = v => v ? t('yes') : t('no');
-  const f = (l, v) => `<div><dt>${l}</dt><dd>${v}</dd></div>`;
-  const scores = S.criteria.map(c => `${esc(critName(c))}: <b>${n1(p.sc[c.id])}</b>`).join(' · ');
+  const f = (l, v, cls = '') => `<dt>${l}</dt><dd${cls ? ` class="${cls}"` : ''}>${v}</dd>`;
   const links = (i.links || []).map(id => D.byId[id]).filter(Boolean).map(o => esc(o.name) || t('unnamed')).join(', ');
-  return `<dl class="facts">
-    ${f(t('grp.state'), t('state.' + (i.state || 'active')) + (isPostponed(i) ? ' · ' + t('backOn', fmtDate(i.snoozeUntil)) : ''))}
-    ${f('MoSCoW', MOSCOW[i.moscow]?.label ?? '—')}
-    ${f(t('quadrant'), t(p.q + '.l'))}
-    ${on('matrix') && p.vq ? f(t('vcFact'), `${t(p.vq + '.s')} (${n1(p.val)} / ${n1(p.conv)})`) : ''}
-    ${f(`${t('urgent')} / ${t('important')}`, `${yn(i.urgent)} / ${yn(i.important)}`)}
-    ${f(t('price'), money(+i.price || 0))}
-    ${f(t('cpu'), cpuText(p))}
-    ${f(t('uses'), esc(i.uses))}
-    ${f(t('life'), esc(i.life))}
-    ${f(t('added'), fmtDate(i.added))}
-    ${f(t('waitCol'), waitText(p, i))}
-    ${f(t('matrixScore'), formula(p))}
-    <div class="wide"><dt>${t('scoresBy')}</dt><dd>${scores}</dd></div>
-    ${links ? f(t('together').replace(/\s*:\s*$/, ''), links) : ''}
-    ${i.notes ? `<div class="wide"><dt>${t('notes')}</dt><dd class="note">${esc(i.notes)}</dd></div>` : ''}
-  </dl>`;
+  const secs = [];
+  secs.push(['grp.base', `${f(t('price'), money(+i.price || 0))}${f(t('uses'), esc(i.uses))}${f(t('life'), esc(i.life))}${f(t('cpu'), cpuText(p), 'key')}`]);
+  secs.push(['grp.priority', `${f('MoSCoW', MOSCOW[i.moscow]?.label ?? '—')}${f(t('urgent'), yn(i.urgent))}${f(t('important'), yn(i.important))}${f(t('quadrant'), t(p.q + '.l'), 'key')}`]);
+  if (on('matrix') && S.criteria.length) secs.push(['grp.scores', S.criteria.map(c => f(esc(critName(c)) + (c.auto ? ` <span class="mute small">(${t('autoScore')})</span>` : ''),
+    `<span class="mbar"><i style="width:${Math.max(0, Math.min(100, 10 * (+p.sc[c.id] || 0)))}%"></i></span><b>${n1(p.sc[c.id])}</b>`)).join('')
+    + '</dl>' + (p.vq ? `<p class="vfoot">${t('vcFact')}: <b>${t(p.vq + '.s')}</b> <span class="mute">(${n1(p.val)} / ${n1(p.conv)})</span></p>` : '') + '<dl>']);
+  secs.push(['grp.notes', `${i.notes ? `<p class="note vnote">${esc(i.notes)}</p>` : `<p class="vnote mute">${t('noNotes')}</p>`}${links ? `<p class="vfoot">${t('together')} <b>${links}</b></p>` : ''}`, true]);
+  secs.push(['grp.timing', `${f(t('grp.state'), t('state.' + (i.state || 'active')))}${f(t('added'), fmtDate(i.added))}${f(t('waitCol'), waitText(p, i), 'key')}`]);
+  return `<div class="iview">
+    <div class="vtop">${itemBadge(i, p)}<span class="vscore">${t('matrixScore')}: ${formula(p)}</span></div>
+    <div class="vgrid">${secs.map(([k, body, raw], n) => `<section class="vsec"><h3><span class="fnum">${n + 1}</span>${t(k).replace(/\s*:\s*$/, '')}</h3>${raw ? body : `<dl>${body}</dl>`}</section>`).join('')}</div>
+    ${actions ? `<div class="fbar">${actions}</div>` : ''}
+  </div>`;
 }
 
 const itemBadge = (i, p) => isPostponed(i) ? `<span class="badge b-warn">${t('backOn', fmtDate(i.snoozeUntil))}</span>` : statusBadge(p.status);
@@ -973,9 +979,8 @@ function viewItems(D) {
       <td class="num">${money(+i.price || 0)}</td>
       <td class="sm-hide">${on('moscow') ? (MOSCOW[i.moscow]?.label.split(' ')[0] ?? '—') : '—'}</td>
       <td>${itemBadge(i, p)}</td>
-    </tr>${open ? `<tr class="rdetail"><td></td><td colspan="4">${editing ? itemForm(i) : `${itemFacts(i, p, D)}
-      <div class="row"><button class="btn primary" id="edit-${i.id}" data-act="editItem" data-id="${i.id}">${t('editShort')}</button>
-      <button class="btn del" data-act="delItem" data-id="${i.id}">${t('del')}</button></div>`}</td></tr>` : ''}`;
+    </tr>${open ? `<tr class="rdetail"><td></td><td colspan="4">${editing ? itemForm(i) : `${itemFacts(i, p, D, `<button class="btn del" data-act="delItem" data-id="${i.id}">${t('del')}</button>
+      <button class="btn primary" id="edit-${i.id}" data-act="editItem" data-id="${i.id}">${t('editShort')}</button>`)}`}</td></tr>` : ''}`;
   }).join('');
   return `<button class="btn primary" id="add-item" data-act="addItem" style="margin-bottom:14px">${t('add')}</button>
   <div class="card"><h2>${t('listTitle')}</h2>${showHints ? `<p class="small mute" style="margin-top:0">${t('itemsHelp')}</p>` : ''}
@@ -1117,8 +1122,7 @@ function viewResults(D) {
       <td class="num sm-hide">${money(+i.price || 0)}</td>
       <td class="lscore" style="min-width:120px"><div class="row" style="flex-wrap:nowrap"><div class="bar" style="flex:1"><i style="width:${100 * p.final / max}%"></i></div><b class="num">${n1(p.final)}</b></div></td>
       <td>${statusBadge(p.status)}</td>
-    </tr>${open ? `<tr class="rdetail"><td></td><td colspan="5">${itemFacts(i, p, D)}
-      <button class="btn" id="edit-${i.id}" data-act="editItem" data-id="${i.id}">${t('edit')}</button></td></tr>` : ''}`;
+    </tr>${open ? `<tr class="rdetail"><td></td><td colspan="5">${itemFacts(i, p, D, `<span></span><button class="btn primary" id="edit-${i.id}" data-act="editItem" data-id="${i.id}">${t('edit')}</button>`)}</td></tr>` : ''}`;
   }).join('');
 
   const list = q => {
@@ -1162,8 +1166,7 @@ function viewResults(D) {
       <td class="lname"><span class="ell">${esc(i.name) || t('unnamed')}</span></td>
       <td class="num">${money(+i.price || 0)}</td>
       <td><span class="badge b-warn">${t('backOn', fmtDate(i.snoozeUntil))}</span></td>
-    </tr>${open ? `<tr class="rdetail"><td></td><td colspan="3">${itemFacts(i, p, D)}
-      <button class="btn" id="edit-${i.id}" data-act="editItem" data-id="${i.id}">${t('edit')}</button></td></tr>` : ''}`;
+    </tr>${open ? `<tr class="rdetail"><td></td><td colspan="3">${itemFacts(i, p, D, `<span></span><button class="btn primary" id="edit-${i.id}" data-act="editItem" data-id="${i.id}">${t('edit')}</button>`)}</td></tr>` : ''}`;
       }).join('')}</tbody>
     </table></div>
   </div>` : ''}
