@@ -17,7 +17,7 @@ Il n'y a rien à installer. Choisissez une option :
 1. **Réglages** : choisissez la devise. Si vous le souhaitez, modifiez les critères et leurs poids.
 2. **Articles → + Ajouter un article** : saisissez le nom, le prix, MoSCoW, urgent/important, les utilisations par mois, la durée de vie et les notes de 1 à 10 des critères. Cliquez sur une ligne pour revoir les données, puis sur **Modifier** pour les changer.
 3. **★ Résultats** : voyez le prochain achat conseillé, ce qui est prêt et ce qui est encore en attente. Cliquez sur une ligne pour voir tous les détails.
-4. **Après l'achat** : passez l'état à *Acheté*, *Plus nécessaire* ou *Reporté* de N jours ou mois.
+4. **Après l'achat** : dans ★ Résultats, utilisez le menu d'état à côté de l'article (sans l'ouvrir) et choisissez *Acheté*, *Plus nécessaire* ou *Reporté* de N jours ou mois.
 5. **Sauvegarde** : dans Réglages → Données et sauvegarde, utilisez souvent **Télécharger une sauvegarde (JSON)**. Pour restaurer, utilisez **Importer un JSON**.
 
 Pour essayer : Réglages → Données et sauvegarde → **Charger l'exemple**.

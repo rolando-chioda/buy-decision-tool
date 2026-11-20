@@ -172,6 +172,8 @@ td input[type=number]{width:64px;text-align:right}
 .banner{border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:14px}
 .banner.warn{background:var(--warn-soft);color:var(--ink)}
 .banner.bad{background:var(--bad-soft);color:var(--ink)}
+.banner.okb{background:var(--ok-soft);color:var(--ink);gap:10px}
+.qstate{width:auto;padding:4px 8px;font-size:13px;cursor:pointer}
 .empty{text-align:center;padding:32px 16px}
 details summary{cursor:pointer;color:var(--mute);font-size:14px}
 footer{margin-top:28px;display:flex;flex-direction:column;gap:10px}
@@ -210,6 +212,12 @@ footer{margin-top:28px;display:flex;flex-direction:column;gap:10px}
   .ltable td.lscore{min-width:0!important}
   .ltable td.lscore .bar{display:none}
   .ltable tr.rdetail{display:block}
+  .rtable tr.rrow{flex-wrap:wrap;row-gap:0}
+  .rtable td.lname{flex:1 1 calc(100% - 48px)}
+  .rtable td.lscore{margin-left:36px;flex:1}
+  .ptable td.lbadge{margin-left:36px;flex:1}
+  .rtable td.lscore,.rtable td.lbadge,.rtable td.lqs{padding-top:0!important}
+  .rtable .qstate{font-size:16px;padding:4px 6px}
   .ltable tr.rdetail td{display:block;border-bottom:1px solid var(--line);padding:4px 4px 12px}
   .ltable tr.rdetail td:first-child{display:none}
   .stable th:first-child,.stable td:first-child{position:sticky;left:0;background:var(--card);z-index:1;min-width:110px;max-width:130px}
@@ -268,7 +276,7 @@ const T = {
     'sub.currency': 'Valuta', 'sub.wait': "Regola dell'attesa", 'sub.criteria': 'Criteri', 'sub.data': 'Dati e backup', 'sub.how': 'Come funziona',
     hintsToggle: 'Mostra descrizioni', 'grp.base': 'Prezzo e utilizzo', 'grp.notes': 'Note e acquisti collegati', 'grp.timing': 'Stato e attesa', autoCalc: 'Calcolati in automatico:', noNotes: 'Nessuna nota.', 'grp.priority': 'Priorità', 'grp.usage': 'Utilizzo', 'grp.scores': 'Voti dei criteri', 'h.scores': 'Da 1 (pessimo) a 10 (ottimo) per ogni criterio della matrice. Prezzo e costo per utilizzo sono calcolati in automatico. Gli stessi voti sono nella scheda Valutazioni.', autoScore: 'automatico', 'grp.state': 'Stato',
     critDescPh: 'Descrizione (facoltativa)', critLegend: 'Cosa significano i criteri', howLink: 'Come viene calcolato il punteggio →',
-    'state.active': 'Attivo', 'state.bought': 'Comprato', 'state.dropped': 'Non serve più', 'state.snoozed': 'Rimandato',
+    changeState: 'Cambia stato', movedArchive: 'spostato nell\'archivio', undo: 'Annulla', 'state.active': 'Attivo', 'state.bought': 'Comprato', 'state.dropped': 'Non serve più', 'state.snoozed': 'Rimandato',
     snoozeFor: 'Rimanda di', 'unit.days': 'giorni', 'unit.months': 'mesi', snoozedUntil: d => `Rimandato fino al ${d}`,
     postponedTitle: 'Rimandati', postponedHelp: 'Fuori dalla classifica fino alla data indicata, poi rientrano da soli. Clicca una riga per vedere i dati o modificarli, anche per cambiare lo stato.', backOn: d => `torna il ${d}`,
     'sub.methods': 'Metodi di classifica',
@@ -373,7 +381,7 @@ const T = {
     'sub.currency': 'Currency', 'sub.wait': 'Waiting rule', 'sub.criteria': 'Criteria', 'sub.data': 'Data & backup', 'sub.how': 'How it works',
     hintsToggle: 'Show descriptions', 'grp.base': 'Price and use', 'grp.notes': 'Notes and linked purchases', 'grp.timing': 'Status and waiting', autoCalc: 'Calculated automatically:', noNotes: 'No notes.', 'grp.priority': 'Priority', 'grp.usage': 'Usage', 'grp.scores': 'Criteria scores', 'h.scores': 'From 1 (poor) to 10 (excellent) for each matrix criterion. Price and cost per use are calculated automatically. The same scores are in the Scores tab.', autoScore: 'automatic', 'grp.state': 'Status',
     critDescPh: 'Description (optional)', critLegend: 'What the criteria mean', howLink: 'How the score is calculated →',
-    'state.active': 'Active', 'state.bought': 'Bought', 'state.dropped': 'No longer needed', 'state.snoozed': 'Postponed',
+    changeState: 'Change status', movedArchive: 'moved to the archive', undo: 'Undo', 'state.active': 'Active', 'state.bought': 'Bought', 'state.dropped': 'No longer needed', 'state.snoozed': 'Postponed',
     snoozeFor: 'Postpone by', 'unit.days': 'days', 'unit.months': 'months', snoozedUntil: d => `Postponed until ${d}`,
     postponedTitle: 'Postponed', postponedHelp: 'Out of the ranking until the date shown, then they come back by themselves. Click a row to see the data or edit it, including the status.', backOn: d => `back on ${d}`,
     'sub.methods': 'Ranking methods',
@@ -478,7 +486,7 @@ const T = {
     'sub.currency': 'Devise', 'sub.wait': "Règle d'attente", 'sub.criteria': 'Critères', 'sub.data': 'Données et sauvegarde', 'sub.how': 'Fonctionnement',
     hintsToggle: 'Afficher les descriptions', 'grp.base': 'Prix et utilisation', 'grp.notes': 'Notes et achats liés', 'grp.timing': 'État et attente', autoCalc: 'Calculés automatiquement :', noNotes: 'Aucune note.', 'grp.priority': 'Priorité', 'grp.usage': 'Utilisation', 'grp.scores': 'Notes des critères', 'h.scores': "De 1 (mauvais) à 10 (excellent) pour chaque critère de la matrice. Le prix et le coût par utilisation sont calculés automatiquement. Les mêmes notes sont dans l'onglet Notes.", autoScore: 'automatique', 'grp.state': 'État',
     critDescPh: 'Description (facultative)', critLegend: 'Signification des critères', howLink: 'Comment le score est calculé →',
-    'state.active': 'Actif', 'state.bought': 'Acheté', 'state.dropped': 'Plus nécessaire', 'state.snoozed': 'Reporté',
+    changeState: "Changer l'état", movedArchive: "déplacé dans l'archive", undo: 'Annuler', 'state.active': 'Actif', 'state.bought': 'Acheté', 'state.dropped': 'Plus nécessaire', 'state.snoozed': 'Reporté',
     snoozeFor: 'Reporter de', 'unit.days': 'jours', 'unit.months': 'mois', snoozedUntil: d => `Reporté jusqu'au ${d}`,
     postponedTitle: 'Reportés', postponedHelp: "Hors classement jusqu'à la date indiquée, puis ils reviennent d'eux-mêmes. Cliquez sur une ligne pour voir les données ou les modifier, y compris l'état.", backOn: d => `revient le ${d}`,
     'sub.methods': 'Méthodes de classement',
@@ -902,6 +910,17 @@ function itemFacts(i, p, D, actions = '') {
   </div>`;
 }
 
+let lastChange = null;   // ultimo cambio di stato rapido, per Annulla
+const STATES = ['active', 'bought', 'dropped', 'snoozed'];
+const quickState = i => `<select class="qstate" id="qs-${i.id}" data-k="item:${i.id}:state" data-quick="1" aria-label="${esc(t('changeState') + ': ' + (i.name || t('unnamed')))}">
+  ${STATES.map(s => `<option value="${s}" ${(i.state || 'active') === s ? 'selected' : ''}>${t('state.' + s)}</option>`).join('')}</select>`;
+function undoBanner() {
+  const c = lastChange; if (!c) return '';
+  const i = S.items.find(x => x.id === c.id); if (!i || (i.state || 'active') !== c.to) { lastChange = null; return ''; }
+  const extra = isArchived(i) ? t('movedArchive') : isPostponed(i) ? t('backOn', fmtDate(i.snoozeUntil)) : '';
+  return `<div class="banner okb spread" role="status"><span>«${esc(i.name) || t('unnamed')}» → <b>${t('state.' + c.to)}</b>${extra ? ' · ' + extra : ''}</span>
+    <button class="btn" id="undo-state" data-act="undoState">${t('undo')}</button></div>`;
+}
 const itemBadge = (i, p) => isPostponed(i) ? `<span class="badge b-warn">${t('backOn', fmtDate(i.snoozeUntil))}</span>` : statusBadge(p.status);
 
 function viewArchive() {
@@ -1121,8 +1140,9 @@ function viewResults(D) {
       <td class="lname"><span class="ell">${p.group.length > 1 ? '🔗 ' : ''}${esc(i.name) || t('unnamed')}</span></td>
       <td class="num sm-hide">${money(+i.price || 0)}</td>
       <td class="lscore" style="min-width:120px"><div class="row" style="flex-wrap:nowrap"><div class="bar" style="flex:1"><i style="width:${100 * p.final / max}%"></i></div><b class="num">${n1(p.final)}</b></div></td>
-      <td>${statusBadge(p.status)}</td>
-    </tr>${open ? `<tr class="rdetail"><td></td><td colspan="5">${itemFacts(i, p, D, `<span></span><button class="btn primary" id="edit-${i.id}" data-act="editItem" data-id="${i.id}">${t('edit')}</button>`)}</td></tr>` : ''}`;
+      <td class="lbadge">${statusBadge(p.status)}</td>
+      <td class="lqs">${quickState(i)}</td>
+    </tr>${open ? `<tr class="rdetail"><td></td><td colspan="6">${itemFacts(i, p, D, `<span></span><button class="btn primary" id="edit-${i.id}" data-act="editItem" data-id="${i.id}">${t('edit')}</button>`)}</td></tr>` : ''}`;
   }).join('');
 
   const list = q => {
@@ -1147,26 +1167,27 @@ function viewResults(D) {
   </div>` : '';
 
   const allOff = !METHODS.some(on);
-  return `${allOff ? `<div class="banner warn">${t('allOff')}</div>` : ''}${reco}${kpis}
+  return `${undoBanner()}${allOff ? `<div class="banner warn">${t('allOff')}</div>` : ''}${reco}${kpis}
   <div class="card"><h2>${t('rankTitle')}</h2>
-    <div class="tablewrap"><table class="ltable">
-      <thead><tr><th></th><th class="num">#</th><th>${t('thItem')}</th><th class="num">${t('thPrice')}</th><th>${t('thFinal')}</th><th>${t('thStatus')}</th></tr></thead>
-      <tbody>${rows || `<tr><td colspan="6" class="mute">${t('noActive')}</td></tr>`}</tbody>
+    <div class="tablewrap"><table class="ltable rtable">
+      <thead><tr><th></th><th class="num">#</th><th>${t('thItem')}</th><th class="num">${t('thPrice')}</th><th>${t('thFinal')}</th><th>${t('thStatus')}</th><th>${t('changeState')}</th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="7" class="mute">${t('noActive')}</td></tr>`}</tbody>
     </table></div>
     ${D.excluded.length ? `<p class="small mute" style="margin:12px 0 0">${t('excludedList')} ${D.excluded.map(i => esc(i.name)).join(', ')}</p>` : ''}
   </div>
   ${D.postponed.length ? `<div class="card"><h2>${t('postponedTitle')}</h2>
     <p class="small mute" style="margin-top:0">${t('postponedHelp')}</p>
-    <div class="tablewrap"><table class="ltable">
-      <thead><tr><th></th><th>${t('thItem')}</th><th class="num">${t('thPrice')}</th><th>${t('thStatus')}</th></tr></thead>
+    <div class="tablewrap"><table class="ltable rtable ptable">
+      <thead><tr><th></th><th>${t('thItem')}</th><th class="num">${t('thPrice')}</th><th>${t('thStatus')}</th><th>${t('changeState')}</th></tr></thead>
       <tbody>${D.postponed.map(i => {
         const p = D.per[i.id], open = openRows.has(i.id);
         return `<tr class="rrow${open ? ' open' : ''}" data-act="toggleRow" data-id="${i.id}">
       <td><button class="tog" aria-expanded="${open}" aria-label="${esc(t('showDetails'))}">${open ? '▾' : '▸'}</button></td>
       <td class="lname"><span class="ell">${esc(i.name) || t('unnamed')}</span></td>
-      <td class="num">${money(+i.price || 0)}</td>
-      <td><span class="badge b-warn">${t('backOn', fmtDate(i.snoozeUntil))}</span></td>
-    </tr>${open ? `<tr class="rdetail"><td></td><td colspan="3">${itemFacts(i, p, D, `<span></span><button class="btn primary" id="edit-${i.id}" data-act="editItem" data-id="${i.id}">${t('edit')}</button>`)}</td></tr>` : ''}`;
+      <td class="num sm-hide">${money(+i.price || 0)}</td>
+      <td class="lbadge"><span class="badge b-warn">${t('backOn', fmtDate(i.snoozeUntil))}</span></td>
+      <td class="lqs">${quickState(i)}</td>
+    </tr>${open ? `<tr class="rdetail"><td></td><td colspan="4">${itemFacts(i, p, D, `<span></span><button class="btn primary" id="edit-${i.id}" data-act="editItem" data-id="${i.id}">${t('edit')}</button>`)}</td></tr>` : ''}`;
       }).join('')}</tbody>
     </table></div>
   </div>` : ''}
@@ -1246,6 +1267,7 @@ function onEdit(e) {
   const val = el.type === 'checkbox' ? el.checked : (NUM.has(field) || NUM.has(id)) ? (el.value === '' ? '' : +el.value) : el.value;
   if (kind === 'item') {
     const i = S.items.find(x => x.id === id); if (!i) return;
+    if (field === 'state') lastChange = el.dataset.quick ? {id, to:val, prev:{state:i.state || 'active', closedAt:i.closedAt ?? null, snoozeUntil:i.snoozeUntil ?? null, snoozeN:i.snoozeN, snoozeUnit:i.snoozeUnit}} : null;
     i[field] = val;
     if (['state', 'snoozeN', 'snoozeUnit'].includes(field)) {
       if (i.state === 'snoozed') { i.snoozeN = Math.max(1, +i.snoozeN || 1); i.snoozeUnit = i.snoozeUnit || 'months'; i.snoozeUntil = snoozeDate(i.snoozeN, i.snoozeUnit); }
@@ -1278,7 +1300,7 @@ document.getElementById('view').addEventListener('click', e => {
 });
 document.getElementById('tabs').addEventListener('click', e => {
   const tb = e.target.closest('button')?.dataset.tab; if (!tb) return;
-  tab = tb; try { localStorage.setItem('bdt:tab', tab); } catch (err) {}
+  tab = tb; lastChange = null; try { localStorage.setItem('bdt:tab', tab); } catch (err) {}
   needRender = false; render();
 });
 
@@ -1362,8 +1384,13 @@ document.addEventListener('click', async e => {
     const i = S.items.find(x => x.id === id); if (!i) return;
     i.state = 'active'; i.closedAt = null; i.snoozeUntil = null;
     queueWrite('items/' + id, true); render();
+  } else if (act === 'undoState') {
+    const c = lastChange; lastChange = null; if (!c) return;
+    const i = S.items.find(x => x.id === c.id); if (!i) { render(); return; }
+    Object.assign(i, c.prev); queueWrite('items/' + i.id, true); render();
+    document.getElementById('qs-' + i.id)?.focus({preventScroll:true});
   } else if (act === 'toggleRow') {
-    if (e.target.closest('.rdetail')) return;
+    if (e.target.closest('.rdetail') || e.target.closest('.qstate')) return;
     openRows.has(id) ? openRows.delete(id) : openRows.add(id);
     render();
     document.querySelector(`tr.rrow[data-id="${id}"] .tog`)?.focus({preventScroll:true});
